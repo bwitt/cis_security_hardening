@@ -37,9 +37,8 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler-cache: false
-      - name: Install dependencies
-        run: bundle install --jobs 4
+          bundler-cache: true
+          cache-version: 5
       - name: Validate
         run: bundle exec rake validate check rubocop syntax lint metadata_lint
       - name: Run tests
