@@ -56,14 +56,11 @@ group :release do
   gem "puppet-strings", '~> 4.0',                require: false
 end
 
-puppet_version = ENV['PUPPET_GEM_VERSION'] || '>= 7.0'
+puppet_version = ENV['PUPPET_GEM_VERSION']
 facter_version = ENV['FACTER_GEM_VERSION']
 hiera_version = ENV['HIERA_GEM_VERSION']
 
 gems = {}
-
-# Puppet gem - version controlled by PUPPET_GEM_VERSION env var in CI
-gems['puppet'] = location_for(puppet_version)
 
 # If facter or hiera versions have been specified via the environment variables
 gems['facter'] = location_for(facter_version) if facter_version
@@ -72,6 +69,10 @@ gems['hiera'] = location_for(hiera_version) if hiera_version
 gems.each do |gem_name, gem_params|
   gem gem_name, *gem_params
 end
+
+# Puppet gem - version controlled by PUPPET_GEM_VERSION env var in CI
+# We handle this separately to work with bundler's deployment mode
+gem 'puppet', *location_for(puppet_version)
 
 # Evaluate Gemfile.local and ~/.gemfile if they exist
 extra_gemfiles = [
