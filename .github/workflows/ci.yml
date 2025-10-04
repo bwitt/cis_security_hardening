@@ -16,5 +16,3 @@ jobs:
   puppet:
     name: Puppet
     uses: voxpupuli/gha-puppet/.github/workflows/basic.yml@v3
-    with:
-      cache-version: '2'
