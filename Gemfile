@@ -56,7 +56,7 @@ group :release do
   gem "puppet-strings", '~> 4.0',                require: false
 end
 
-puppet_version = ENV['PUPPET_GEM_VERSION']
+puppet_version = ENV['PUPPET_GEM_VERSION'] || '>= 7.0'
 facter_version = ENV['FACTER_GEM_VERSION']
 hiera_version = ENV['HIERA_GEM_VERSION']
 
