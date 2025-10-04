@@ -56,14 +56,14 @@ group :release do
   gem "puppet-strings", '~> 4.0',                require: false
 end
 
-# Puppet gem - version controlled by PUPPET_GEM_VERSION env var in CI
-gem 'puppet', ENV.fetch('PUPPET_GEM_VERSION', '>= 7.0'), require: false
-
 puppet_version = ENV['PUPPET_GEM_VERSION']
 facter_version = ENV['FACTER_GEM_VERSION']
 hiera_version = ENV['HIERA_GEM_VERSION']
 
 gems = {}
+
+# Puppet gem - version controlled by PUPPET_GEM_VERSION env var in CI
+gems['puppet'] = location_for(puppet_version)
 
 # If facter or hiera versions have been specified via the environment variables
 gems['facter'] = location_for(facter_version) if facter_version
