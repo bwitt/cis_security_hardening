@@ -13,7 +13,15 @@ def location_for(place_or_version, fake_version = nil)
   end
 end
 
+# The development group is intended for developer tooling. CI will never install this.
 group :development do
+  gem "pry", '~> 0.10',                          require: false
+  gem "puppet-debugger", '~> 1.0',               require: false
+  gem "rb-readline", '= 0.5.5',                  require: false, platforms: [:mswin, :mingw, :x64_mingw]
+end
+
+# The test group is used for static validations and unit tests in gha-puppet's basic workflow.
+group :test do
   gem "json", '= 2.1.0',                         require: false if Gem::Requirement.create(['>= 2.5.0', '< 2.7.0']).satisfied_by?(Gem::Version.new(RUBY_VERSION.dup))
   gem "json", '= 2.3.0',                         require: false if Gem::Requirement.create(['>= 2.7.0', '< 3.0.0']).satisfied_by?(Gem::Version.new(RUBY_VERSION.dup))
   gem "json", '= 2.3.0',                         require: false if Gem::Requirement.create(['>= 3.0.0', '< 3.0.5']).satisfied_by?(Gem::Version.new(RUBY_VERSION.dup))
@@ -28,23 +36,24 @@ group :development do
   gem "codecov", '~> 0.2',                       require: false
   gem "dependency_checker", '~> 1.0.0',          require: false
   gem "parallel_tests", '= 3.12.1',              require: false
-  gem "pry", '~> 0.10',                          require: false
   gem "simplecov-console", '~> 0.5',             require: false
-  gem "puppet-debugger", '~> 1.0',               require: false
   gem "rubocop", '= 1.48.1',                     require: false
   gem "rubocop-performance", '= 1.16.0',         require: false
   gem "rubocop-rspec", '= 2.19.0',               require: false
-  gem "puppet-strings", '~> 4.0',                require: false
-  gem "rb-readline", '= 0.5.5',                  require: false, platforms: [:mswin, :mingw, :x64_mingw]
-  gem "github_changelog_generator",              require: false
+  gem "puppet_metadata", '~> 3.4',               require: false
 end
+
+# The system_tests group is used in gha-puppet's beaker workflow.
 group :system_tests do
   gem "puppet_litmus", '~> 1.0', require: false, platforms: [:ruby, :x64_mingw]
   gem "serverspec", '~> 2.41',   require: false
   gem "hiera-puppet-helper",     require: false
 end
-group :release_prep do
-  # Note: puppet-strings and puppetlabs_spec_helper are already defined in development group
+
+# The release group is used in gha-puppet's release workflow
+group :release do
+  gem "github_changelog_generator",              require: false
+  gem "puppet-strings", '~> 4.0',                require: false
 end
 
 puppet_version = ENV['PUPPET_GEM_VERSION']

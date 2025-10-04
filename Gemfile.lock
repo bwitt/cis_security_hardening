@@ -132,7 +132,7 @@ GEM
       net-http-persistent (>= 4.0.4, < 5)
     fast_gettext (2.4.0)
       prime
-    ffi (1.17.2)
+    ffi (1.17.2-x86_64-linux-gnu)
     fiber-annotation (0.2.0)
     fiber-local (1.0.0)
     forwardable (1.3.3)
@@ -320,6 +320,9 @@ GEM
       retryable (~> 3.0)
       rspec
       tty-spinner (>= 0.5.0, < 1.0.0)
+    puppet_metadata (3.7.1)
+      metadata-json-lint (>= 2.0, < 5)
+      semantic_puppet (~> 1.0)
     puppetfile-resolver (0.6.3)
       molinillo (~> 0.6)
       semantic_puppet (~> 1.0)
@@ -510,6 +513,7 @@ DEPENDENCIES
   puppet-debugger (~> 1.0)
   puppet-strings (~> 4.0)
   puppet_litmus (~> 1.0)
+  puppet_metadata (~> 3.4)
   puppetlabs_spec_helper (~> 6.0)
   rb-readline (= 0.5.5)
   rspec-puppet-facts (~> 2.0)
