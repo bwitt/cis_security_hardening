@@ -77,12 +77,12 @@ class cis_security_hardening::rules::grub_bootloader_config (
     if fact('cis_security_hardening.efi') and cis_security_hardening::hash_key($facts['mountpoints'], '/boot/efi') {
       $device = $facts['mountpoints']['/boot/efi']['device']
       $uuid   = $facts['partitions'][$device]['uuid']
-      $line   = "UUID=${uuid}  /boot/efi       vfat    umask=0077,fmask=0077,uid=0,gid=0      0        1"
+      $line   = "/dev/disk/by-uuid/${uuid}  /boot/efi       vfat    umask=0077,fmask=0077,uid=0,gid=0      0        1"
 
       file_line { 'fix /boot/efi':
         ensure             => present,
         path               => '/etc/fstab',
-        match              => "^UUID=${uuid}\\s+/boot/efi\\s+vfat",
+        match              => '^[^#]*\s+/boot/efi\s+',
         line               => $line,
         append_on_no_match => true,
       }

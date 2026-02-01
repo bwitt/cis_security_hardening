@@ -135,8 +135,8 @@ describe 'cis_security_hardening::rules::grub_bootloader_config' do
               with(
                 'ensure'             => 'present',
                 'path'               => '/etc/fstab',
-                'match'              => '^UUID=583bc67c-8dfa-42f2-9022-6d3161d34521\\s+/boot/efi\\s+vfat',
-                'line'               => 'UUID=583bc67c-8dfa-42f2-9022-6d3161d34521  /boot/efi       vfat    umask=0077,fmask=0077,uid=0,gid=0      0        1',
+                'match'              => '^[^#]*\s+/boot/efi\s+',
+                'line'               => '/dev/disk/by-uuid/583bc67c-8dfa-42f2-9022-6d3161d34521  /boot/efi       vfat    umask=0077,fmask=0077,uid=0,gid=0      0        1',
                 'append_on_no_match' => true
               )
 
