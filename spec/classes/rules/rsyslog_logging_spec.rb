@@ -10,10 +10,9 @@ describe 'cis_security_hardening::rules::rsyslog_logging' do
     package { 'rsyslog':
       ensure => installed,
     }
-    exec { 'reload-rsyslog':
-      command     => 'pkill -HUP rsyslog',
-      path        => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
-      refreshonly => true,
+    service { 'rsyslog':
+      ensure => running,
+      enable => true,
     }
     EOF
   end
@@ -83,77 +82,77 @@ describe 'cis_security_hardening::rules::rsyslog_logging' do
                 'ensure'  => 'file',
                 'content' => '*.emerg *.emerg'
               ).
-              that_notifies('Exec[reload-rsyslog]')
+              that_notifies('Service[rsyslog]')
 
             is_expected.to contain_file('/etc/rsyslog.d/mail.conf').
               with(
                 'ensure'  => 'file',
                 'content' => 'mail.* -/var/log/mail'
               ).
-              that_notifies('Exec[reload-rsyslog]')
+              that_notifies('Service[rsyslog]')
 
             is_expected.to contain_file('/etc/rsyslog.d/messages.conf').
               with(
                 'ensure'  => 'file',
                 'content' => '*.info;mail.none;authpriv.none;cron.none;local0.none /var/log/messages'
               ).
-              that_notifies('Exec[reload-rsyslog]')
+              that_notifies('Service[rsyslog]')
 
             is_expected.to contain_file('/etc/rsyslog.d/cron.conf').
               with(
                 'ensure'  => 'file',
                 'content' => 'cron.* /var/log/cron'
               ).
-              that_notifies('Exec[reload-rsyslog]')
+              that_notifies('Service[rsyslog]')
 
             is_expected.to contain_file('/etc/rsyslog.d/secure.conf').
               with(
                 'ensure'  => 'file',
                 'content' => '*.info;mail.none;authpriv.none;cron.none;local0.none -/var/log/secure'
               ).
-              that_notifies('Exec[reload-rsyslog]')
+              that_notifies('Service[rsyslog]')
 
             is_expected.to contain_file('/etc/rsyslog.d/spooler.conf').
               with(
                 'ensure'  => 'file',
                 'content' => 'uucp,news.crit /var/log/spooler'
               ).
-              that_notifies('Exec[reload-rsyslog]')
+              that_notifies('Service[rsyslog]')
 
             is_expected.to contain_file('/etc/rsyslog.d/boot.conf').
               with(
                 'ensure'  => 'file',
                 'content' => 'local7.* /var/log/boot.log'
               ).
-              that_notifies('Exec[reload-rsyslog]')
+              that_notifies('Service[rsyslog]')
 
             is_expected.to contain_file('/etc/rsyslog.d/ldap.conf').
               with(
                 'ensure'  => 'file',
                 'content' => 'local4.* /var/log/ldap.log'
               ).
-              that_notifies('Exec[reload-rsyslog]')
+              that_notifies('Service[rsyslog]')
 
             is_expected.to contain_file('/etc/rsyslog.d/daemon.conf').
               with(
                 'ensure'  => 'file',
                 'content' => 'daemon.* /var/log/daemon.log'
               ).
-              that_notifies('Exec[reload-rsyslog]')
+              that_notifies('Service[rsyslog]')
 
             is_expected.to contain_file('/etc/rsyslog.d/debug.conf').
               with(
                 'ensure'  => 'file',
                 'content' => '*.debug /var/log/debug'
               ).
-              that_notifies('Exec[reload-rsyslog]')
+              that_notifies('Service[rsyslog]')
 
             is_expected.to contain_file('/etc/rsyslog.d/kern.conf').
               with(
                 'ensure'  => 'file',
                 'content' => 'kern.* -/var/log/kern.log'
               ).
-              that_notifies('Exec[reload-rsyslog]')
+              that_notifies('Service[rsyslog]')
           else
             is_expected.not_to contain_file('/etc/rsyslog.d/emerg.conf')
             is_expected.not_to contain_file('/etc/rsyslog.d/mailall.conf')
