@@ -2,7 +2,7 @@
 #    Ensure login and logout events are collected
 #
 # Monitor login and logout events. The parameters below track changes to files associated with login/logout events.
-# The file /var/log/lastlog maintain records of the last time a user successfully logged in. The /var/run/failock
+# The file /var/log/lastlog maintain records of the last time a user successfully logged in. The /var/run/faillock
 # directory maintains records of login failures via the pam_faillock module.
 #
 # Rationale:
@@ -10,7 +10,7 @@
 # attacks against user logins.
 #
 # @param enforce
-#    Sets rule enforcement. If set to true, code will be exeuted to bring the system into a compliant state.
+#    Sets rule enforcement. If set to true, code will be executed to bring the system into a compliant state.
 #
 # @example
 #   class { 'cis_security_hardening::rules::auditd_logins':

@@ -8,7 +8,7 @@
 # credit card numbers, serial numbers, and other private material.
 #
 # @param enforce
-#    Sets rule enforcemt. If set to true, code will be exeuted to bring the system into a compliant state.
+#    Sets rule enforcement. If set to true, code will be executed to bring the system into a compliant state.
 # @param delete_package
 #    If set to trur apport package will be removed, otherwise onle the service gets stopped and masked
 #

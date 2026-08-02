@@ -17,7 +17,7 @@
 #    The name format.
 #
 # @example
-#   class { 'cis_security_hardening::rules::auditd_remote_labled':
+#   class { 'cis_security_hardening::rules::auditd_remote_labeled':
 #     enforce => true,
 #     format => 'hostname',
 #   }

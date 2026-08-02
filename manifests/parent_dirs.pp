@@ -13,13 +13,13 @@
 #    The directory owner.
 #
 # @param group
-#    The directoray group.
+#    The directory group.
 #
 # @param mode
 #    The directory permissions.
 #
 # @example
-#   pxe_installarent_dirs{ 'create script dir':
+#   cis_security_hardening::parent_dirs { 'create script dir':
 #    dir_path => '/var/www/scripts',
 #  }
 define cis_security_hardening::parent_dirs (

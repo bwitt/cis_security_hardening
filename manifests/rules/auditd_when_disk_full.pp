@@ -8,7 +8,7 @@
 # the benefit of the system's availability.
 #
 # @param enforce
-#    Sets rule enforcement. If set to true, code will be exeuted to bring the system into a compliant state.
+#    Sets rule enforcement. If set to true, code will be executed to bring the system into a compliant state.
 #
 # @param space_left_action
 #    What to do when space get low

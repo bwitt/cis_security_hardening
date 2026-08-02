@@ -5,19 +5,19 @@
 # The purpose of the module is to give the ability to setup complete security baseline which not necessarily have to stick
 # to an industry security guide like the CIS benchmarks.
 #
-# The easiest way to use the module is to put all rule data into a hiera file. For more information please coinsult the README file.
+# The easiest way to use the module is to put all rule data into a hiera file. For more information please consult the README file.
 #
 # @param profile
 #    The benchmark profile to use. Currently only server profiles are supported.
 # @param level
-#    The CIS Benchmark server security level. Higher levels include all rules of lover levels. Therefore level1 rules are all included
+#    The CIS Benchmark server security level. Higher levels include all rules of lower levels. Therefore level1 rules are all included
 #    in the level2 rules and stig includes level1 and level 2 rules.
 # @param update_postrun_command
 #    Update Puppet agent post run command
 # @param fact_upload_command
 #    Command to use to upload facts to Puppet master
 # @param exclude_dirs_sticky_ww
-#    Araay of directories to exclude from the search for world writable directories with sticky bit
+#    Array of directories to exclude from the search for world writable directories with sticky bit
 # @param auditd_dirs_to_include
 #    Directories to search for privileged commands to create auditd rules.
 # @param time_until_reboot

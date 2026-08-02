@@ -28,7 +28,7 @@
 #    Flag if root should be locked on failed logins.
 #
 # @param lock_dir
-#    Faillock direcrory to use.
+#    Faillock directory to use.
 #
 # @example
 #   class { 'cis_security_hardening::rules::pam_lockout':

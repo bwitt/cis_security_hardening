@@ -22,7 +22,7 @@
 #    Enforce the rule
 #
 # @param client_alive_interval
-#    The client alive imterval
+#    The client alive interval
 #
 # @param client_alive_count_max
 #    The client alive cout max

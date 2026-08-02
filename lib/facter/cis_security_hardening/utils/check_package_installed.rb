@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# check if a package isinstalled
+# check if a package is installed
 # params:
 #    opts: rpm options to use
 #    pkg:  package name to query

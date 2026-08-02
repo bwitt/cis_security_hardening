@@ -11,7 +11,7 @@ describe 'cis_security_hardening::rules::ufw_outbound' do
         let(:facts) do
           os_facts.merge(
             cis_security_hardening: {
-              sservices_enabled: {
+              services_enabled: {
                 srv_ufw: 'disabled',
               },
               ufw: {
