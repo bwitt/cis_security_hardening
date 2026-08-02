@@ -25,7 +25,7 @@ class cis_security_hardening::rules::ufw_open_ports (
   if $enforce {
     $firewall_rules.each |$title, $data| {
       if cis_security_hardening::hash_key($data, 'action') {
-        unless $data['action'] =~ /\W*/ {
+        unless $data['action'] =~ /^(allow|deny|reject|limit)$/ {
           fail("Illegal action: ${data['action']}")
         }
         $action = $data['action']
@@ -34,7 +34,7 @@ class cis_security_hardening::rules::ufw_open_ports (
       }
 
       if cis_security_hardening::hash_key($data, 'queue') {
-        unless $data['queue'] =~ /\W*/ {
+        unless $data['queue'] =~ /^(in|out)$/ {
           fail("Illegal queue: ${data['queue']}")
         }
         $queue = $data['queue']
