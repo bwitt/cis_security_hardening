@@ -14,9 +14,7 @@
 * [`cis_security_hardening::reboot`](#cis_security_hardening--reboot): Handle necessary reboot
 * [`cis_security_hardening::rules::automatic_error_reporting`](#cis_security_hardening--rules--automatic_error_reporting): Ensure Automatic Error Reporting is not enabled (Automated)
 * [`cis_security_hardening::rules::dac_on_hardlinks`](#cis_security_hardening--rules--dac_on_hardlinks): Ensure the operating system is configured to enable DAC on hardlinks
-* [`cis_security_hardening::rules::dac_on_symlinks`](#cis_security_hardening--rules--dac_on_symlinks): Ensure the operating system is configured to enable DAC on symlinks
 * [`cis_security_hardening::rules::gdm_lock_delay`](#cis_security_hardening--rules--gdm_lock_delay): Ensure overriding the screensaver lock-delay setting is prevented
-* [`cis_security_hardening::rules::pam_libpwquality`](#cis_security_hardening--rules--pam_libpwquality): Ensure libpwquality is installed (Automated)
 * [`cis_security_hardening::services`](#cis_security_hardening--services): Services
 * [`cis_security_hardening::sticky_world_writable_cron`](#cis_security_hardening--sticky_world_writable_cron): Create a cron job for the search for world writable directories with sticky bit set.
 
@@ -142,6 +140,7 @@ audited
 * `cis_security_hardening::rules::crypto_policy`: Ensure system-wide crypto policy is FUTURE or FIPS
 * `cis_security_hardening::rules::ctrl_alt_del_graphical`: Ensure the graphical user Ctrl-Alt-Delete key sequence is disabled
 * `cis_security_hardening::rules::cups`: Ensure CUPS is not enabled
+* `cis_security_hardening::rules::dac_on_symlinks`: Ensure the operating system is configured to enable DAC on symlinks
 * `cis_security_hardening::rules::debug_shell`: Ensure the operating system is configured to mask the debug- shell systemd service
 * `cis_security_hardening::rules::dev_shm`: Ensure /dev/shm is configured
 * `cis_security_hardening::rules::dev_shm_nodev`: Ensure nodev option set on /dev/shm partition
@@ -281,6 +280,7 @@ audited
 * `cis_security_hardening::rules::pam_cached_auth`: Ensure PAM prohibits the use of cached authentications after one day
 * `cis_security_hardening::rules::pam_fail_delay`: Ensure logging delay after failed logon attempt
 * `cis_security_hardening::rules::pam_last_logon`: Ensure last successful account logon is displayed upon logon
+* `cis_security_hardening::rules::pam_libpwquality`: Ensure libpwquality is installed (Automated)
 * `cis_security_hardening::rules::pam_lockout`: Ensure lockout for failed password attempts is configured
 * `cis_security_hardening::rules::pam_mfa`: Ensure smart card logins for multifactor authentication for local and network access
 * `cis_security_hardening::rules::pam_mfa_redhat`: Ensure multi-factor authentication is enable for users
@@ -882,59 +882,6 @@ Enforce the rule.
 
 Default value: `false`
 
-### <a name="cis_security_hardening--rules--dac_on_symlinks"></a>`cis_security_hardening::rules::dac_on_symlinks`
-
-The operating system must enable kernel parameters to enforce discretionary access control on symlinks.
-
-Rationale:
-Discretionary Access Control (DAC) is based on the notion that individual users are "owners" of objects and therefore have
-discretion over who should be authorized to access the object and in which mode (e.g., read or write). Ownership is usually
-acquired as a consequence of creating the object or via specified ownership assignment. DAC allows the owner to determine who
-will have access to objects they control. An example of DAC includes user-controlled file permissions.
-
-When discretionary access control policies are implemented, subjects are not constrained with regard to what actions they can
-take with information for which they have already been granted access. Thus, subjects that have been granted access to information
-are not prevented from passing (i.e., the subjects have the discretion to pass) the information to other subjects or objects. A subject
-that is constrained in its operation by Mandatory Access Control policies is still able to operate under the less rigorous constraints
-of this requirement. Thus, while Mandatory Access Control imposes constraints preventing a subject from passing information to another
-subject operating at a different sensitivity level, this requirement permits the subject to pass the information to any subject at the
-same sensitivity level. The policy is bounded by the information system boundary. Once the information is passed outside the control of
-the information system, additional means may be required to ensure the constraints remain in effect. While the older, more traditional
-definitions of discretionary access control require identity-based access control, that limitation is not required for this use of
-discretionary access control.
-
-By enabling the fs.protected_symlinks kernel parameter, symbolic links are permitted to be followed only when outside a sticky
-world-writable directory, or when the UID of the link and follower match, or when the directory owner matches the symlink's owner.
-
-Disallowing such symlinks helps mitigate vulnerabilities based on insecure file system accessed by privileged programs, avoiding an
-exploitation vector exploiting unsafe use of open() or creat().
-
-Satisfies: SRG-OS-000312-GPOS-00122, SRG-OS-000312-GPOS-00123, SRG-OS-000312- GPOS-00124, SRG-OS-000324-GPOS-00125
-
-#### Examples
-
-##### 
-
-```puppet
-class { 'cis_security_hardening::rules::dac_on_symlinks':
-  enforce => true,
-}
-```
-
-#### Parameters
-
-The following parameters are available in the `cis_security_hardening::rules::dac_on_symlinks` class:
-
-* [`enforce`](#-cis_security_hardening--rules--dac_on_symlinks--enforce)
-
-##### <a name="-cis_security_hardening--rules--dac_on_symlinks--enforce"></a>`enforce`
-
-Data type: `Boolean`
-
-Enforce the rule.
-
-Default value: `false`
-
 ### <a name="cis_security_hardening--rules--gdm_lock_delay"></a>`cis_security_hardening::rules::gdm_lock_delay`
 
 The operating system must prevent a user from overriding the screensaver lock-delay setting for the graphical user interface.
@@ -977,38 +924,6 @@ Data type: `Integer`
 Lock delay timeout.
 
 Default value: `900`
-
-### <a name="cis_security_hardening--rules--pam_libpwquality"></a>`cis_security_hardening::rules::pam_libpwquality`
-
-The libpwquality package provides common functions for password quality checking
-
-Rationale:
-Strong passwords reduce the risk of systems being hacked through brute force
-methods.
-
-#### Examples
-
-##### 
-
-```puppet
-class {'cis_security_hardening::rules::pam_libpwquality':
- enforce +> true,
-}
-```
-
-#### Parameters
-
-The following parameters are available in the `cis_security_hardening::rules::pam_libpwquality` class:
-
-* [`enforce`](#-cis_security_hardening--rules--pam_libpwquality--enforce)
-
-##### <a name="-cis_security_hardening--rules--pam_libpwquality--enforce"></a>`enforce`
-
-Data type: `Boolean`
-
-Enforce the rule
-
-Default value: `false`
 
 ### <a name="cis_security_hardening--services"></a>`cis_security_hardening::services`
 
