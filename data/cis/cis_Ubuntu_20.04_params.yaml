@@ -557,6 +557,7 @@ cis_security_hardening::rules::shadow_perms::enforce: true
 cis_security_hardening::rules::group_perms::enforce: true
 cis_security_hardening::rules::gshadow_perms::enforce: true
 cis_security_hardening::rules::shells_perms::enforce: true
+cis_security_hardening::rules::opassword_perms::enforce: true
 cis_security_hardening::rules::passwd_bak_perms::enforce: true
 cis_security_hardening::rules::group_bak_perms::enforce: true
 cis_security_hardening::rules::shadow_bak_perms::enforce: true
