@@ -20,6 +20,19 @@ class cis_security_hardening::rules::dev_shm_nosuid (
   Boolean $enforce = false,
 ) {
   if ($enforce) and cis_security_hardening::hash_key($facts['mountpoints'], '/dev/shm') {
+    # /dev/shm is normally kernel/systemd-mounted with no /etc/fstab entry, which
+    # set_mount_options requires in order to edit it. Ensure a baseline entry
+    # exists first; leave any pre-existing entry (e.g. a configured size) untouched.
+    file_line { 'ensure /dev/shm fstab entry exists (nosuid)':
+      ensure             => present,
+      path               => '/etc/fstab',
+      match              => '^\S+\s+/dev/shm\s',
+      line               => 'tmpfs   /dev/shm        tmpfs   defaults   0 0',
+      append_on_no_match => true,
+      replace            => false,
+      before             => Cis_security_hardening::Set_mount_options['/dev/shm-nosuid'],
+    }
+
     cis_security_hardening::set_mount_options { '/dev/shm-nosuid':
       mountpoint   => '/dev/shm',
       mountoptions => 'nosuid',

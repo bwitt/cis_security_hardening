@@ -39,8 +39,16 @@ describe 'cis_security_hardening::rules::dev_shm_nodev' do
                 'mountpoint'   => '/dev/shm',
                 'mountoptions' => 'nodev'
               )
+            is_expected.to contain_file_line('ensure /dev/shm fstab entry exists (nodev)').
+              with(
+                'path'               => '/etc/fstab',
+                'append_on_no_match' => true,
+                'replace'            => false
+              ).
+              that_comes_before('Cis_security_hardening::Set_mount_options[/dev/shm-nodev]')
           else
             is_expected.not_to contain_cis_security_hardening__set_mount_options('/dev/shm-nodev')
+            is_expected.not_to contain_file_line('ensure /dev/shm fstab entry exists (nodev)')
           end
         }
       end

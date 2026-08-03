@@ -39,8 +39,16 @@ describe 'cis_security_hardening::rules::dev_shm_noexec' do
                 'mountpoint'   => '/dev/shm',
                 'mountoptions' => 'noexec'
               )
+            is_expected.to contain_file_line('ensure /dev/shm fstab entry exists (noexec)').
+              with(
+                'path'               => '/etc/fstab',
+                'append_on_no_match' => true,
+                'replace'            => false
+              ).
+              that_comes_before('Cis_security_hardening::Set_mount_options[/dev/shm-noexec]')
           else
             is_expected.not_to contain_cis_security_hardening__set_mount_options('/dev/shm-noexec')
+            is_expected.not_to contain_file_line('ensure /dev/shm fstab entry exists (noexec)')
           end
         }
       end

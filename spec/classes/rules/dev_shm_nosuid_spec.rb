@@ -39,8 +39,16 @@ describe 'cis_security_hardening::rules::dev_shm_nosuid' do
                 'mountpoint'   => '/dev/shm',
                 'mountoptions' => 'nosuid'
               )
+            is_expected.to contain_file_line('ensure /dev/shm fstab entry exists (nosuid)').
+              with(
+                'path'               => '/etc/fstab',
+                'append_on_no_match' => true,
+                'replace'            => false
+              ).
+              that_comes_before('Cis_security_hardening::Set_mount_options[/dev/shm-nosuid]')
           else
             is_expected.not_to contain_cis_security_hardening__set_mount_options('/dev/shm-nosuid')
+            is_expected.not_to contain_file_line('ensure /dev/shm fstab entry exists (nosuid)')
           end
         }
       end
