@@ -295,6 +295,7 @@ cis_security_hardening::benchmark::ubuntu::v24:
         - gshadow_perms
         - gshadow_bak_perms
         - shells_perms
+        - opassword_perms
     configure_user_groups:
       level1:
         - shadowed_passwords
