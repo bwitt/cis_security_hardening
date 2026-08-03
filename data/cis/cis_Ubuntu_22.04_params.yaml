@@ -183,7 +183,7 @@ cis_security_hardening::rules::ufw_open_ports::enforce: false
 cis_security_hardening::rules::ufw_default_deny::enforce: false
 cis_security_hardening::rules::ufw_default_deny::default_incoming: allow
 cis_security_hardening::rules::ufw_default_deny::default_outgoing: allow
-cis_security_hardening::rules::ufw_default_deny::routed: allow
+cis_security_hardening::rules::ufw_default_deny::default_routed: allow
 
 cis_security_hardening::rules::nftables_install::enforce: false
 cis_security_hardening::rules::nftables_flush_iptables::enforce: false
