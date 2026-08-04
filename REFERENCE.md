@@ -255,12 +255,11 @@ audited
 * `cis_security_hardening::rules::mta_unrestriced_relay`
 * `cis_security_hardening::rules::net_bpf_jit_harden`: Ensure the operating system enables hardening for the BPF JIT
 * `cis_security_hardening::rules::net_snmp`: Ensure net-snmp is not installed
-* `cis_security_hardening::rules::nfs`: Ensure NFS is not enabled
+* `cis_security_hardening::rules::nfs`: Ensure network file system services are not in use
 * `cis_security_hardening::rules::nfs_nodev`: Ensure file systems being imported via NFS are mounted with the "nosuid" option.
 * `cis_security_hardening::rules::nfs_noexec`: Ensure noexec option is configured for NFS.
 * `cis_security_hardening::rules::nfs_nosuid`: Ensure nosuid option is set for NFS
 * `cis_security_hardening::rules::nfs_sec_opt`: Ensure NFS is configured to use RPCSEC_GSS
-* `cis_security_hardening::rules::nfs_utils`: Ensure nfs-utils is not installed or the nfs-server service is masked
 * `cis_security_hardening::rules::nftables_base_chains`: Ensure base chains exist
 * `cis_security_hardening::rules::nftables_default_deny`: Ensure default deny firewall policy
 * `cis_security_hardening::rules::nftables_flush_iptables`: Ensure iptables are flushed
