@@ -9,6 +9,7 @@ require 'facter/cis_security_hardening/utils/read_sshd_config'
 require 'facter/cis_security_hardening/utils/check_value_integer'
 require 'facter/cis_security_hardening/utils/read_open_ports'
 require 'facter/cis_security_hardening/utils/read_nfs_filesystems'
+require 'facter/cis_security_hardening/utils/read_fstab_mountpoints'
 
 # gather os common facts
 def common_facts(os, _distid, _release)
@@ -111,6 +112,8 @@ def common_facts(os, _distid, _release)
   facts['open_ports'] = read_open_ports
 
   facts['nfs_file_systems'] = read_nfs_filesystems
+
+  facts['fstab_mountpoints'] = read_fstab_mountpoints
 
   facts['efi'] = File.directory?('/sys/firmware/efi')
 
