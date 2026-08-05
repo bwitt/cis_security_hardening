@@ -28,9 +28,6 @@ cis_security_hardening::benchmark::debian::v11:
         - home_nodev
         - home_nosuid
         - dev_shm
-        - dev_shm_nodev
-        - dev_shm_nosuid
-        - dev_shm_noexec
         - sticky_world_writeable_files
         - disable_automount
         - disable_usb_storage

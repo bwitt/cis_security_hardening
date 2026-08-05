@@ -11,9 +11,6 @@ cis_security_hardening::benchmark::sles::v15:
         - tmp_nodev
         - tmp_nosuid
         - dev_shm
-        - dev_shm_noexec
-        - dev_shm_nodev
-        - dev_shm_nosuid
         - var_tmp_noexec
         - var_tmp_nodev
         - var_tmp_nosuid

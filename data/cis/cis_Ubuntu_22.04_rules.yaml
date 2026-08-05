@@ -24,9 +24,6 @@ cis_security_hardening::benchmark::ubuntu::v22:
         - home_nodev
         - home_nosuid
         - dev_shm
-        - dev_shm_nodev
-        - dev_shm_nosuid
-        - dev_shm_noexec
     filesystem_integrety:
       level1:
         - aide_installed

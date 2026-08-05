@@ -12,9 +12,6 @@ cis_security_hardening::rules::apparmor_bootloader::enforce: false
 cis_security_hardening::rules::authselect::enforce: false
 cis_security_hardening::rules::chrony::enforce: false
 cis_security_hardening::rules::dev_shm::enforce: false
-cis_security_hardening::rules::dev_shm_nodev::enforce: false
-cis_security_hardening::rules::dev_shm_noexec::enforce: false
-cis_security_hardening::rules::dev_shm_nosuid::enforce: false
 cis_security_hardening::rules::enable_aslr::enforce: false
 cis_security_hardening::rules::ptrace_scope::enforce: false
 cis_security_hardening::rules::restrict_core_dumps::enforce: false
