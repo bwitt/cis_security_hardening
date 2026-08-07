@@ -144,6 +144,9 @@ audited
 * `cis_security_hardening::rules::cups`: Ensure CUPS is not enabled
 * `cis_security_hardening::rules::debug_shell`: Ensure the operating system is configured to mask the debug- shell systemd service
 * `cis_security_hardening::rules::dev_shm`: Ensure /dev/shm is configured
+* `cis_security_hardening::rules::dev_shm_nodev`: Ensure nodev option set on /dev/shm partition
+* `cis_security_hardening::rules::dev_shm_noexec`: Ensure noexec option set on /dev/shm partition
+* `cis_security_hardening::rules::dev_shm_nosuid`: Ensure nosuid option set on /dev/shm partition
 * `cis_security_hardening::rules::dhcp`: Ensure DHCP Server is not enabled
 * `cis_security_hardening::rules::disable_apport`: Ensure Automatic Error Reporting is not enabled (Automated)
 * `cis_security_hardening::rules::disable_atm`: Ensure ATM is disabled
