@@ -16,6 +16,9 @@ cis_security_hardening::benchmark::redhat::v7:
         - tmp_nodev
         - tmp_nosuid
         - dev_shm
+        - dev_shm_noexec
+        - dev_shm_nodev
+        - dev_shm_nosuid
         - home_nodev
         - home_nosuid
         - var_nodev

@@ -27,6 +27,9 @@ cis_security_hardening::benchmark::centos::v8:
         - home_usrquota
         - home_grpquota
         - dev_shm
+        - dev_shm_noexec
+        - dev_shm_nodev
+        - dev_shm_nosuid
         - disable_automount
         - disable_usb_storage
     software_updates:

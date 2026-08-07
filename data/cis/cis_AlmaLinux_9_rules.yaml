@@ -26,6 +26,9 @@ cis_security_hardening::benchmark::almalinux::v9:
         - home_usrquota
         - home_grpquota
         - dev_shm
+        - dev_shm_noexec
+        - dev_shm_nodev
+        - dev_shm_nosuid
         - disable_usb_storage
     software_updates:
       level1:
