@@ -17,6 +17,15 @@
 # @param size
 #    Size in GB
 #
+# @param enforce_nodev
+#    Include the nodev option
+#
+# @param enforce_noexec
+#    Include the noexec option
+#
+# @param enforce_nosuid
+#    Include the nosuid option
+#
 # @example
 #   class { 'cis_security_hardening::rules::dev_shm':
 #       enforce => true,
@@ -34,15 +43,18 @@
 #    if none exists, and replaces the whole line if one already does. This
 #    will overwrite any options an administrator had already set there.
 class cis_security_hardening::rules::dev_shm (
-  Boolean $enforce = false,
-  Integer $size    = 0,
+  Boolean $enforce        = false,
+  Integer $size           = 0,
+  Boolean $enforce_nodev  = true,
+  Boolean $enforce_noexec = true,
+  Boolean $enforce_nosuid = true,
 ) {
   if $enforce {
-    if $size == 0 {
-      $options = 'defaults,nodev,nosuid,noexec,seclabel'
-    } else {
-      $options = "defaults,size=${size}G,nodev,nosuid,noexec,seclabel"
-    }
+    $size_token   = $size > 0 ? { true => ["size=${size}G"], false => [] }
+    $nodev_token  = $enforce_nodev ? { true => ['nodev'], false => [] }
+    $nosuid_token = $enforce_nosuid ? { true => ['nosuid'], false => [] }
+    $noexec_token = $enforce_noexec ? { true => ['noexec'], false => [] }
+    $options = join(['defaults'] + $size_token + $nodev_token + $nosuid_token + $noexec_token + ['seclabel'], ',')
 
     $line = "tmpfs   /dev/shm        tmpfs   ${options}   0 0"
     file_line { 'add /dev/shm to fstab':

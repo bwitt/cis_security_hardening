@@ -43,4 +43,58 @@ describe 'cis_security_hardening::rules::dev_shm' do
       end
     end
   end
+
+  os, os_facts = on_supported_os.first
+
+  context "on #{os} with individual options toggled off" do
+    let(:facts) { os_facts }
+
+    context 'enforce_noexec => false' do
+      let(:params) do
+        {
+          'enforce'        => true,
+          'size'           => 0,
+          'enforce_noexec' => false,
+        }
+      end
+
+      it {
+        is_expected.to contain_file_line('add /dev/shm to fstab').
+          with('line' => 'tmpfs   /dev/shm        tmpfs   defaults,nodev,nosuid,seclabel   0 0')
+      }
+    end
+
+    context 'enforce_nodev => false and enforce_nosuid => false' do
+      let(:params) do
+        {
+          'enforce'        => true,
+          'size'           => 0,
+          'enforce_nodev'  => false,
+          'enforce_nosuid' => false,
+        }
+      end
+
+      it {
+        is_expected.to contain_file_line('add /dev/shm to fstab').
+          with('line' => 'tmpfs   /dev/shm        tmpfs   defaults,noexec,seclabel   0 0')
+      }
+    end
+
+    context 'all three options disabled' do
+      let(:params) do
+        {
+          'enforce'        => true,
+          'size'           => 0,
+          'enforce_nodev'  => false,
+          'enforce_noexec' => false,
+          'enforce_nosuid' => false,
+        }
+      end
+
+      it {
+        is_expected.to contain_file_line('add /dev/shm to fstab').
+          with('line' => 'tmpfs   /dev/shm        tmpfs   defaults,seclabel   0 0')
+      }
+    end
+  end
 end
