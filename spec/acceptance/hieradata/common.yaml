@@ -1,43 +1,33 @@
 ---
-# TODO: Fix idempotency issues with these rules
-cis_security_hardening::rules::log_suspicious_packets::enforce: false  # Ubuntu 24.04 containers reset live value between runs
-cis_security_hardening::rules::logrotate_configuration::enforce: false
-cis_security_hardening::rules::mta_local::enforce: false
+# Rules below were each enabled, run, and disabled again with the observed reason.
+# Failures on only some platforms live in family/<osfamily>/<release>.yaml.
 
-# Automatic reboot can interfere with verification TODO: how can this be enabled?
+# A reboot would end the run before the idempotency apply
 cis_security_hardening::auto_reboot: false
 
-# Disable things that do not work properly in containers
+# No grub-mkconfig in a container, so kernel_parameter has no usable provider
 cis_security_hardening::rules::apparmor_bootloader::enforce: false
-cis_security_hardening::rules::authselect::enforce: false
-cis_security_hardening::rules::chrony::enforce: false
+cis_security_hardening::rules::disable_ipv6::enforce: false
+cis_security_hardening::rules::fips_bootloader::enforce: false
+cis_security_hardening::rules::grub_bootloader_config::enforce: false
+cis_security_hardening::rules::grub_page_poison::enforce: false
+cis_security_hardening::rules::grub_slub_debug::enforce: false
+cis_security_hardening::rules::grub_vsyscall::enforce: false
+cis_security_hardening::rules::pti::enforce: false
+cis_security_hardening::rules::selinux_bootloader::enforce: false
+
+# Global kernel sysctls: a privileged container writes these to the CI runner's kernel
+cis_security_hardening::rules::enable_aslr::enforce: false
+cis_security_hardening::rules::ptrace_scope::enforce: false
+cis_security_hardening::rules::restrict_core_dumps::enforce: false
+
+# Left to PR #78, which enables these
 cis_security_hardening::rules::dev_shm::enforce: false
 cis_security_hardening::rules::dev_shm_nodev::enforce: false
 cis_security_hardening::rules::dev_shm_noexec::enforce: false
 cis_security_hardening::rules::dev_shm_nosuid::enforce: false
-cis_security_hardening::rules::enable_aslr::enforce: false
-cis_security_hardening::rules::ptrace_scope::enforce: false
-cis_security_hardening::rules::restrict_core_dumps::enforce: false
-cis_security_hardening::rules::disable_ipv6::enforce: false
-cis_security_hardening::rules::disable_wireless::enforce: false  # NetworkManager radio reports enabled in Debian 11 container
-cis_security_hardening::rules::fips_bootloader::enforce: false
-cis_security_hardening::rules::grub_bootloader_config::enforce: false
-cis_security_hardening::rules::grub_page_poison::enforce: false
-cis_security_hardening::rules::grub_password::enforce: false
-cis_security_hardening::rules::grub_slub_debug::enforce: false
-cis_security_hardening::rules::grub_vsyscall::enforce: false
-cis_security_hardening::rules::passwd_inactive_days::enforce: false  # Password aging not persistent in containers
-cis_security_hardening::rules::passwd_min_days::enforce: false  # Password aging not persistent in containers
-cis_security_hardening::rules::pti::enforce: false
-cis_security_hardening::rules::selinux_bootloader::enforce: false
-cis_security_hardening::rules::tmp_filesystem::enforce: false
 
-# iptables/nftables have some problems in containers TODO: what can we enable?
-cis_security_hardening::rules::firewalld_default_zone::enforce: false
-cis_security_hardening::rules::firewalld_install::enforce: false
-cis_security_hardening::rules::firewalld_interfaces::enforce: false
-cis_security_hardening::rules::firewalld_ports_services::enforce: false
-cis_security_hardening::rules::firewalld_service::enforce: false
+# Mutate live netfilter state; the deny-policy rules cut beaker's own SSH channel
 cis_security_hardening::rules::iptables_deny_policy::enforce: false
 cis_security_hardening::rules::iptables_install::enforce: false
 cis_security_hardening::rules::iptables_loopback::enforce: false
@@ -53,7 +43,9 @@ cis_security_hardening::rules::nftables_persistence::enforce: false
 cis_security_hardening::rules::nftables_service::enforce: false
 cis_security_hardening::rules::nftables_table::enforce: false
 
-# auditd has some problems in containers TODO: what can we enable?
+# auditd_init's auditctl -R fails in a container and its -D would flush the host's
+# rules; all fragment rules target its file, and auditd_service will not start
+# auditd_immutable's -e 2 would lock the host audit subsystem until reboot
 cis_security_hardening::rules::auditd_access::enforce: false
 cis_security_hardening::rules::auditd_actions::enforce: false
 cis_security_hardening::rules::auditd_apparmor_parser_use::enforce: false
@@ -63,11 +55,9 @@ cis_security_hardening::rules::auditd_chage_use::enforce: false
 cis_security_hardening::rules::auditd_chcon_use::enforce: false
 cis_security_hardening::rules::auditd_chfn_use::enforce: false
 cis_security_hardening::rules::auditd_chsh_use::enforce: false
-cis_security_hardening::rules::auditd_conf_perms::enforce: false
 cis_security_hardening::rules::auditd_crontab_use::enforce: false
 cis_security_hardening::rules::auditd_delete::enforce: false
 cis_security_hardening::rules::auditd_delete_module::enforce: false
-cis_security_hardening::rules::auditd_disk_error::enforce: false
 cis_security_hardening::rules::auditd_failure_processing::enforce: false
 cis_security_hardening::rules::auditd_fdisk_use::enforce: false
 cis_security_hardening::rules::auditd_finit_module_use::enforce: false
@@ -80,25 +70,17 @@ cis_security_hardening::rules::auditd_init::enforce: false
 cis_security_hardening::rules::auditd_init_module::enforce: false
 cis_security_hardening::rules::auditd_kernel_modules::enforce: false
 cis_security_hardening::rules::auditd_kmod_use::enforce: false
-cis_security_hardening::rules::auditd_local_events::enforce: false
-cis_security_hardening::rules::auditd_log_config::enforce: false
-cis_security_hardening::rules::auditd_log_dir_perms::enforce: false
-cis_security_hardening::rules::auditd_log_format::enforce: false
-cis_security_hardening::rules::auditd_log_perms::enforce: false
 cis_security_hardening::rules::auditd_logins::enforce: false
 cis_security_hardening::rules::auditd_loginuid_immutable::enforce: false
 cis_security_hardening::rules::auditd_lremovexattr_use::enforce: false
 cis_security_hardening::rules::auditd_lsetxattr_use::enforce: false
 cis_security_hardening::rules::auditd_mac_policy::enforce: false
-cis_security_hardening::rules::auditd_max_log_file::enforce: false
-cis_security_hardening::rules::auditd_max_log_file_action::enforce: false
 cis_security_hardening::rules::auditd_modules::enforce: false
 cis_security_hardening::rules::auditd_mounts::enforce: false
 cis_security_hardening::rules::auditd_newgrp_use::enforce: false
 cis_security_hardening::rules::auditd_nonlocal_admin_access::enforce: false
 cis_security_hardening::rules::auditd_open_by_handle_use::enforce: false
 cis_security_hardening::rules::auditd_overflow_action::enforce: false
-cis_security_hardening::rules::auditd_package::enforce: false
 cis_security_hardening::rules::auditd_pam_timestamp_check_use::enforce: false
 cis_security_hardening::rules::auditd_passwd_use::enforce: false
 cis_security_hardening::rules::auditd_perm_mod::enforce: false
@@ -108,23 +90,19 @@ cis_security_hardening::rules::auditd_privileged_commands::enforce: false
 cis_security_hardening::rules::auditd_privileged_functions_use::enforce: false
 cis_security_hardening::rules::auditd_privileged_priv_change::enforce: false
 cis_security_hardening::rules::auditd_process::enforce: false
-cis_security_hardening::rules::auditd_remote::enforce: false
 cis_security_hardening::rules::auditd_remote_conf::enforce: false
-cis_security_hardening::rules::auditd_remote_encrypt::enforce: false
 cis_security_hardening::rules::auditd_remote_labeled::enforce: false
 cis_security_hardening::rules::auditd_removexattr_use::enforce: false
 cis_security_hardening::rules::auditd_rmdir::enforce: false
 cis_security_hardening::rules::auditd_rsyslog_gnutls::enforce: false
 cis_security_hardening::rules::auditd_scope::enforce: false
 cis_security_hardening::rules::auditd_semanage::enforce: false
-cis_security_hardening::rules::auditd_sending_errors::enforce: false
 cis_security_hardening::rules::auditd_service::enforce: false
 cis_security_hardening::rules::auditd_session_logins::enforce: false
 cis_security_hardening::rules::auditd_setfacl_use::enforce: false
 cis_security_hardening::rules::auditd_setfiles::enforce: false
 cis_security_hardening::rules::auditd_setsebool::enforce: false
 cis_security_hardening::rules::auditd_setxattr_use::enforce: false
-cis_security_hardening::rules::auditd_space_left::enforce: false
 cis_security_hardening::rules::auditd_ssh_agent_use::enforce: false
 cis_security_hardening::rules::auditd_ssh_keysign_use::enforce: false
 cis_security_hardening::rules::auditd_sudo_use::enforce: false
@@ -133,50 +111,33 @@ cis_security_hardening::rules::auditd_sudoers::enforce: false
 cis_security_hardening::rules::auditd_sudoersd::enforce: false
 cis_security_hardening::rules::auditd_system_locale::enforce: false
 cis_security_hardening::rules::auditd_time_change::enforce: false
-cis_security_hardening::rules::auditd_tools_perms::enforce: false
 cis_security_hardening::rules::auditd_umount::enforce: false
 cis_security_hardening::rules::auditd_unix_checkpwd::enforce: false
 cis_security_hardening::rules::auditd_unix_update_use::enforce: false
-cis_security_hardening::rules::auditd_usbguard::enforce: false
 cis_security_hardening::rules::auditd_user_emulation::enforce: false
 cis_security_hardening::rules::auditd_userhelper::enforce: false
 cis_security_hardening::rules::auditd_usermod_use::enforce: false
+
+# Need /etc/audisp, created only by auditd_init
+cis_security_hardening::rules::auditd_remote::enforce: false
+cis_security_hardening::rules::auditd_remote_encrypt::enforce: false
+cis_security_hardening::rules::auditd_sending_errors::enforce: false
 cis_security_hardening::rules::auditd_when_disk_full::enforce: false
 
-# sshd rules can break container access TODO: what can we enable?
-cis_security_hardening::rules::sshd_banner::enforce: false
-cis_security_hardening::rules::sshd_ciphers::enforce: false
-cis_security_hardening::rules::sshd_compression::enforce: false
-cis_security_hardening::rules::sshd_config_permissions::enforce: false
-cis_security_hardening::rules::sshd_crypto_policy::enforce: false
-cis_security_hardening::rules::sshd_empty_passwords::enforce: false
-cis_security_hardening::rules::sshd_gssapi::enforce: false
-cis_security_hardening::rules::sshd_hostbased_authentication::enforce: false
-cis_security_hardening::rules::sshd_ignore_rhosts::enforce: false
-cis_security_hardening::rules::sshd_ignore_user_known_hosts::enforce: false
-cis_security_hardening::rules::sshd_install::enforce: false
-cis_security_hardening::rules::sshd_kerberos::enforce: false
-cis_security_hardening::rules::sshd_kex::enforce: false
-cis_security_hardening::rules::sshd_limit_access::enforce: false
-cis_security_hardening::rules::sshd_login_gracetime::enforce: false
-cis_security_hardening::rules::sshd_loglevel::enforce: false
-cis_security_hardening::rules::sshd_macs::enforce: false
-cis_security_hardening::rules::sshd_max_auth_tries::enforce: false
-cis_security_hardening::rules::sshd_max_sessions::enforce: false
-cis_security_hardening::rules::sshd_max_startups::enforce: false
-cis_security_hardening::rules::sshd_printlastlog::enforce: false
-cis_security_hardening::rules::sshd_priv_separation::enforce: false
-cis_security_hardening::rules::sshd_private_keys::enforce: false
-cis_security_hardening::rules::sshd_protocol::enforce: false
-cis_security_hardening::rules::sshd_public_keys::enforce: false
-cis_security_hardening::rules::sshd_rekey_limit::enforce: false
-cis_security_hardening::rules::sshd_root_login::enforce: false
-cis_security_hardening::rules::sshd_rsa_rhosts_authentication::enforce: false
-cis_security_hardening::rules::sshd_strict_modes::enforce: false
-cis_security_hardening::rules::sshd_strong_rng::enforce: false
-cis_security_hardening::rules::sshd_tcp_forwarding::enforce: false
-cis_security_hardening::rules::sshd_timeouts::enforce: false
+# beaker sets UsePAM no and prepends PermitUserEnvironment yes
 cis_security_hardening::rules::sshd_use_pam::enforce: false
 cis_security_hardening::rules::sshd_user_environment::enforce: false
-cis_security_hardening::rules::sshd_x11_forward::enforce: false
-cis_security_hardening::rules::sshd_x11_use_localhost::enforce: false
+
+# The rest of the sshd rules are enforced, with values that keep beaker's login working
+cis_security_hardening::rules::sshd_root_login::permitrootlogin: 'yes'
+cis_security_hardening::rules::sshd_max_auth_tries::max_auth_tries: 1000
+cis_security_hardening::rules::sshd_timeouts::client_alive_interval: 0
+cis_security_hardening::rules::sshd_timeouts::client_alive_count_max: 3
+
+# Verified failing or non-idempotent in containers
+cis_security_hardening::rules::tmp_filesystem::enforce: false  # Systemd start for tmp.mount failed
+cis_security_hardening::rules::logrotate_configuration::enforce: false  # module bug: fact keys by filename, misses 2nd create line
+cis_security_hardening::rules::passwd_min_days::enforce: false  # chage exec re-runs every apply
+cis_security_hardening::rules::passwd_inactive_days::enforce: false  # chage exec re-runs every apply
+cis_security_hardening::rules::authselect::enforce: false  # re-applies and drags the pam rules with it
+cis_security_hardening::rules::disable_wireless::enforce: false  # installs NetworkManager, which takes the container's network down
