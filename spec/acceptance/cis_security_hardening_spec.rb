@@ -18,5 +18,27 @@ describe 'cis_security_hardening class' do
     it 'is idempotent' do
       apply_manifest(pp, catch_changes: true)
     end
+
+    describe 'dev_shm rules' do
+      it 'adds exactly one /dev/shm entry to fstab' do
+        expect(shell('grep -c "[[:space:]]/dev/shm[[:space:]]" /etc/fstab').stdout.strip).to eq('1')
+      end
+
+      %w[nodev nosuid noexec].each do |opt|
+        it "sets #{opt} on the /dev/shm fstab entry" do
+          expect(shell('grep "[[:space:]]/dev/shm[[:space:]]" /etc/fstab').stdout).to match(%r{[,\s]#{opt}[,\s]})
+        end
+
+        it "applies #{opt} to the running /dev/shm mount" do
+          expect(shell('findmnt -no OPTIONS /dev/shm').stdout).to match(%r{\b#{opt}\b})
+        end
+      end
+
+      it 'does not write seclabel where SELinux is inactive' do
+        selinux = shell('getenforce 2>/dev/null || true').stdout.strip
+        skip 'SELinux is active' unless selinux.empty? || selinux == 'Disabled'
+        expect(shell('grep "[[:space:]]/dev/shm[[:space:]]" /etc/fstab').stdout).not_to match(%r{seclabel})
+      end
+    end
   end
 end

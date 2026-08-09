@@ -23,14 +23,29 @@ mpts.each do |mpt|
             is_expected.to compile
             aug = "/etc/fstab - work on #{mpt} with #{opt}"
             exc = "Exec[remount #{mpt} with #{opt}]"
+
+            if opt.include?('=')
+              optname, optvalue = opt.split('=', 2)
+              expected_changes = [
+                "ins opt after /files/etc/fstab/*[file = '#{mpt}']/opt[last()]",
+                "set *[file = '#{mpt}']/opt[last()] #{optname}",
+                "set *[file = '#{mpt}']/opt[last()]/value #{optvalue}",
+                "rm *[file = '#{mpt}']/opt[. = '#{optname}'][value != '#{optvalue}']",
+              ]
+              expected_onlyif = "match *[file = '#{mpt}']/opt[. = '#{optname}'][value = '#{optvalue}'] size == 0"
+            else
+              expected_changes = [
+                "ins opt after /files/etc/fstab/*[file = '#{mpt}']/opt[last()]",
+                "set *[file = '#{mpt}']/opt[last()] #{opt}",
+              ]
+              expected_onlyif = "match *[file = '#{mpt}']/opt[. = '#{opt}'] size == 0"
+            end
+
             is_expected.to contain_augeas(aug).
               with(
                 'context' => '/files/etc/fstab',
-                'changes' => [
-                  "ins opt after /files/etc/fstab/*[file = '#{mpt}']/opt[last()]",
-                  "set *[file = '#{mpt}']/opt[last()] #{opt}",
-                ],
-                'onlyif' => "match *[file = '#{mpt}']/opt[. = '#{opt}'] size == 0"
+                'changes' => expected_changes,
+                'onlyif'  => expected_onlyif
               ).
               that_notifies(exc)
 

@@ -28,19 +28,35 @@ class cis_security_hardening::rules::dev_shm (
   Integer $size    = 0,
 ) {
   if $enforce {
-    if $size == 0 {
-      $options = 'defaults,nodev,nosuid,noexec,seclabel'
-    } else {
-      $options = "defaults,size=${size}G,nodev,nosuid,noexec,seclabel"
+    # Create the entry only when missing; nodev, nosuid and noexec are added by their own rules
+    augeas { 'add /dev/shm to fstab':
+      context => '/files/etc/fstab',
+      changes => [
+        'set 01/spec tmpfs',
+        'set 01/file /dev/shm',
+        'set 01/vfstype tmpfs',
+        'set 01/opt defaults',
+        'set 01/dump 0',
+        'set 01/passno 0',
+      ],
+      onlyif  => "match *[file = '/dev/shm'] size == 0",
     }
 
-    $line = "tmpfs   /dev/shm        tmpfs   ${options}   0 0"
-    file_line { 'add /dev/shm to fstab':
-      ensure             => present,
-      path               => '/etc/fstab',
-      match              => "^tmpfs\\s* /dev/shm",
-      line               => $line,
-      append_on_no_match => true,
+    if $size > 0 {
+      cis_security_hardening::set_mount_options { '/dev/shm-size':
+        mountpoint   => '/dev/shm',
+        mountoptions => "size=${size}G",
+        require      => Augeas['add /dev/shm to fstab'],
+      }
+    }
+
+    # seclabel is only a valid mount option where SELinux is active
+    if fact('os.selinux.enabled') {
+      cis_security_hardening::set_mount_options { '/dev/shm-seclabel':
+        mountpoint   => '/dev/shm',
+        mountoptions => 'seclabel',
+        require      => Augeas['add /dev/shm to fstab'],
+      }
     }
   }
 }
