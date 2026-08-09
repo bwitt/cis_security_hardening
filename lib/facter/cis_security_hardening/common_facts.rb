@@ -94,16 +94,23 @@ def common_facts(os, _distid, _release)
   val = Facter::Core::Execution.exec('grep -Es "^\s*create\s+\S+" /etc/logrotate.conf /etc/logrotate.d/* | grep -E -v "\s(0)?[0-6][04]0\s"')
   unless val.nil? || val.empty?
     val.split("\n").each do |line|
-      data = line.split(%r{:})
-      file = data[0]
-      data_rotate = data[1].split(%r{\s+})
+      file, _, directive = line.partition(':')
+      next if directive.empty?
+
+      # reject empty leading field so the indices do not shift when the
+      # create directive is not indented
+      fields = directive.split(%r{\s+}).reject(&:empty?)
+      next if fields.length < 4
+
       entry = {
-        'action' => data_rotate[1],
-        'mode'   => data_rotate[2],
-        'user'   => data_rotate[3],
-        'group'  => data_rotate[4],
+        'action' => fields[0],
+        'mode'   => fields[1],
+        'user'   => fields[2],
+        'group'  => fields[3],
       }
-      logrotate_conf[file] = entry
+      # a single file can hold more than one non-compliant create directive
+      logrotate_conf[file] ||= []
+      logrotate_conf[file] << entry
     end
   end
   facts['logrotate_conf'] = logrotate_conf
