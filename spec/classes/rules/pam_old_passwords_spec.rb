@@ -69,7 +69,7 @@ describe 'cis_security_hardening::rules::pam_old_passwords' do
                   'control'   => 'required',
                   'module'    => 'pam_pwhistory.so',
                   'position'  => 'before *[type="password" and module="pam_unix.so"]',
-                  'arguments' => ['use_authok', 'remember=5']
+                  'arguments' => ['use_authtok', 'remember=5']
                 )
               elsif os_facts[:os]['name'].casecmp('ubuntu').zero? && os_facts[:os]['release']['major'].to_i >= 20
                 is_expected.to contain_pam('ubuntu-remember-old-pw').with(
@@ -79,7 +79,7 @@ describe 'cis_security_hardening::rules::pam_old_passwords' do
                   'control'          => '[success=1 default=ignore]',
                   'control_is_param' => true,
                   'module'           => 'pam_unix.so',
-                  'arguments'        => ['obscure', 'use_authok', 'try_first_pass', 'yescrypt', 'remember=5'],
+                  'arguments'        => ['obscure', 'use_authtok', 'try_first_pass', 'yescrypt', 'remember=5'],
                   'position'         => 'before *[type="password" and module="pam_deny.so"]'
                 )
               else
