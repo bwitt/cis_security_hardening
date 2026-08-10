@@ -1,2 +1,2 @@
 ---
-cis_security_hardening::rules::mta_local::enforce: false  # file_line re-applies every run
+cis_security_hardening::rules::mta_local::enforce: false  # aide pulls in postfix mid-run, so the postfix fact only flips on the next run

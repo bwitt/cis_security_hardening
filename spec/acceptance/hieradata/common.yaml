@@ -136,7 +136,7 @@ cis_security_hardening::rules::sshd_timeouts::client_alive_count_max: 3
 
 # Verified failing or non-idempotent in containers
 cis_security_hardening::rules::tmp_filesystem::enforce: false  # Systemd start for tmp.mount failed
-cis_security_hardening::rules::logrotate_configuration::enforce: false  # module bug: fact keys by filename, misses 2nd create line
+cis_security_hardening::rules::logrotate_configuration::enforce: false  # logrotate pkg installed mid-run, so the fact misses btmp/wtmp until the next run
 cis_security_hardening::rules::passwd_min_days::enforce: false  # chage exec re-runs every apply
 cis_security_hardening::rules::passwd_inactive_days::enforce: false  # chage exec re-runs every apply
 cis_security_hardening::rules::authselect::enforce: false  # re-applies and drags the pam rules with it
