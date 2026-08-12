@@ -311,6 +311,24 @@ describe 'cis_security_hardening::rules::pam_pw_requirements' do
                   'append_on_no_match' => true
                 )
 
+              is_expected.to contain_file_line('pam maxrepeat debian').
+                with(
+                  'ensure' => 'present',
+                  'path' => '/etc/security/pwquality.conf',
+                  'line' => 'maxrepeat = 3',
+                  'match' => '^#? ?maxrepeat',
+                  'append_on_no_match' => true
+                )
+
+              is_expected.to contain_file_line('pam maxsequence debian').
+                with(
+                  'ensure' => 'present',
+                  'path' => '/etc/security/pwquality.conf',
+                  'line' => 'maxsequence = 3',
+                  'match' => '^#? ?maxsequence',
+                  'append_on_no_match' => true
+                )
+
               is_expected.to contain_file_line('pam usercheck debian').
                 with(
                   'ensure' => 'present',
