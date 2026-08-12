@@ -133,7 +133,7 @@ class cis_security_hardening::rules::pam_old_passwords (
             control   => 'required',
             module    => 'pam_pwhistory.so',
             position  => 'before *[type="password" and module="pam_unix.so"]',
-            arguments => ['use_authok', "remember=${oldpasswords}"],
+            arguments => ['use_authtok', "remember=${oldpasswords}"],
           }
         } elsif ($facts['os']['name'].downcase() == 'ubuntu' and $facts['os']['release']['major'] >= '20') {
           Pam { 'ubuntu-remember-old-pw':
@@ -143,7 +143,7 @@ class cis_security_hardening::rules::pam_old_passwords (
             control          => '[success=1 default=ignore]',
             control_is_param => true,
             module           => 'pam_unix.so',
-            arguments        => ['obscure', 'use_authok', 'try_first_pass', 'yescrypt', "remember=${oldpasswords}"],
+            arguments        => ['obscure', 'use_authtok', 'try_first_pass', 'yescrypt', "remember=${oldpasswords}"],
             position         => 'before *[type="password" and module="pam_deny.so"]',
           }
         } else {
