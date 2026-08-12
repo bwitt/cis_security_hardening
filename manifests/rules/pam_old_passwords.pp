@@ -126,6 +126,11 @@ class cis_security_hardening::rules::pam_old_passwords (
       'debian', 'suse': {
         if ($facts['os']['name'].downcase() == 'debian' and $facts['os']['release']['major'] > '10') or
         ($facts['os']['name'].downcase() == 'ubuntu' and $facts['os']['release']['major'] >= '22') {
+          $pwhistory_arguments = $enforce_for_root ? {
+            true    => ['use_authtok', 'enforce_for_root', "remember=${oldpasswords}"],
+            default => ['use_authtok', "remember=${oldpasswords}"],
+          }
+
           Pam { 'pam-common-password-requisite-pwhistory':
             ensure    => present,
             service   => 'common-password',
@@ -133,7 +138,7 @@ class cis_security_hardening::rules::pam_old_passwords (
             control   => 'required',
             module    => 'pam_pwhistory.so',
             position  => 'before *[type="password" and module="pam_unix.so"]',
-            arguments => ['use_authtok', "remember=${oldpasswords}"],
+            arguments => $pwhistory_arguments,
           }
         } elsif ($facts['os']['name'].downcase() == 'ubuntu' and $facts['os']['release']['major'] >= '20') {
           Pam { 'ubuntu-remember-old-pw':
