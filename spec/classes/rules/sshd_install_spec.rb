@@ -31,7 +31,8 @@ describe 'cis_security_hardening::rules::sshd_install' do
                 )
             end
 
-            is_expected.to contain_service('sshd').
+            svc = os_facts[:os]['family'].casecmp('debian').zero? ? 'ssh' : 'sshd'
+            is_expected.to contain_service(svc).
               with(
                 'enable' => true,
                 'ensure' => 'running'
@@ -39,6 +40,7 @@ describe 'cis_security_hardening::rules::sshd_install' do
           else
             is_expected.not_to contain_package('ssh')
             is_expected.not_to contain_service('sshd')
+            is_expected.not_to contain_service('ssh')
           end
         }
       end

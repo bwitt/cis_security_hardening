@@ -150,7 +150,6 @@ cis_security_hardening::rules::sshd_gssapi::enforce: false
 cis_security_hardening::rules::sshd_hostbased_authentication::enforce: false
 cis_security_hardening::rules::sshd_ignore_rhosts::enforce: false
 cis_security_hardening::rules::sshd_ignore_user_known_hosts::enforce: false
-cis_security_hardening::rules::sshd_install::enforce: false
 cis_security_hardening::rules::sshd_kerberos::enforce: false
 cis_security_hardening::rules::sshd_kex::enforce: false
 cis_security_hardening::rules::sshd_limit_access::enforce: false
