@@ -29,12 +29,11 @@ class cis_security_hardening::rules::shadow_password_empty (
     if $empty_password != undef and !empty($empty_password) {
       $empty_password.each | String $user | {
         unless $user in $exclude {
-          # lint:ignore:exec_idempotency Idempotency handled by fact check above
           exec { "lock account with empty password: ${user}":
             command => "passwd -l ${user}",
             path    => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
+            onlyif  => "test -n \"$(awk -F: '(\$1==\"${user}\" && \$2==\"\") {print \$1}' /etc/shadow)\"",
           }
-          # lint:endignore
         }
       }
     }

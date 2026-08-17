@@ -293,7 +293,7 @@ audited
 * `cis_security_hardening::rules::passwd_bak_perms`: Ensure permissions on /etc/group- are configured
 * `cis_security_hardening::rules::passwd_expiration`: Ensure password expiration is 365 days or less
 * `cis_security_hardening::rules::passwd_inactive_days`: Ensure inactive password lock is 30 days or less
-* `cis_security_hardening::rules::passwd_last_change_date`: Ensure all users last password change date is in the past
+* `cis_security_hardening::rules::passwd_last_change_date`: Alert when a user's last password change date is in the future
 * `cis_security_hardening::rules::passwd_min_days`: Ensure minimum days between password changes is 7 or more
 * `cis_security_hardening::rules::passwd_perms`: Ensure permissions on /etc/passwd are configured
 * `cis_security_hardening::rules::passwd_sha512`: Ensure ENCRYPT_METHOD is SHA512

@@ -55,15 +55,14 @@ describe 'cis_security_hardening::rules::passwd_last_change_date' do
           is_expected.to compile
 
           if enforce
-            is_expected.to contain_exec('reset last password change date to today for futureuser').
+            is_expected.to contain_notify('user futureuser has a last password change date in the future').
               with(
-                'command' => 'chage -d $(date +%Y-%m-%d) futureuser',
-                'path'    => ['/bin', '/usr/bin', '/sbin', '/usr/sbin']
+                'loglevel' => 'warning'
               )
-            is_expected.not_to contain_exec('reset last password change date to today for validuser')
-            is_expected.not_to contain_exec('reset last password change date to today for neverchangeduser')
+            is_expected.not_to contain_notify('user validuser has a last password change date in the future')
+            is_expected.not_to contain_notify('user neverchangeduser has a last password change date in the future')
           else
-            is_expected.not_to contain_exec('reset last password change date to today for futureuser')
+            is_expected.not_to contain_notify('user futureuser has a last password change date in the future')
           end
         }
       end

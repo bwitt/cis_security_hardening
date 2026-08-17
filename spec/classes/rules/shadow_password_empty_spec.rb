@@ -30,12 +30,14 @@ describe 'cis_security_hardening::rules::shadow_password_empty' do
             is_expected.to contain_exec('lock account with empty password: test1').
               with(
                 'command' => 'passwd -l test1',
-                'path'    => ['/bin', '/usr/bin', '/sbin', '/usr/sbin']
+                'path'    => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
+                'onlyif'  => 'test -n "$(awk -F: \'($1=="test1" && $2=="") {print $1}\' /etc/shadow)"'
               )
             is_expected.to contain_exec('lock account with empty password: test2').
               with(
                 'command' => 'passwd -l test2',
-                'path'    => ['/bin', '/usr/bin', '/sbin', '/usr/sbin']
+                'path'    => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
+                'onlyif'  => 'test -n "$(awk -F: \'($1=="test2" && $2=="") {print $1}\' /etc/shadow)"'
               )
           else
             is_expected.not_to contain_exec('lock account with empty password: test1')
