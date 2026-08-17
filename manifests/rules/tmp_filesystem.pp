@@ -21,6 +21,9 @@
 # @param enable
 #    enable systemd service
 #
+# @param ensure
+#    run state of the systemd service
+#
 # @example
 #   class { 'cis_security_hardening::rules::tmp_filesystem':
 #       enforce => true,
@@ -30,9 +33,10 @@
 #
 # @api private
 class cis_security_hardening::rules::tmp_filesystem (
-  Boolean $enforce = false,
-  Integer $size    = 0,
-  Boolean $enable  = true,
+  Boolean $enforce                 = false,
+  Integer $size                    = 0,
+  Boolean $enable                  = true,
+  Stdlib::Ensure::Service $ensure  = 'running',
 ) {
   if $enforce {
     $file = '/etc/systemd/system/tmp.mount'
@@ -72,8 +76,9 @@ class cis_security_hardening::rules::tmp_filesystem (
     }
 
     ensure_resource('service', 'tmp.mount', {
-      ensure => running,
-      enable => $enable,
+      ensure  => $ensure,
+      enable  => $enable,
+      require => Exec['systemd-daemon-reload'],
     })
   }
 }

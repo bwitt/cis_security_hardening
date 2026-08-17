@@ -40,5 +40,22 @@ describe 'cis_security_hardening class' do
         expect(shell('grep "[[:space:]]/dev/shm[[:space:]]" /etc/fstab').stdout).not_to match(%r{seclabel})
       end
     end
+
+    describe 'tmp_filesystem' do
+      it 'writes the tmp.mount unit' do
+        expect(file('/etc/systemd/system/tmp.mount')).to be_file
+      end
+
+      it 'enables the unit for the next boot' do
+        expect(shell('systemctl is-enabled tmp.mount').stdout.strip).to eq('enabled')
+      end
+
+      it 'sets the hardening mount options in the unit' do
+        opts = shell('grep -E "^Options=" /etc/systemd/system/tmp.mount').stdout
+        expect(opts).to match(%r{nosuid})
+        expect(opts).to match(%r{nodev})
+        expect(opts).to match(%r{noexec})
+      end
+    end
   end
 end
