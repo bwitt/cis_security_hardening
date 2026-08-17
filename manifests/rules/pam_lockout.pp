@@ -259,6 +259,16 @@ class cis_security_hardening::rules::pam_lockout (
             line               => "unlock_time = ${lockouttime}",
             append_on_no_match => true,
           }
+
+          if $lockout_root {
+            file_line { 'faillock_even_deny_root debian':
+              ensure             => present,
+              path               => '/etc/security/faillock.conf',
+              match              => '^even_deny_root',
+              line               => 'even_deny_root',
+              append_on_no_match => true,
+            }
+          }
         } else {
           if $lockouttime == 0 {
             $args = ['onerr=fail', 'audit', 'silent', "deny=${attempts}"]
