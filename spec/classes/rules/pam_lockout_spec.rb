@@ -283,6 +283,14 @@ describe 'cis_security_hardening::rules::pam_lockout' do
                     'line'               => 'unlock_time = 900',
                     'append_on_no_match' => true
                   )
+                is_expected.to contain_file_line('faillock_even_deny_root debian').
+                  with(
+                    'ensure'             => 'present',
+                    'path'               => '/etc/security/faillock.conf',
+                    'match'              => '^even_deny_root',
+                    'line'               => 'even_deny_root',
+                    'append_on_no_match' => true
+                  )
               else
                 is_expected.to contain_pam('pam-common-auth-require-tally2').
                   with(
