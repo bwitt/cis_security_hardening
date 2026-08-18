@@ -284,6 +284,8 @@ cis_security_hardening::benchmark::ubuntu::v24:
         - umask_setting
         - timeout_setting
         - lock_root
+        - root_umask
+        - login_shell_lock
     system_file_permissions:
       level1:
         - passwd_perms
