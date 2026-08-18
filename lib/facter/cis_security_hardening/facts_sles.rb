@@ -40,6 +40,12 @@ def facts_sles(os, distid, release)
   accounts['root_gid'] = check_value_string(val, 'none')
   val = Facter::Core::Execution.exec("awk -F: '($2 == \"\" ) { print $1 }' /etc/shadow")
   accounts['empty_password'] = val.nil? || val.empty? ? [] : val.split("\n")
+  val = Facter::Core::Execution.exec("awk -F: '($3 == 0 && $1 != \"root\") { print $1 }' /etc/passwd")
+  accounts['uid_zero'] = val.nil? || val.empty? ? [] : val.split("\n")
+  val = Facter::Core::Execution.exec("awk -F: '($1 !~ /^(root|sync|shutdown|halt|operator)$/ && $4 == \"0\") { print $1 }' /etc/passwd")
+  accounts['gid_zero'] = val.nil? || val.empty? ? [] : val.split("\n")
+  val = Facter::Core::Execution.exec("awk -F: '($3 == \"0\" && $1 != \"root\") { print $1 }' /etc/group")
+  accounts['gid_zero_groups'] = val.nil? || val.empty? ? [] : val.split("\n")
   cis_security_hardening['accounts'] = accounts
 
   # check for x11 packages

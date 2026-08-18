@@ -195,6 +195,7 @@ audited
 * `cis_security_hardening::rules::gnome_gdm`
 * `cis_security_hardening::rules::gnome_gdm_package`: Ensure GNOME Display Manager is removed
 * `cis_security_hardening::rules::group_bak_perms`: Ensure permissions on /etc/group- are configured
+* `cis_security_hardening::rules::group_gid_zero`: Alert when a group other than root has GID 0
 * `cis_security_hardening::rules::group_perms`: Ensure permissions on /etc/group are configured
 * `cis_security_hardening::rules::grub_bootloader_config`: Ensure permissions on bootloader config are configured
 * `cis_security_hardening::rules::grub_page_poison`: Ensure GRUB 2 is configured to enable page poisoning to mitigate use-after-free vulnerabilities
@@ -292,11 +293,13 @@ audited
 * `cis_security_hardening::rules::pam_use_mappers`: Ensure authenticated identity is mapped to the user or group account for PKI-based authentication
 * `cis_security_hardening::rules::passwd_bak_perms`: Ensure permissions on /etc/group- are configured
 * `cis_security_hardening::rules::passwd_expiration`: Ensure password expiration is 365 days or less
+* `cis_security_hardening::rules::passwd_gid_zero`: Alert when an account other than root has GID 0 as its primary group
 * `cis_security_hardening::rules::passwd_inactive_days`: Ensure inactive password lock is 30 days or less
 * `cis_security_hardening::rules::passwd_last_change_date`: Alert when a user's last password change date is in the future
 * `cis_security_hardening::rules::passwd_min_days`: Ensure minimum days between password changes is 7 or more
 * `cis_security_hardening::rules::passwd_perms`: Ensure permissions on /etc/passwd are configured
 * `cis_security_hardening::rules::passwd_sha512`: Ensure ENCRYPT_METHOD is SHA512
+* `cis_security_hardening::rules::passwd_uid_zero`: Alert when an account other than root has UID 0
 * `cis_security_hardening::rules::passwd_warn_days`: Ensure password expiration warning days is 7 or more
 * `cis_security_hardening::rules::perf_event_paranoid`: .   Ensure the operating system is configured to prevent kernel profiling by unprivileged users  The operating system must prevent kernel pro
 * `cis_security_hardening::rules::pki_certs_validation`: Ensure certificates are validated by constructing a certification path to an accepted trust anchor
