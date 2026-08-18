@@ -293,6 +293,7 @@ audited
 * `cis_security_hardening::rules::passwd_bak_perms`: Ensure permissions on /etc/group- are configured
 * `cis_security_hardening::rules::passwd_expiration`: Ensure password expiration is 365 days or less
 * `cis_security_hardening::rules::passwd_inactive_days`: Ensure inactive password lock is 30 days or less
+* `cis_security_hardening::rules::passwd_last_change_date`: Alert when a user's last password change date is in the future
 * `cis_security_hardening::rules::passwd_min_days`: Ensure minimum days between password changes is 7 or more
 * `cis_security_hardening::rules::passwd_perms`: Ensure permissions on /etc/passwd are configured
 * `cis_security_hardening::rules::passwd_sha512`: Ensure ENCRYPT_METHOD is SHA512
@@ -329,6 +330,8 @@ audited
 * `cis_security_hardening::rules::setroubleshoot`: Ensure SETroubleshoot is not installed
 * `cis_security_hardening::rules::shadow_bak_perms`: Ensure permissions on /etc/shadow- are configured
 * `cis_security_hardening::rules::shadow_encrypt_sha512`: Ensure password hashing algorithm is SHA-512
+* `cis_security_hardening::rules::shadow_group_empty`: Ensure shadow group is empty
+* `cis_security_hardening::rules::shadow_password_empty`: Ensure /etc/shadow password fields are not empty
 * `cis_security_hardening::rules::shadow_perms`: Ensure permissions on /etc/shadow are configured
 * `cis_security_hardening::rules::shadowed_passwords`: Ensure accounts in /etc/passwd use shadowed passwords
 * `cis_security_hardening::rules::shell_nologin`: Ensure system accounts aresecured

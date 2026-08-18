@@ -166,6 +166,8 @@ def facts_redhat(os, distid, release)
   accounts['no_shell_nologin_count'] = wrong_shell.count
   val = Facter::Core::Execution.exec('grep "^root:" /etc/passwd | cut -f4 -d:')
   accounts['root_gid'] = check_value_string(val, 'none')
+  val = Facter::Core::Execution.exec("awk -F: '($2 == \"\" ) { print $1 }' /etc/shadow")
+  accounts['empty_password'] = val.nil? || val.empty? ? [] : val.split("\n")
   cis_security_hardening['accounts'] = accounts
 
   # check for x11 packages
