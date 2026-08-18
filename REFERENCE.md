@@ -247,6 +247,7 @@ audited
 * `cis_security_hardening::rules::logfile_permissions`: Ensure permissions on all logfiles are configured
 * `cis_security_hardening::rules::login_create_home`: Ensure upon user creation a home directory is assigned.
 * `cis_security_hardening::rules::login_fail_delay`: Ensure delay between logon prompts on failure
+* `cis_security_hardening::rules::login_shell_lock`: Ensure accounts without a valid login shell are locked
 * `cis_security_hardening::rules::logrotate`: Ensure logrotate is configured
 * `cis_security_hardening::rules::logrotate_configuration`: Ensure logrotate assigns appropriate permissions
 * `cis_security_hardening::rules::mcstrans`: Ensure the MCS Translation Service (mcstrans) is not installed
@@ -313,6 +314,7 @@ audited
 * `cis_security_hardening::rules::rng_tools`: Ensure the system has the packages required to enable the hardware random number generator entropy gatherer service
 * `cis_security_hardening::rules::rngd`: Ensure the operating system has enabled the hardware random number generator entropy gatherer service
 * `cis_security_hardening::rules::root_gid`: Ensure default group for the root account is GID 0
+* `cis_security_hardening::rules::root_umask`: Ensure root user umask is configured
 * `cis_security_hardening::rules::rpcbind`: Ensure rpcbind is not installed or the rpcbind services are masked
 * `cis_security_hardening::rules::rsh_client`: Ensure rsh client is not installed
 * `cis_security_hardening::rules::rsh_server`: Ensure rsh-server is not installed
