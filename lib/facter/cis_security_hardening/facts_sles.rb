@@ -5,6 +5,7 @@ require 'facter/cis_security_hardening/utils/check_value_string'
 require 'facter/cis_security_hardening/utils/read_file_stats'
 require 'facter/cis_security_hardening/utils/read_iptables_rules'
 require 'facter/cis_security_hardening/utils/read_apparmor_data'
+require 'facter/cis_security_hardening/utils/read_invalid_shell_accounts'
 
 # gather SLES specific facts
 def facts_sles(os, distid, release)
@@ -46,6 +47,7 @@ def facts_sles(os, distid, release)
   accounts['gid_zero'] = val.nil? || val.empty? ? [] : val.split("\n")
   val = Facter::Core::Execution.exec("awk -F: '($3 == \"0\" && $1 != \"root\") { print $1 }' /etc/group")
   accounts['gid_zero_groups'] = val.nil? || val.empty? ? [] : val.split("\n")
+  accounts['no_valid_shell_unlocked'] = read_invalid_shell_accounts
   cis_security_hardening['accounts'] = accounts
 
   # check for x11 packages

@@ -264,6 +264,8 @@ cis_security_hardening::benchmark::ubuntu::v22:
         - root_gid
         - umask_setting
         - timeout_setting
+        - root_umask
+        - login_shell_lock
         - passwd_last_change_date
         - passwd_uid_zero
         - passwd_gid_zero
