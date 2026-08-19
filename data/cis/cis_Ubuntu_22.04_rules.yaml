@@ -264,6 +264,10 @@ cis_security_hardening::benchmark::ubuntu::v22:
         - root_gid
         - umask_setting
         - timeout_setting
+        - passwd_last_change_date
+        - passwd_uid_zero
+        - passwd_gid_zero
+        - group_gid_zero
     system_file_permissions:
       level1:
         - passwd_perms
@@ -279,3 +283,5 @@ cis_security_hardening::benchmark::ubuntu::v22:
     configure_user_groups:
       level1:
         - shadowed_passwords
+        - shadow_password_empty
+        - shadow_group_empty
