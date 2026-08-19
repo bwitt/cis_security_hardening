@@ -286,6 +286,10 @@ cis_security_hardening::benchmark::ubuntu::v24:
         - lock_root
         - root_umask
         - login_shell_lock
+        - passwd_last_change_date
+        - passwd_uid_zero
+        - passwd_gid_zero
+        - group_gid_zero
     system_file_permissions:
       level1:
         - passwd_perms
@@ -301,3 +305,5 @@ cis_security_hardening::benchmark::ubuntu::v24:
     configure_user_groups:
       level1:
         - shadowed_passwords
+        - shadow_password_empty
+        - shadow_group_empty
