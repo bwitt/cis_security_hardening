@@ -26,6 +26,13 @@ describe 'cis_security_hardening::rules::root_umask' do
                 'group'  => 'root',
                 'mode'   => '0644'
               )
+            is_expected.to contain_file('/root/.bashrc').
+              with(
+                'ensure' => 'file',
+                'owner'  => 'root',
+                'group'  => 'root',
+                'mode'   => '0644'
+              )
             is_expected.to contain_file_line('root umask bash_profile').
               with(
                 'path' => '/root/.bash_profile',
@@ -38,6 +45,7 @@ describe 'cis_security_hardening::rules::root_umask' do
               )
           else
             is_expected.not_to contain_file('/root/.bash_profile')
+            is_expected.not_to contain_file('/root/.bashrc')
             is_expected.not_to contain_file_line('root umask bash_profile')
             is_expected.not_to contain_file_line('root umask bashrc')
           end

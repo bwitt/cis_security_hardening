@@ -43,11 +43,19 @@ class cis_security_hardening::rules::root_umask (
       require            => File['/root/.bash_profile'],
     }
 
+    ensure_resource('file', '/root/.bashrc', {
+      ensure => file,
+      owner  => 'root',
+      group  => 'root',
+      mode   => '0644',
+    })
+
     file_line { 'root umask bashrc':
       path               => '/root/.bashrc',
       line               => "umask ${default_umask}",
       match              => '^\s*umask\s+\d+',
       append_on_no_match => true,
+      require            => File['/root/.bashrc'],
     }
   }
 }
