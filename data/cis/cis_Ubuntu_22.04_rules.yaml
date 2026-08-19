@@ -270,6 +270,9 @@ cis_security_hardening::benchmark::ubuntu::v22:
         - passwd_uid_zero
         - passwd_gid_zero
         - group_gid_zero
+        - passwd_gid_exists
+        - passwd_duplicate_uid
+        - passwd_duplicate_username
     system_file_permissions:
       level1:
         - passwd_perms
@@ -287,3 +290,5 @@ cis_security_hardening::benchmark::ubuntu::v22:
         - shadowed_passwords
         - shadow_password_empty
         - shadow_group_empty
+        - group_duplicate_gid
+        - group_duplicate_groupname
