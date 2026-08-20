@@ -31,7 +31,7 @@ class cis_security_hardening::rules::passwd_duplicate_uid (
       $duplicates.each | String $uid, Array $users | {
         $user_list = join($users, ', ')
         notify { "duplicate UID ${uid}":
-          message  => "CIS: UID '${uid}' is shared by multiple accounts (${user_list}) -- investigate and assign unique UIDs",
+          message  => "CIS: UID '${uid}' is shared by multiple accounts (${user_list})",
           loglevel => 'warning',
         }
       }
