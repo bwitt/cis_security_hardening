@@ -3,14 +3,6 @@
 output1=""
 output2=""
 
-# Ceiling comes from the tmout task parameter (defaults to the CIS-mandated
-# 900s). This used to be two hand-built digit-range regexes that disagreed
-# with each other: the "compliant" check spliced in ${PT_tmout} as a literal
-# accepted value while the "invalid" check had 700-999 hardcoded, so any
-# configured value in 700-900 (e.g. the module's own 900s default) matched
-# both the compliant AND the invalid pattern at once. Extracting the actual
-# value and comparing it numerically against the same ceiling avoids
-# re-deriving a bespoke digit-range regex per ceiling.
 # shellcheck disable=SC2154
 max_tmout="${PT_tmout:-900}"
 
