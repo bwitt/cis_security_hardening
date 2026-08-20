@@ -30,7 +30,7 @@ describe 'cis_security_hardening::rules::passwd_duplicate_uid' do
             is_expected.to contain_notify('duplicate UID 1000').
               with(
                 'loglevel' => 'warning',
-                'message'  => "CIS: UID '1000' is shared by multiple accounts (userone, usertwo) -- investigate and assign unique UIDs"
+                'message'  => "CIS: UID '1000' is shared by multiple accounts (userone, usertwo)"
               )
           else
             is_expected.not_to contain_notify('duplicate UID 1000')
