@@ -195,6 +195,8 @@ audited
 * `cis_security_hardening::rules::gnome_gdm`
 * `cis_security_hardening::rules::gnome_gdm_package`: Ensure GNOME Display Manager is removed
 * `cis_security_hardening::rules::group_bak_perms`: Ensure permissions on /etc/group- are configured
+* `cis_security_hardening::rules::group_duplicate_gid`: Alert when a GID is shared by more than one group
+* `cis_security_hardening::rules::group_duplicate_groupname`: Alert when a group name is shared by more than one group
 * `cis_security_hardening::rules::group_gid_zero`: Alert when a group other than root has GID 0
 * `cis_security_hardening::rules::group_perms`: Ensure permissions on /etc/group are configured
 * `cis_security_hardening::rules::grub_bootloader_config`: Ensure permissions on bootloader config are configured
@@ -293,7 +295,10 @@ audited
 * `cis_security_hardening::rules::pam_pw_requirements`: Ensure password creation requirements are configured
 * `cis_security_hardening::rules::pam_use_mappers`: Ensure authenticated identity is mapped to the user or group account for PKI-based authentication
 * `cis_security_hardening::rules::passwd_bak_perms`: Ensure permissions on /etc/group- are configured
+* `cis_security_hardening::rules::passwd_duplicate_uid`: Alert when a UID is shared by more than one account
+* `cis_security_hardening::rules::passwd_duplicate_username`: Alert when a user name is shared by more than one account
 * `cis_security_hardening::rules::passwd_expiration`: Ensure password expiration is 365 days or less
+* `cis_security_hardening::rules::passwd_gid_exists`: Alert when a user's GID does not exist in /etc/group
 * `cis_security_hardening::rules::passwd_gid_zero`: Alert when an account other than root has GID 0 as its primary group
 * `cis_security_hardening::rules::passwd_inactive_days`: Ensure inactive password lock is 30 days or less
 * `cis_security_hardening::rules::passwd_last_change_date`: Alert when a user's last password change date is in the future
