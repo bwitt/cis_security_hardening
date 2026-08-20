@@ -31,7 +31,7 @@ class cis_security_hardening::rules::passwd_duplicate_username (
     if $duplicates != undef and !empty($duplicates) {
       $duplicates.each | String $user | {
         notify { "duplicate username ${user}":
-          message  => "CIS: username '${user}' appears more than once in /etc/passwd -- investigate and assign unique user names",
+          message  => "CIS: username '${user}' appears more than once in /etc/passwd",
           loglevel => 'warning',
         }
       }
