@@ -31,7 +31,7 @@ class cis_security_hardening::rules::group_duplicate_gid (
       $duplicates.each | String $gid, Array $groups | {
         $group_list = join($groups, ', ')
         notify { "duplicate GID ${gid}":
-          message  => "CIS: GID '${gid}' is shared by multiple groups (${group_list}) -- investigate and assign unique GIDs",
+          message  => "CIS: GID '${gid}' is shared by multiple groups (${group_list})",
           loglevel => 'warning',
         }
       }
