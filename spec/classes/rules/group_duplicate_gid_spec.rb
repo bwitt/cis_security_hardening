@@ -30,7 +30,7 @@ describe 'cis_security_hardening::rules::group_duplicate_gid' do
             is_expected.to contain_notify('duplicate GID 2000').
               with(
                 'loglevel' => 'warning',
-                'message'  => "CIS: GID '2000' is shared by multiple groups (groupone, grouptwo) -- investigate and assign unique GIDs"
+                'message'  => "CIS: GID '2000' is shared by multiple groups (groupone, grouptwo)"
               )
           else
             is_expected.not_to contain_notify('duplicate GID 2000')
