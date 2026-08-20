@@ -6,6 +6,9 @@ require 'facter/cis_security_hardening/utils/read_file_stats'
 require 'facter/cis_security_hardening/utils/read_iptables_rules'
 require 'facter/cis_security_hardening/utils/read_apparmor_data'
 require 'facter/cis_security_hardening/utils/read_invalid_shell_accounts'
+require 'facter/cis_security_hardening/utils/read_orphan_gid_users'
+require 'facter/cis_security_hardening/utils/read_duplicate_ids'
+require 'facter/cis_security_hardening/utils/read_duplicate_names'
 
 # gather SLES specific facts
 def facts_sles(os, distid, release)
@@ -48,6 +51,11 @@ def facts_sles(os, distid, release)
   val = Facter::Core::Execution.exec("awk -F: '($3 == \"0\" && $1 != \"root\") { print $1 }' /etc/group")
   accounts['gid_zero_groups'] = val.nil? || val.empty? ? [] : val.split("\n")
   accounts['no_valid_shell_unlocked'] = read_invalid_shell_accounts
+  accounts['orphan_gid_users'] = read_orphan_gid_users
+  accounts['duplicate_uids'] = read_duplicate_ids('/etc/passwd', 2, 0)
+  accounts['duplicate_usernames'] = read_duplicate_names('/etc/passwd', 0)
+  accounts['duplicate_gids'] = read_duplicate_ids('/etc/group', 2, 0)
+  accounts['duplicate_groupnames'] = read_duplicate_names('/etc/group', 0)
   cis_security_hardening['accounts'] = accounts
 
   # check for x11 packages
