@@ -31,7 +31,7 @@ class cis_security_hardening::rules::group_duplicate_groupname (
     if $duplicates != undef and !empty($duplicates) {
       $duplicates.each | String $group | {
         notify { "duplicate group name ${group}":
-          message  => "CIS: group name '${group}' appears more than once in /etc/group -- investigate and assign unique group names",
+          message  => "CIS: group name '${group}' appears more than once in /etc/group",
           loglevel => 'warning',
         }
       }
