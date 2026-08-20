@@ -36,4 +36,26 @@ describe 'cis_security_hardening::rules::passwd_gid_exists' do
       end
     end
   end
+
+  context 'when the fact reports the same username twice (duplicate-username host)' do
+    let(:facts) do
+      on_supported_os.first[1].merge(
+        'cis_security_hardening' => {
+          'accounts' => {
+            'orphan_gid_users' => %w[dupuser dupuser],
+          },
+        }
+      )
+    end
+    let(:params) do
+      {
+        'enforce' => true,
+      }
+    end
+
+    it 'compiles without a duplicate-resource error and alerts only once' do
+      is_expected.to compile
+      is_expected.to contain_notify('user dupuser has a GID that does not exist in /etc/group')
+    end
+  end
 end

@@ -13,5 +13,5 @@ def read_orphan_gid_users
 
     orphans.push(user) unless group_gids.include?(gid)
   end
-  orphans
+  orphans.uniq
 end

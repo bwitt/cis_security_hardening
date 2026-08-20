@@ -27,4 +27,20 @@ describe 'read_orphan_gid_users' do
   it 'excludes accounts whose GID exists in /etc/group' do
     expect(read_orphan_gid_users).not_to include('root', 'gooduser')
   end
+
+  context 'when two /etc/passwd lines share a username and both are orphaned' do
+    before do
+      allow(File).to receive(:readlines).with('/etc/passwd').and_return(
+        [
+          "root:x:0:0:root:/root:/bin/bash\n",
+          "dupuser:x:1001:9999::/home/dupuser:/bin/bash\n",
+          "dupuser:x:1002:9998::/home/dupuser2:/bin/bash\n",
+        ]
+      )
+    end
+
+    it 'returns the duplicated username only once' do
+      expect(read_orphan_gid_users).to eq(['dupuser'])
+    end
+  end
 end

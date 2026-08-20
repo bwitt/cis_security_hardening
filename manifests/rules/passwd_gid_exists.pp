@@ -28,7 +28,7 @@ class cis_security_hardening::rules::passwd_gid_exists (
   if $enforce {
     $orphans = fact('cis_security_hardening.accounts.orphan_gid_users')
     if $orphans != undef and !empty($orphans) {
-      $orphans.each | String $user | {
+      unique($orphans).each | String $user | {
         notify { "user ${user} has a GID that does not exist in /etc/group":
           message  => "CIS: user '${user}' has a GID in /etc/passwd with no matching entry in /etc/group",
           loglevel => 'warning',
