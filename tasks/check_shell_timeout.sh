@@ -3,13 +3,26 @@
 output1=""
 output2=""
 
-[ -f /etc/bash.bashrc ] && BRC="/etc/bash.bashrc"
 # shellcheck disable=SC2154
-for f in "$BRC" /etc/profile /etc/profile.d/*.sh; do
-  grep -Pq "\bTMOUT=(${PT_tmout}|[1-5][0-9][0-9]|[1-9][0-9]|[1-9])\b" "$f" && grep -Pq "\breadonly\h+TMOUT(\h+|\h*;|\h*$|=(${PT_tmout}|[1-5][0-9][0-9]|[1-9][0-9]|[1-9]))\b" "$f" && grep -Pq '\bexport\h+([^#\n\r]+\h+)?TMOUT\b' "$f" && output1="$f"
-done
+max_tmout="${PT_tmout:-900}"
 
-output2=$(grep -Ps "\bTMOUT=(${PT_tmout:1:1}[0-9][1-9]|[7-9][0-9][0-9]|[1-9]{3,}|0+)\b" /etc/profile /etc/profile.d/*.sh "$BRC")
+[ -f /etc/bash.bashrc ] && BRC="/etc/bash.bashrc"
+for f in "$BRC" /etc/profile /etc/profile.d/*.sh; do
+  [ -f "$f" ] || continue
+
+  tmout_value=$(grep -Po '\bTMOUT=\K[0-9]+' "$f" | tail -1)
+  [ -z "$tmout_value" ] && continue
+
+  if [ "$tmout_value" -ge 1 ] && [ "$tmout_value" -le "$max_tmout" ] &&
+    grep -Pq "\breadonly\h+TMOUT(\h+|\h*;|\h*$|=${tmout_value})\b" "$f" &&
+    grep -Pq '\bexport\h+([^#\n\r]+\h+)?TMOUT\b' "$f"; then
+    output1="$f"
+  fi
+
+  if [ "$tmout_value" -lt 1 ] || [ "$tmout_value" -gt "$max_tmout" ]; then
+    output2="$f:TMOUT=$tmout_value"
+  fi
+done
 
 if [ -n "$output1" ] && [ -z "$output2" ]; then
   echo -e "\nPASSED\n\nTMOUT is configured in: \"$output1\"\n"

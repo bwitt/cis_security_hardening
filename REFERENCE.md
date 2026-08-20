@@ -494,7 +494,7 @@ Ensure systemd-journal-remote is enabled
 * [`check_pass_warn_age`](#check_pass_warn_age): Check password expiration warning days is 7 or more.
 * [`check_root_path_integrety`](#check_root_path_integrety): Check root PATH Integrity.
 * [`check_shadow_group_is_empty`](#check_shadow_group_is_empty): Check shadow group is empty.
-* [`check_shell_timeout`](#check_shell_timeout): Check default user shell timeout is 600 seconds or less.
+* [`check_shell_timeout`](#check_shell_timeout): Check default user shell timeout is 900 seconds or less (configurable via the tmout parameter).
 * [`check_stig_cert_fingerprints`](#check_stig_cert_fingerprints): Check if all certificates match DoD fingerprints.
 * [`check_system_accounts_secured`](#check_system_accounts_secured): Check system accounts are secured.
 * [`check_uid_0_files`](#check_uid_0_files): Check root is the only UID 0 account.
@@ -1390,7 +1390,7 @@ Check shadow group is empty.
 
 ### <a name="check_shell_timeout"></a>`check_shell_timeout`
 
-Check default user shell timeout is 600 seconds or less.
+Check default user shell timeout is 900 seconds or less (configurable via the tmout parameter).
 
 **Supports noop?** false
 
