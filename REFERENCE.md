@@ -168,6 +168,7 @@ audited
 * `cis_security_hardening::rules::dmesg_restrict`: Ensure the operating system is configured to restrict access to the kernel message buffer
 * `cis_security_hardening::rules::dns`: Ensure DNS is servers are configured
 * `cis_security_hardening::rules::dnsmasq`: Ensure dnsmasq is not installed (Automated)
+* `cis_security_hardening::rules::dot_files_configured`: Ensure local interactive user dot files access is configured
 * `cis_security_hardening::rules::dovecot`: Ensure IMAP and POP3 server is not enabled
 * `cis_security_hardening::rules::dracut_fips`: Ensure NIST FIPS-validated cryptography is configured
 * `cis_security_hardening::rules::enable_aslr`: Ensure address space layout randomization (ASLR) is enabled
@@ -209,6 +210,7 @@ audited
 * `cis_security_hardening::rules::gssproxy`: Ensure the gssproxy package has not been installed on the system
 * `cis_security_hardening::rules::hfs`: Ensure mounting of hfs filesystems is disabled
 * `cis_security_hardening::rules::hfsplus`: Ensure mounting of hfsplus filesystems is disabled
+* `cis_security_hardening::rules::home_dirs_configured`: Ensure local interactive user home directories are configured
 * `cis_security_hardening::rules::home_grpquota`: Ensure grpquota option set on /home partition
 * `cis_security_hardening::rules::home_nodev`: Ensure nodev option set on /home partition
 * `cis_security_hardening::rules::home_noexec`: Ensure file systems that contain user home directories are mounted with the "noexec" option

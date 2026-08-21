@@ -247,6 +247,7 @@ cis_security_hardening::benchmark::ubuntu::v22:
         - sudo_use_pty
         - sudo_log
         - sudo_timeout
+        - sudo_passwd_required
         - restrict_su
     configure_pam:
       level1:
@@ -292,3 +293,5 @@ cis_security_hardening::benchmark::ubuntu::v22:
         - shadow_group_empty
         - group_duplicate_gid
         - group_duplicate_groupname
+        - home_dirs_configured
+        - dot_files_configured
