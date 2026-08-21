@@ -8,6 +8,7 @@ describe 'read_dot_file_status' do
 
   before do
     allow(File).to receive(:directory?).with('/home/alice').and_return(true)
+    allow(File).to receive(:realpath).with('/home/alice').and_return('/home/alice')
     allow(Etc).to receive(:getpwnam).with('alice').and_return(Struct.new(:gid).new(1000))
     allow(Etc).to receive(:getgrgid).with(1000).and_return(Struct.new(:name).new('alice'))
 
@@ -78,6 +79,7 @@ describe 'read_dot_file_status' do
 
     before do
       allow(File).to receive(:directory?).with('/home/shared').and_return(true)
+      allow(File).to receive(:realpath).with('/home/shared').and_return('/home/shared')
       allow(Etc).to receive(:getpwnam).with('shareduser1').and_return(Struct.new(:gid).new(2000))
       allow(Etc).to receive(:getpwnam).with('shareduser2').and_return(Struct.new(:gid).new(2001))
       allow(Etc).to receive(:getgrgid).with(2000).and_return(Struct.new(:name).new('shareduser1'))
@@ -112,6 +114,7 @@ describe 'read_dot_file_status' do
 
     before do
       allow(File).to receive(:directory?).with('/home/alice').and_return(true)
+      allow(File).to receive(:realpath).with('/home/alice').and_return('/home/alice')
       allow(Etc).to receive(:getpwnam).with('alice').and_return(Struct.new(:gid).new(1000))
       allow(Etc).to receive(:getgrgid).with(1000).and_return(Struct.new(:name).new('alice'))
       allow(Dir).to receive(:glob).with('/home/alice/.*').and_return(['/home/alice/.vanishing'])
@@ -125,6 +128,29 @@ describe 'read_dot_file_status' do
       result = read_dot_file_status(toctou_users)
       expect(result['dotfiles_strict_perm']).to be_empty
       expect(result['dotfiles_moderate_perm']).to be_empty
+    end
+  end
+
+  context "when the owning user's primary group can't be resolved via NSS" do
+    let(:unresolvable_users) { { 'ghost' => '/home/ghost' } }
+
+    before do
+      allow(File).to receive(:directory?).with('/home/ghost').and_return(true)
+      allow(File).to receive(:realpath).with('/home/ghost').and_return('/home/ghost')
+      allow(Etc).to receive(:getpwnam).with('ghost').and_raise(ArgumentError)
+      allow(Dir).to receive(:glob).with('/home/ghost/.*').and_return(['/home/ghost/.bashrc'])
+      allow(File).to receive(:file?).with('/home/ghost/.bashrc').and_return(true)
+      allow(File).to receive(:symlink?).with('/home/ghost/.bashrc').and_return(false)
+      stat_ghost = instance_double(File::Stat, uid: 1234, gid: 1234, mode: 0o100644)
+      allow(File).to receive(:stat).with('/home/ghost/.bashrc').and_return(stat_ghost)
+      allow(Etc).to receive(:getpwuid).with(1234).and_return(Struct.new(:name).new('ghost'))
+      allow(Etc).to receive(:getgrgid).with(1234).and_return(Struct.new(:name).new('ghost'))
+    end
+
+    it 'reports the dotfile via dotfiles_group_unresolvable instead of silently skipping the group check' do
+      result = read_dot_file_status(unresolvable_users)
+      expect(result['dotfiles_group_unresolvable']).to eq(['/home/ghost/.bashrc'])
+      expect(result['dotfiles_wrong_group']).not_to have_key('/home/ghost/.bashrc')
     end
   end
 end

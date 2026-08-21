@@ -15,6 +15,10 @@ require 'etc'
 # ownership/group are genuinely ambiguous when shared -- rather than guessing
 # and auto-chowning to an arbitrary one of the sharing users, those paths are
 # reported via dotfiles_shared (alert-only) instead.
+#
+# sharing is detected on the canonicalized (realpath) form of each home, not
+# the raw /etc/passwd string, so two entries pointing at the same real
+# directory via differently-formatted paths are still recognized as shared.
 def read_dot_file_status(local_interactive_users)
   alert_only = []
   strict_perm_files = []
@@ -22,20 +26,38 @@ def read_dot_file_status(local_interactive_users)
   wrong_owner = {}
   wrong_group = {}
   shared = []
+  group_unresolvable = []
 
-  home_counts = local_interactive_users.values.tally
+  canonical_home = {}
+  local_interactive_users.each do |user, home|
+    canonical_home[user] = if File.directory?(home)
+                             begin
+                               File.realpath(home)
+                             rescue SystemCallError
+                               home
+                             end
+                           else
+                             home
+                           end
+  end
+  home_counts = canonical_home.values.tally
   seen_homes = []
 
   local_interactive_users.each do |user, home|
     next unless File.directory?(home)
 
-    is_shared = home_counts[home] > 1
+    is_shared = home_counts[canonical_home[user]] > 1
     if is_shared
       next if seen_homes.include?(home)
 
       seen_homes.push(home)
     end
 
+    # nil when the user's primary group can't be resolved via NSS (e.g. an
+    # /etc/passwd entry whose gid has no corresponding group, or an NSS/LDAP
+    # hiccup) -- in that case we don't know what group *would* be correct, so
+    # there's no safe chgrp target; alert instead of silently skipping the
+    # group check entirely.
     primary_group = begin
       Etc.getgrgid(Etc.getpwnam(user).gid).name
     rescue ArgumentError
@@ -74,7 +96,11 @@ def read_dot_file_status(local_interactive_users)
           nil
         end
         wrong_owner[path] = user if owner != user
-        wrong_group[path] = primary_group if primary_group && group != primary_group
+        if primary_group
+          wrong_group[path] = primary_group if group != primary_group
+        else
+          group_unresolvable.push(path)
+        end
       end
 
       if ['.netrc', '.bash_history'].include?(base)
@@ -86,11 +112,12 @@ def read_dot_file_status(local_interactive_users)
   end
 
   {
-    'dotfiles_alert_only'    => alert_only.uniq,
-    'dotfiles_strict_perm'   => strict_perm_files.uniq,
+    'dotfiles_alert_only' => alert_only.uniq,
+    'dotfiles_strict_perm' => strict_perm_files.uniq,
     'dotfiles_moderate_perm' => moderate_perm_files.uniq,
-    'dotfiles_wrong_owner'   => wrong_owner,
-    'dotfiles_wrong_group'   => wrong_group,
-    'dotfiles_shared'        => shared.uniq,
+    'dotfiles_wrong_owner' => wrong_owner,
+    'dotfiles_wrong_group' => wrong_group,
+    'dotfiles_shared' => shared.uniq,
+    'dotfiles_group_unresolvable' => group_unresolvable.uniq,
   }
 end

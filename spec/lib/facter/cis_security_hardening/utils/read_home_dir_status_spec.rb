@@ -16,6 +16,7 @@ describe 'read_home_dir_status' do
   before do
     allow(File).to receive(:directory?).and_return(true)
     allow(File).to receive(:directory?).with('/home/missinguser').and_return(false)
+    allow(File).to receive(:realpath) { |path| path }
 
     stat_wrongowner = instance_double(File::Stat, uid: 9999, mode: 0o040750)
     stat_looseperms = instance_double(File::Stat, uid: 1002, mode: 0o040777)
@@ -28,6 +29,23 @@ describe 'read_home_dir_status' do
     allow(Etc).to receive(:getpwuid).with(9999).and_return(Struct.new(:name).new('someoneelse'))
     allow(Etc).to receive(:getpwuid).with(1001).and_return(Struct.new(:name).new('gooduser'))
     allow(Etc).to receive(:getpwuid).with(1002).and_return(Struct.new(:name).new('looseperms'))
+  end
+
+  context 'when the home directory vanishes between the existence check and stat (TOCTOU)' do
+    let(:toctou_users) { { 'vanishing' => '/home/vanishing' } }
+
+    before do
+      allow(File).to receive(:directory?).with('/home/vanishing').and_return(true)
+      allow(File).to receive(:realpath).with('/home/vanishing').and_return('/home/vanishing')
+      allow(File).to receive(:stat).with('/home/vanishing').and_raise(Errno::ENOENT)
+    end
+
+    it 'skips a home directory that vanishes between the existence check and stat, instead of raising' do
+      expect { read_home_dir_status(toctou_users) }.not_to raise_error
+      status = read_home_dir_status(toctou_users)
+      expect(status['home_dir_wrong_owner']).not_to have_key('/home/vanishing')
+      expect(status['home_dir_excess_perms']).not_to include('/home/vanishing')
+    end
   end
 
   it 'flags a user with no home directory' do
@@ -58,6 +76,7 @@ describe 'read_home_dir_status' do
 
     before do
       allow(File).to receive(:directory?).with('/home/shared').and_return(true)
+      allow(File).to receive(:realpath).with('/home/shared').and_return('/home/shared')
       stat_shared = instance_double(File::Stat, uid: 0, mode: 0o040777)
       allow(File).to receive(:stat).with('/home/shared').and_return(stat_shared)
     end
@@ -75,6 +94,33 @@ describe 'read_home_dir_status' do
     it 'does not guess an owner for the shared home' do
       status = read_home_dir_status(shared_users)
       expect(status['home_dir_wrong_owner']).not_to have_key('/home/shared')
+    end
+  end
+
+  context 'with a home directory shared by two users via differently-formatted paths that resolve to the same real directory' do
+    let(:aliased_users) do
+      {
+        'aliaseduser1' => '/home/aliased',
+        'aliaseduser2' => '/home/aliased/',
+      }
+    end
+
+    before do
+      allow(File).to receive(:directory?).with('/home/aliased').and_return(true)
+      allow(File).to receive(:directory?).with('/home/aliased/').and_return(true)
+      # both literal strings resolve to the same real path -- this is exactly
+      # what raw string-equality tallying would miss
+      allow(File).to receive(:realpath).with('/home/aliased').and_return('/home/aliased')
+      allow(File).to receive(:realpath).with('/home/aliased/').and_return('/home/aliased')
+      stat_aliased = instance_double(File::Stat, uid: 0, mode: 0o040750)
+      allow(File).to receive(:stat).with('/home/aliased').and_return(stat_aliased)
+      allow(File).to receive(:stat).with('/home/aliased/').and_return(stat_aliased)
+    end
+
+    it 'recognizes both differently-formatted paths as shared, not as two independent homes' do
+      status = read_home_dir_status(aliased_users)
+      expect(status['home_dir_shared']).to contain_exactly('/home/aliased', '/home/aliased/')
+      expect(status['home_dir_wrong_owner']).to be_empty
     end
   end
 end

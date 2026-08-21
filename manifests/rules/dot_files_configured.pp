@@ -52,6 +52,16 @@ class cis_security_hardening::rules::dot_files_configured (
       }
     }
 
+    $group_unresolvable = fact('cis_security_hardening.accounts.dot_file_status.dotfiles_group_unresolvable')
+    if $group_unresolvable != undef and !empty($group_unresolvable) {
+      $group_unresolvable.each | String $path | {
+        notify { "dot file group ownership cannot be verified: ${path}":
+          message  => "CIS: could not resolve the owning user's primary group for '${path}' (NSS lookup failure) -- group ownership cannot be auto-corrected without a known-good target; investigate manually per local site policy",
+          loglevel => 'warning',
+        }
+      }
+    }
+
     $strict_perm = fact('cis_security_hardening.accounts.dot_file_status.dotfiles_strict_perm')
     if $strict_perm != undef and !empty($strict_perm) {
       $strict_perm.each | String $path | {

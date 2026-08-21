@@ -11,13 +11,30 @@ require 'etc'
 # permission check doesn't depend on which user is "correct" -- but ownership
 # is genuinely ambiguous when shared, so a shared home is reported via
 # home_dir_shared (alert-only) instead of guessing an owner and auto-chowning.
+#
+# sharing is detected on the canonicalized (realpath) form of each home, not
+# the raw /etc/passwd string, so two entries pointing at the same real
+# directory via differently-formatted paths (trailing slash, a symlink, etc.)
+# are still recognized as shared rather than each being treated as unshared.
 def read_home_dir_status(local_interactive_users)
   missing = []
   wrong_owner = {}
   excess_perms = []
   shared = []
 
-  home_counts = local_interactive_users.values.tally
+  canonical_home = {}
+  local_interactive_users.each do |user, home|
+    canonical_home[user] = if File.directory?(home)
+                             begin
+                               File.realpath(home)
+                             rescue SystemCallError
+                               home
+                             end
+                           else
+                             home
+                           end
+  end
+  home_counts = canonical_home.values.tally
 
   local_interactive_users.each do |user, home|
     unless File.directory?(home)
@@ -34,7 +51,7 @@ def read_home_dir_status(local_interactive_users)
       next
     end
 
-    if home_counts[home] > 1
+    if home_counts[canonical_home[user]] > 1
       shared.push(home) unless shared.include?(home)
       excess_perms.push(home) if (stat.mode & 0o027) != 0 && !excess_perms.include?(home)
       next
