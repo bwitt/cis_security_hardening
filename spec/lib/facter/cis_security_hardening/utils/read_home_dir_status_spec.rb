@@ -48,3 +48,33 @@ describe 'read_home_dir_status' do
     expect(status['home_dir_wrong_owner']).not_to have_key('/home/gooduser')
   end
 end
+
+describe 'read_home_dir_status with a home directory shared by two users' do
+  let(:shared_users) do
+    {
+      'shareduser1' => '/home/shared',
+      'shareduser2' => '/home/shared',
+    }
+  end
+
+  before do
+    allow(File).to receive(:directory?).with('/home/shared').and_return(true)
+    stat_shared = instance_double(File::Stat, uid: 0, mode: 0o040777)
+    allow(File).to receive(:stat).with('/home/shared').and_return(stat_shared)
+  end
+
+  it 'reports the shared home exactly once, not once per sharing user' do
+    status = read_home_dir_status(shared_users)
+    expect(status['home_dir_shared']).to eq(['/home/shared'])
+  end
+
+  it 'reports excess permissions exactly once, not once per sharing user (regression: previously a duplicate array entry that crashed the catalog compile with a duplicate Exec declaration, same bug class fixed in passwd_gid_exists.pp / PR #98 / ITCPE-722)' do
+    status = read_home_dir_status(shared_users)
+    expect(status['home_dir_excess_perms']).to eq(['/home/shared'])
+  end
+
+  it 'does not guess an owner for the shared home' do
+    status = read_home_dir_status(shared_users)
+    expect(status['home_dir_wrong_owner']).not_to have_key('/home/shared')
+  end
+end

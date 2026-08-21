@@ -41,4 +41,19 @@ describe 'read_local_interactive_users' do
       expect(read_local_interactive_users).to eq({})
     end
   end
+
+  context 'with a user whose shell field is empty (not nologin, just blank)' do
+    before do
+      allow(File).to receive(:readlines).with('/etc/passwd').and_return(
+        [
+          "root:x:0:0:root:/root:/bin/bash\n",
+          "emptyshell:x:1002:1002:Empty Shell:/home/emptyshell:\n",
+        ]
+      )
+    end
+
+    it 'excludes the user (Ruby split(":") drops the trailing empty field entirely, so the nil-shell guard catches it -- verified directly against a real /etc/passwd entry with a blank 7th field, not just inferred)' do
+      expect(read_local_interactive_users).not_to have_key('emptyshell')
+    end
+  end
 end

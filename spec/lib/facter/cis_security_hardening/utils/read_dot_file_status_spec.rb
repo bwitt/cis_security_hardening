@@ -68,3 +68,63 @@ describe 'read_dot_file_status' do
     expect(result['dotfiles_wrong_owner']).to eq('/home/alice/.wrongowner' => 'alice')
   end
 end
+
+describe 'read_dot_file_status with a home directory shared by two users' do
+  let(:shared_users) do
+    {
+      'shareduser1' => '/home/shared',
+      'shareduser2' => '/home/shared',
+    }
+  end
+
+  before do
+    allow(File).to receive(:directory?).with('/home/shared').and_return(true)
+    allow(Etc).to receive(:getpwnam).with('shareduser1').and_return(Struct.new(:gid).new(2000))
+    allow(Etc).to receive(:getpwnam).with('shareduser2').and_return(Struct.new(:gid).new(2001))
+    allow(Etc).to receive(:getgrgid).with(2000).and_return(Struct.new(:name).new('shareduser1'))
+    allow(Etc).to receive(:getgrgid).with(2001).and_return(Struct.new(:name).new('shareduser2'))
+
+    allow(File).to receive(:file?).with('/home/shared/.bash_history').and_return(true)
+    allow(File).to receive(:symlink?).with('/home/shared/.bash_history').and_return(false)
+    stat_shared = instance_double(File::Stat, uid: 0, gid: 0, mode: 0o100644)
+    allow(File).to receive(:stat).with('/home/shared/.bash_history').and_return(stat_shared)
+    allow(Dir).to receive(:glob).with('/home/shared/.*').and_return(['/home/shared/.bash_history'])
+  end
+
+  it 'globs the shared home exactly once (not once per sharing user)' do
+    read_dot_file_status(shared_users)
+    expect(Dir).to have_received(:glob).with('/home/shared/.*').once
+  end
+
+  it 'reports the shared dotfile via dotfiles_shared instead of guessing an owner (regression: previously duplicate array entries that crashed the catalog compile with a duplicate Exec declaration, same bug class fixed in passwd_gid_exists.pp / PR #98 / ITCPE-722)' do
+    result = read_dot_file_status(shared_users)
+    expect(result['dotfiles_shared']).to eq(['/home/shared/.bash_history'])
+    expect(result['dotfiles_wrong_owner']).not_to have_key('/home/shared/.bash_history')
+  end
+
+  it 'still flags the shared dotfile for excess permissions exactly once' do
+    result = read_dot_file_status(shared_users)
+    expect(result['dotfiles_strict_perm']).to eq(['/home/shared/.bash_history'])
+  end
+end
+
+describe 'read_dot_file_status TOCTOU handling' do
+  let(:users) { { 'alice' => '/home/alice' } }
+
+  before do
+    allow(File).to receive(:directory?).with('/home/alice').and_return(true)
+    allow(Etc).to receive(:getpwnam).with('alice').and_return(Struct.new(:gid).new(1000))
+    allow(Etc).to receive(:getgrgid).with(1000).and_return(Struct.new(:name).new('alice'))
+    allow(Dir).to receive(:glob).with('/home/alice/.*').and_return(['/home/alice/.vanishing'])
+    allow(File).to receive(:file?).with('/home/alice/.vanishing').and_return(true)
+    allow(File).to receive(:symlink?).with('/home/alice/.vanishing').and_return(false)
+  end
+
+  it 'skips a file that vanishes between the existence check and stat, instead of raising' do
+    allow(File).to receive(:stat).with('/home/alice/.vanishing').and_raise(Errno::ENOENT)
+    expect { read_dot_file_status(users) }.not_to raise_error
+    result = read_dot_file_status(users)
+    expect(result['dotfiles_strict_perm']).to be_empty
+    expect(result['dotfiles_moderate_perm']).to be_empty
+  end
+end

@@ -15,7 +15,9 @@
 # the account -- CIS's own remediation is "lock the account / remove the user / create the
 # directory per local site policy," none of which is a safe default to pick automatically.
 # Ownership and permission drift on an *existing* home directory is corrected directly, since
-# that has a single unambiguous safe fix.
+# that has a single unambiguous safe fix -- except when the home directory is shared by more
+# than one local interactive user, in which case "who is the correct owner" is genuinely
+# ambiguous and this alerts instead of guessing.
 #
 # @param enforce
 #    Enforce the rule
@@ -40,12 +42,22 @@ class cis_security_hardening::rules::home_dirs_configured (
       }
     }
 
+    $shared = fact('cis_security_hardening.accounts.home_dir_status.home_dir_shared')
+    if $shared != undef and !empty($shared) {
+      $shared.each | String $home | {
+        notify { "home directory shared by more than one local interactive user: ${home}":
+          message  => "CIS: '${home}' is the home directory for more than one local interactive user -- ownership cannot be auto-corrected since it's ambiguous which user is correct; investigate manually per local site policy",
+          loglevel => 'warning',
+        }
+      }
+    }
+
     $wrong_owner = fact('cis_security_hardening.accounts.home_dir_status.home_dir_wrong_owner')
     if $wrong_owner != undef and !empty($wrong_owner) {
       $wrong_owner.each | String $home, String $user | {
         exec { "correct home directory owner: ${home}":
-          command => "/bin/chown ${user} ${home}",
-          unless  => "/usr/bin/test \"$(/usr/bin/stat -c %U ${home})\" = \"${user}\"",
+          command => "/bin/chown ${stdlib::shell_escape($user)} ${stdlib::shell_escape($home)}",
+          unless  => "/usr/bin/test \"$(/usr/bin/stat -c %U ${stdlib::shell_escape($home)})\" = \"${stdlib::shell_escape($user)}\"",
         }
       }
     }
@@ -54,8 +66,8 @@ class cis_security_hardening::rules::home_dirs_configured (
     if $excess_perms != undef and !empty($excess_perms) {
       $excess_perms.each | String $home | {
         exec { "remove excess home directory permissions: ${home}":
-          command => "/bin/chmod g-w,o-rwx ${home}",
-          onlyif  => "/usr/bin/test $(( 0$(/usr/bin/stat -c %a ${home}) & 027 )) -gt 0",
+          command => "/bin/chmod g-w,o-rwx ${stdlib::shell_escape($home)}",
+          onlyif  => "/usr/bin/test $(( 0$(/usr/bin/stat -c %a ${stdlib::shell_escape($home)}) & 027 )) -gt 0",
         }
       }
     }
