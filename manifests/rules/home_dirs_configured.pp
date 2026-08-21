@@ -34,7 +34,7 @@ class cis_security_hardening::rules::home_dirs_configured (
     if $missing != undef and !empty($missing) {
       $missing.each | String $user | {
         notify { "local interactive user has no home directory: ${user}":
-          message  => "CIS: local interactive user '${user}' has no home directory -- follow local site policy (lock the account, remove the user, or create the directory)",
+          message  => "CIS: local interactive user '${user}' has no home directory",
           loglevel => 'warning',
         }
       }

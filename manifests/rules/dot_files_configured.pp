@@ -34,7 +34,7 @@ class cis_security_hardening::rules::dot_files_configured (
     if $alert_only != undef and !empty($alert_only) {
       $alert_only.each | String $path | {
         notify { "dot file flagged for manual review: ${path}":
-          message  => "CIS: '${path}' (.forward/.rhosts) exists -- investigate and delete manually per local site policy",
+          message  => "CIS: '${path}' exists -- investigate and delete manually per local site policy",
           loglevel => 'warning',
         }
       }
@@ -43,7 +43,7 @@ class cis_security_hardening::rules::dot_files_configured (
     $strict_perm = fact('cis_security_hardening.accounts.dot_file_status.dotfiles_strict_perm')
     if $strict_perm != undef and !empty($strict_perm) {
       $strict_perm.each | String $path | {
-        exec { "restrict dot file permissions (.netrc/.bash_history): ${path}":
+        exec { "restrict dot file permissions: ${path}":
           command => "/bin/chmod u-x,go-rwx ${path}",
           onlyif  => "/usr/bin/test $(( 0$(/usr/bin/stat -c %a ${path}) & 0177 )) -gt 0",
         }
