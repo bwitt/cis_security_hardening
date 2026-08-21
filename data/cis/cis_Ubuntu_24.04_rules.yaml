@@ -294,6 +294,8 @@ cis_security_hardening::benchmark::ubuntu::v24:
         - passwd_gid_exists
         - passwd_duplicate_uid
         - passwd_duplicate_username
+        - home_dirs_configured
+        - dot_files_configured
     system_file_permissions:
       level1:
         - passwd_perms
@@ -313,5 +315,3 @@ cis_security_hardening::benchmark::ubuntu::v24:
         - shadow_group_empty
         - group_duplicate_gid
         - group_duplicate_groupname
-        - home_dirs_configured
-        - dot_files_configured

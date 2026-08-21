@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
+require 'facter/cis_security_hardening/utils/read_canonical_homes'
 require 'facter/cis_security_hardening/utils/read_dot_file_status'
 
 describe 'read_dot_file_status' do
@@ -151,6 +152,70 @@ describe 'read_dot_file_status' do
       result = read_dot_file_status(unresolvable_users)
       expect(result['dotfiles_group_unresolvable']).to eq(['/home/ghost/.bashrc'])
       expect(result['dotfiles_wrong_group']).not_to have_key('/home/ghost/.bashrc')
+    end
+  end
+
+  context 'when .forward or .rhosts is itself a symlink' do
+    let(:symlink_users) { { 'bob' => '/home/bob' } }
+
+    before do
+      allow(File).to receive(:directory?).with('/home/bob').and_return(true)
+      allow(File).to receive(:realpath).with('/home/bob').and_return('/home/bob')
+      allow(Etc).to receive(:getpwnam).with('bob').and_return(Struct.new(:gid).new(1000))
+      allow(Etc).to receive(:getgrgid).with(1000).and_return(Struct.new(:name).new('bob'))
+      allow(Dir).to receive(:glob).with('/home/bob/.*').and_return(['/home/bob/.forward'])
+      # a symlinked .forward: File.file? follows the link (true), but so does
+      # File.symlink? (true) -- regression test for the bug where the old
+      # file?/symlink? guard ran *before* the .forward/.rhosts basename
+      # check, silently excluding a symlinked .forward from the alert
+      allow(File).to receive(:file?).with('/home/bob/.forward').and_return(true)
+      allow(File).to receive(:symlink?).with('/home/bob/.forward').and_return(true)
+    end
+
+    it 'still flags a symlinked .forward as alert-only' do
+      result = read_dot_file_status(symlink_users)
+      expect(result['dotfiles_alert_only']).to eq(['/home/bob/.forward'])
+    end
+  end
+
+  context 'with a home directory shared by two users via genuinely different raw paths that resolve to the same real directory' do
+    # unlike a trailing-slash variant (which File.join normalizes away before
+    # Dir.glob even sees it), a symlink-style alias produces two genuinely
+    # different glob targets for the same real directory -- this is what
+    # actually distinguishes canonical-path dedup from raw-string dedup
+    let(:aliased_users) do
+      {
+        'aliaseduser1' => '/home/aliased',
+        'aliaseduser2' => '/home/aliased-link',
+      }
+    end
+
+    before do
+      allow(File).to receive(:directory?).with('/home/aliased').and_return(true)
+      allow(File).to receive(:directory?).with('/home/aliased-link').and_return(true)
+      allow(File).to receive(:realpath).with('/home/aliased').and_return('/home/aliased')
+      allow(File).to receive(:realpath).with('/home/aliased-link').and_return('/home/aliased')
+      allow(Etc).to receive(:getpwnam).with('aliaseduser1').and_return(Struct.new(:gid).new(3000))
+      allow(Etc).to receive(:getpwnam).with('aliaseduser2').and_return(Struct.new(:gid).new(3001))
+      allow(Etc).to receive(:getgrgid).with(3000).and_return(Struct.new(:name).new('aliaseduser1'))
+      allow(Etc).to receive(:getgrgid).with(3001).and_return(Struct.new(:name).new('aliaseduser2'))
+
+      allow(Dir).to receive(:glob).with('/home/aliased/.*').and_return(['/home/aliased/.bash_history'])
+      allow(Dir).to receive(:glob).with('/home/aliased-link/.*').and_return(['/home/aliased-link/.bash_history'])
+      allow(File).to receive(:file?).with('/home/aliased/.bash_history').and_return(true)
+      allow(File).to receive(:symlink?).with('/home/aliased/.bash_history').and_return(false)
+      stat_shared = instance_double(File::Stat, uid: 0, gid: 0, mode: 0o100644)
+      allow(File).to receive(:stat).with('/home/aliased/.bash_history').and_return(stat_shared)
+    end
+
+    it 'globs only the first-seen alias, not both (regression: seen-homes dedup previously keyed on the raw string, not the canonical path)' do
+      read_dot_file_status(aliased_users)
+      expect(Dir).not_to have_received(:glob).with('/home/aliased-link/.*')
+    end
+
+    it 'reports the shared dotfile exactly once, under the first-seen alias' do
+      result = read_dot_file_status(aliased_users)
+      expect(result['dotfiles_shared']).to eq(['/home/aliased/.bash_history'])
     end
   end
 end

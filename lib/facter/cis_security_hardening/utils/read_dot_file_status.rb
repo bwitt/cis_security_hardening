@@ -28,29 +28,22 @@ def read_dot_file_status(local_interactive_users)
   shared = []
   group_unresolvable = []
 
-  canonical_home = {}
-  local_interactive_users.each do |user, home|
-    canonical_home[user] = if File.directory?(home)
-                             begin
-                               File.realpath(home)
-                             rescue SystemCallError
-                               home
-                             end
-                           else
-                             home
-                           end
-  end
-  home_counts = canonical_home.values.tally
-  seen_homes = []
+  canonical_homes = read_canonical_homes(local_interactive_users)
+  home_counts = canonical_homes.values.map { |info| info['canonical'] }.tally
+  seen_canonical_homes = []
 
   local_interactive_users.each do |user, home|
-    next unless File.directory?(home)
+    next unless canonical_homes[user]['exists']
 
-    is_shared = home_counts[canonical_home[user]] > 1
+    canonical = canonical_homes[user]['canonical']
+    is_shared = home_counts[canonical] > 1
     if is_shared
-      next if seen_homes.include?(home)
+      # dedup on the canonical path, not the raw /etc/passwd string -- two
+      # users sharing a home via differently-formatted paths (trailing
+      # slash, a symlink) must still only be globbed/evaluated once
+      next if seen_canonical_homes.include?(canonical)
 
-      seen_homes.push(home)
+      seen_canonical_homes.push(canonical)
     end
 
     # nil when the user's primary group can't be resolved via NSS (e.g. an
@@ -65,14 +58,19 @@ def read_dot_file_status(local_interactive_users)
     end
 
     Dir.glob(File.join(home, '.*')).each do |path|
-      next unless File.file?(path) && !File.symlink?(path)
-
       base = File.basename(path)
 
+      # checked before the file?/symlink? guard below: CIS's concern with
+      # .forward/.rhosts is their mere presence (mail redirection, rcp/rlogin
+      # trust bypass), so a symlinked .forward is exactly as much a finding
+      # as a regular one -- excluding symlinks here would let a user evade
+      # the alert simply by symlinking it instead of creating it directly.
       if ['.forward', '.rhosts'].include?(base)
         alert_only.push(path)
         next
       end
+
+      next unless File.file?(path) && !File.symlink?(path)
 
       stat = begin
         File.stat(path)

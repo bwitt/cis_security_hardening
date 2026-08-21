@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
+require 'facter/cis_security_hardening/utils/read_canonical_homes'
 require 'facter/cis_security_hardening/utils/read_home_dir_status'
 
 describe 'read_home_dir_status' do

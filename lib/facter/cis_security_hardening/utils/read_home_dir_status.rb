@@ -22,22 +22,11 @@ def read_home_dir_status(local_interactive_users)
   excess_perms = []
   shared = []
 
-  canonical_home = {}
-  local_interactive_users.each do |user, home|
-    canonical_home[user] = if File.directory?(home)
-                             begin
-                               File.realpath(home)
-                             rescue SystemCallError
-                               home
-                             end
-                           else
-                             home
-                           end
-  end
-  home_counts = canonical_home.values.tally
+  canonical_homes = read_canonical_homes(local_interactive_users)
+  home_counts = canonical_homes.values.map { |info| info['canonical'] }.tally
 
   local_interactive_users.each do |user, home|
-    unless File.directory?(home)
+    unless canonical_homes[user]['exists']
       missing.push(user)
       next
     end
@@ -51,7 +40,7 @@ def read_home_dir_status(local_interactive_users)
       next
     end
 
-    if home_counts[canonical_home[user]] > 1
+    if home_counts[canonical_homes[user]['canonical']] > 1
       shared.push(home) unless shared.include?(home)
       excess_perms.push(home) if (stat.mode & 0o027) != 0 && !excess_perms.include?(home)
       next

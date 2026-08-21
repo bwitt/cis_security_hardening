@@ -10,6 +10,7 @@ require 'facter/cis_security_hardening/utils/read_orphan_gid_users'
 require 'facter/cis_security_hardening/utils/read_duplicate_ids'
 require 'facter/cis_security_hardening/utils/read_duplicate_names'
 require 'facter/cis_security_hardening/utils/read_local_interactive_users'
+require 'facter/cis_security_hardening/utils/read_canonical_homes'
 require 'facter/cis_security_hardening/utils/read_home_dir_status'
 require 'facter/cis_security_hardening/utils/read_dot_file_status'
 
