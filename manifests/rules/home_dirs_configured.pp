@@ -57,7 +57,7 @@ class cis_security_hardening::rules::home_dirs_configured (
       $wrong_owner.each | String $home, String $user | {
         exec { "correct home directory owner: ${home}":
           command => "/bin/chown ${stdlib::shell_escape($user)} ${stdlib::shell_escape($home)}",
-          unless  => "/usr/bin/test \"$(/usr/bin/stat -c %U ${stdlib::shell_escape($home)})\" = \"${stdlib::shell_escape($user)}\"",
+          unless  => "/usr/bin/test \"$(/usr/bin/stat -c %U ${stdlib::shell_escape($home)})\" = ${stdlib::shell_escape($user)}",
         }
       }
     }

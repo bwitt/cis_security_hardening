@@ -25,13 +25,21 @@ def read_home_dir_status(local_interactive_users)
       next
     end
 
-    if home_counts[home] > 1
-      shared.push(home) unless shared.include?(home)
-      excess_perms.push(home) if (File.stat(home).mode & 0o027) != 0 && !excess_perms.include?(home)
+    stat = begin
+      File.stat(home)
+    rescue SystemCallError
+      # home vanished between the directory? check above and here (e.g.
+      # deleted, unmounted, or an automounter tearing it down mid-scan) --
+      # nothing left to evaluate
       next
     end
 
-    stat = File.stat(home)
+    if home_counts[home] > 1
+      shared.push(home) unless shared.include?(home)
+      excess_perms.push(home) if (stat.mode & 0o027) != 0 && !excess_perms.include?(home)
+      next
+    end
+
     owner = begin
       Etc.getpwuid(stat.uid).name
     rescue ArgumentError

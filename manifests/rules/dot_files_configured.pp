@@ -77,7 +77,7 @@ class cis_security_hardening::rules::dot_files_configured (
       $wrong_owner.each | String $path, String $user | {
         exec { "correct dot file owner: ${path}":
           command => "/bin/chown ${stdlib::shell_escape($user)} ${stdlib::shell_escape($path)}",
-          unless  => "/usr/bin/test \"$(/usr/bin/stat -c %U ${stdlib::shell_escape($path)})\" = \"${stdlib::shell_escape($user)}\"",
+          unless  => "/usr/bin/test \"$(/usr/bin/stat -c %U ${stdlib::shell_escape($path)})\" = ${stdlib::shell_escape($user)}",
         }
       }
     }
@@ -87,7 +87,7 @@ class cis_security_hardening::rules::dot_files_configured (
       $wrong_group.each | String $path, String $group | {
         exec { "correct dot file group: ${path}":
           command => "/bin/chgrp ${stdlib::shell_escape($group)} ${stdlib::shell_escape($path)}",
-          unless  => "/usr/bin/test \"$(/usr/bin/stat -c %G ${stdlib::shell_escape($path)})\" = \"${stdlib::shell_escape($group)}\"",
+          unless  => "/usr/bin/test \"$(/usr/bin/stat -c %G ${stdlib::shell_escape($path)})\" = ${stdlib::shell_escape($group)}",
         }
       }
     }
