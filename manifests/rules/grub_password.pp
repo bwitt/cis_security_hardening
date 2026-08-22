@@ -25,23 +25,26 @@
 #    Enforce the rule
 #
 # @param grub_password_pbkdf2
-#    Encrypted grub password.
+#    Encrypted grub password, wrapped in Sensitive so it is redacted from logs and reports.
 #
 # @example
 #   class { 'cis_security_hardening::rules::grub_password':
 #       enforce              => true,
-#       grub_password_pbkdf2 => 'grub.pbkdf2.sha512.10000.943.......',
+#       grub_password_pbkdf2 => Sensitive('grub.pbkdf2.sha512.10000.943.......'),
 #   }
 #
 # @api private
 class cis_security_hardening::rules::grub_password (
-  Boolean $enforce                       = false,
-  Optional[String] $grub_password_pbkdf2 = undef,
+  Boolean $enforce                                  = false,
+  Optional[Sensitive[String]] $grub_password_pbkdf2 = undef,
 ) {
   if $enforce {
     if !$grub_password_pbkdf2 {
       fail('Enforcing a grub boot password needs a grub password to be defined. Please define an encrypted grub password in Hiera.')
     } else {
+      # Unwrapped once; every consumer below re-wraps so Puppet keeps redacting it.
+      $password = $grub_password_pbkdf2.unwrap
+
       $grub_path = fact('cis_security_hardening.efi') ? {
         true    => "/boot/efi/EFI/${facts['os']['name'].downcase()}",
         default => '/boot/grub2',
@@ -51,7 +54,7 @@ class cis_security_hardening::rules::grub_password (
         'redhat': {
           file { "${grub_path}/user.cfg":
             ensure  => file,
-            content => "GRUB2_PASSWORD=${grub_password_pbkdf2}",
+            content => Sensitive("GRUB2_PASSWORD=${password}\n"),
             owner   => 'root',
             group   => 'root',
             mode    => fact('cis_security_hardening.efi') ? { true => '0700', default => '0600' },
@@ -76,9 +79,9 @@ class cis_security_hardening::rules::grub_password (
 
           file { '/etc/grub.d/50_custom':
             ensure  => file,
-            content => epp('cis_security_hardening/rules/common/ubuntu_grub_user.cfg.epp', {
-              password => $grub_password_pbkdf2,
-            }),
+            content => Sensitive(epp('cis_security_hardening/rules/common/ubuntu_grub_user.cfg.epp', {
+              password => $password,
+            })),
             owner   => 'root',
             group   => 'root',
             mode    => '0755',
@@ -86,10 +89,7 @@ class cis_security_hardening::rules::grub_password (
           }
 
           exec { 'bootpw-grub-config-ubuntu':
-            command     => fact('cis_security_hardening.efi') ? {
-              true    => "update-grub -o ${grub_path}/grub.cfg",
-              default => 'update-grub'
-            },
+            command     => 'update-grub',
             path        => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
             refreshonly => true,
           }
@@ -97,9 +97,9 @@ class cis_security_hardening::rules::grub_password (
         'suse': {
           file { '/etc/grub.d/40_custom':
             ensure  => file,
-            content => epp('cis_security_hardening/rules/common/ubuntu_grub_user.cfg.epp', {
-              password => $grub_password_pbkdf2,
-            }),
+            content => Sensitive(epp('cis_security_hardening/rules/common/ubuntu_grub_user.cfg.epp', {
+              password => $password,
+            })),
             owner   => 'root',
             group   => 'root',
             mode    => '0755',
