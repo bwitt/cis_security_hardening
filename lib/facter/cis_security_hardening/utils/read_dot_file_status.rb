@@ -39,7 +39,6 @@ def read_dot_file_status(canonical_homes)
   canonical_homes.each do |user, info|
     next unless info['exists']
 
-    home = info['home']
     canonical = info['canonical']
     is_shared = home_counts[canonical] > 1
     if is_shared
@@ -55,14 +54,17 @@ def read_dot_file_status(canonical_homes)
     # /etc/passwd entry whose gid has no corresponding group, or an NSS/LDAP
     # hiccup) -- in that case we don't know what group *would* be correct, so
     # there's no safe chgrp target; alert instead of silently skipping the
-    # group check entirely.
-    primary_group = begin
-      Etc.getgrgid(Etc.getpwnam(user).gid).name
-    rescue ArgumentError
-      nil
-    end
+    # group check entirely. Only needed for non-shared homes, since shared
+    # homes never reach the ownership/group check below.
+    primary_group = unless is_shared
+                      begin
+                        Etc.getgrgid(Etc.getpwnam(user).gid).name
+                      rescue ArgumentError
+                        nil
+                      end
+                    end
 
-    Dir.glob(File.join(home, '.*')).each do |path|
+    Dir.glob(File.join(canonical, '.*')).each do |path|
       base = File.basename(path)
 
       # checked before the file?/symlink? guard below: CIS's concern with

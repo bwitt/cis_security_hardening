@@ -46,13 +46,13 @@ def read_home_dir_status(canonical_homes)
     if home_counts[canonical] > 1
       next if seen_canonical_homes.include?(canonical)
 
-      seen_canonical_homes.push(canonical)
-
       stat = begin
         File.stat(home)
       rescue SystemCallError
         next
       end
+
+      seen_canonical_homes.push(canonical)
 
       shared.push(canonical)
       excess_perms.push(canonical) if (stat.mode & 0o027) != 0
@@ -62,18 +62,18 @@ def read_home_dir_status(canonical_homes)
     stat = begin
       File.stat(home)
     rescue SystemCallError
-      # home vanished between the directory? check above and here (e.g.
-      # deleted, unmounted, or an automounter tearing it down mid-scan) --
-      # nothing left to evaluate
+      # home vanished between the directory? check in read_canonical_homes
+      # and here (e.g. deleted, unmounted, or an automounter tearing it down
+      # mid-scan) -- nothing left to evaluate
       next
     end
 
-    owner = begin
-      Etc.getpwuid(stat.uid).name
+    expected_uid = begin
+      Etc.getpwnam(user).uid
     rescue ArgumentError
       nil
     end
-    wrong_owner[home] = user if owner != user
+    wrong_owner[home] = user if expected_uid.nil? || stat.uid != expected_uid
     excess_perms.push(home) if (stat.mode & 0o027) != 0
   end
 

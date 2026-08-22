@@ -182,11 +182,18 @@ describe 'read_dot_file_status' do
     # unlike a trailing-slash variant (which File.join normalizes away before
     # Dir.glob even sees it), a symlink-style alias produces two genuinely
     # different glob targets for the same real directory -- this is what
-    # actually distinguishes canonical-path dedup from raw-string dedup
+    # actually distinguishes canonical-path dedup from raw-string dedup.
+    #
+    # the raw-path alias is listed FIRST here deliberately: this is a
+    # regression test for globbing via the canonical path rather than
+    # whichever raw alias happens to be encountered first (previously,
+    # dotfiles_shared/strict_perm/etc. would report under '/home/aliased-link'
+    # here, inconsistent with the sibling home_dir_status fact which always
+    # reports shared homes via the canonical path).
     let(:aliased_users) do
       {
-        'aliaseduser1' => '/home/aliased',
         'aliaseduser2' => '/home/aliased-link',
+        'aliaseduser1' => '/home/aliased',
       }
     end
 
@@ -201,19 +208,19 @@ describe 'read_dot_file_status' do
       allow(Etc).to receive(:getgrgid).with(3001).and_return(Struct.new(:name).new('aliaseduser2'))
 
       allow(Dir).to receive(:glob).with('/home/aliased/.*').and_return(['/home/aliased/.bash_history'])
-      allow(Dir).to receive(:glob).with('/home/aliased-link/.*').and_return(['/home/aliased-link/.bash_history'])
       allow(File).to receive(:file?).with('/home/aliased/.bash_history').and_return(true)
       allow(File).to receive(:symlink?).with('/home/aliased/.bash_history').and_return(false)
       stat_shared = instance_double(File::Stat, uid: 0, gid: 0, mode: 0o100644)
       allow(File).to receive(:stat).with('/home/aliased/.bash_history').and_return(stat_shared)
     end
 
-    it 'globs only the first-seen alias, not both (regression: seen-homes dedup previously keyed on the raw string, not the canonical path)' do
+    it 'globs the canonical path, not the raw alias encountered first (regression: previously globbed via whichever raw alias was processed first)' do
       read_dot_file_status(read_canonical_homes(aliased_users))
+      expect(Dir).to have_received(:glob).with('/home/aliased/.*').once
       expect(Dir).not_to have_received(:glob).with('/home/aliased-link/.*')
     end
 
-    it 'reports the shared dotfile exactly once, under the first-seen alias' do
+    it 'reports the shared dotfile exactly once, under the canonical path' do
       result = read_dot_file_status(read_canonical_homes(aliased_users))
       expect(result['dotfiles_shared']).to eq(['/home/aliased/.bash_history'])
     end

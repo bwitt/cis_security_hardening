@@ -13,12 +13,13 @@ describe 'cis_security_hardening::rules::dot_files_configured' do
             'cis_security_hardening' => {
               'accounts' => {
                 'dot_file_status' => {
-                  'dotfiles_alert_only'    => %w[/home/alice/.forward],
-                  'dotfiles_strict_perm'   => %w[/home/alice/.netrc],
+                  'dotfiles_alert_only' => %w[/home/alice/.forward],
+                  'dotfiles_strict_perm' => %w[/home/alice/.netrc],
                   'dotfiles_moderate_perm' => %w[/home/alice/.loosefile],
-                  'dotfiles_wrong_owner'   => { '/home/alice/.wrongowner' => 'alice' },
-                  'dotfiles_wrong_group'   => { '/home/alice/.wronggroup' => 'alice' },
-                  'dotfiles_shared'        => %w[/home/shared/.bash_history],
+                  'dotfiles_wrong_owner' => { '/home/alice/.wrongowner' => 'alice' },
+                  'dotfiles_wrong_group' => { '/home/alice/.wronggroup' => 'alice' },
+                  'dotfiles_shared' => %w[/home/shared/.bash_history],
+                  'dotfiles_group_unresolvable' => %w[/home/ghost/.bashrc],
                 },
               },
             }
@@ -32,6 +33,7 @@ describe 'cis_security_hardening::rules::dot_files_configured' do
           if enforce
             is_expected.to contain_notify('dot file flagged for manual review: /home/alice/.forward')
             is_expected.to contain_notify('dot file ownership ambiguous, home directory shared: /home/shared/.bash_history')
+            is_expected.to contain_notify('dot file group ownership cannot be verified: /home/ghost/.bashrc')
             is_expected.to contain_exec('restrict dot file permissions (strict): /home/alice/.netrc').
               with_command('/bin/chmod u-x,go-rwx /home/alice/.netrc')
             is_expected.to contain_exec('restrict dot file permissions (moderate): /home/alice/.loosefile').
@@ -43,6 +45,7 @@ describe 'cis_security_hardening::rules::dot_files_configured' do
           else
             is_expected.not_to contain_notify('dot file flagged for manual review: /home/alice/.forward')
             is_expected.not_to contain_notify('dot file ownership ambiguous, home directory shared: /home/shared/.bash_history')
+            is_expected.not_to contain_notify('dot file group ownership cannot be verified: /home/ghost/.bashrc')
             is_expected.not_to contain_exec('restrict dot file permissions (strict): /home/alice/.netrc')
           end
         }
