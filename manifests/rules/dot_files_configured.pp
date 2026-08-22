@@ -65,7 +65,7 @@ class cis_security_hardening::rules::dot_files_configured (
     $strict_perm = fact('cis_security_hardening.accounts.dot_file_status.dotfiles_strict_perm')
     if $strict_perm != undef and !empty($strict_perm) {
       $strict_perm.each | String $path | {
-        exec { "restrict dot file permissions: ${path}":
+        exec { "restrict dot file permissions (strict): ${path}":
           command => "/bin/chmod u-x,go-rwx ${stdlib::shell_escape($path)}",
           onlyif  => "/usr/bin/test $(( 0$(/usr/bin/stat -c %a ${stdlib::shell_escape($path)}) & 0177 )) -gt 0",
         }
@@ -75,7 +75,7 @@ class cis_security_hardening::rules::dot_files_configured (
     $moderate_perm = fact('cis_security_hardening.accounts.dot_file_status.dotfiles_moderate_perm')
     if $moderate_perm != undef and !empty($moderate_perm) {
       $moderate_perm.each | String $path | {
-        exec { "restrict dot file permissions: ${path}":
+        exec { "restrict dot file permissions (moderate): ${path}":
           command => "/bin/chmod u-x,go-wx ${stdlib::shell_escape($path)}",
           onlyif  => "/usr/bin/test $(( 0$(/usr/bin/stat -c %a ${stdlib::shell_escape($path)}) & 0133 )) -gt 0",
         }

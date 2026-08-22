@@ -19,7 +19,12 @@ require 'etc'
 # sharing is detected on the canonicalized (realpath) form of each home, not
 # the raw /etc/passwd string, so two entries pointing at the same real
 # directory via differently-formatted paths are still recognized as shared.
-def read_dot_file_status(local_interactive_users)
+#
+# Takes the already-computed read_canonical_homes result (not
+# local_interactive_users directly) so callers that also call
+# read_home_dir_status on the same users only pay the File.stat/realpath
+# syscalls once, not once per fact.
+def read_dot_file_status(canonical_homes)
   alert_only = []
   strict_perm_files = []
   moderate_perm_files = []
@@ -28,14 +33,14 @@ def read_dot_file_status(local_interactive_users)
   shared = []
   group_unresolvable = []
 
-  canonical_homes = read_canonical_homes(local_interactive_users)
   home_counts = canonical_homes.values.map { |info| info['canonical'] }.tally
   seen_canonical_homes = []
 
-  local_interactive_users.each do |user, home|
-    next unless canonical_homes[user]['exists']
+  canonical_homes.each do |user, info|
+    next unless info['exists']
 
-    canonical = canonical_homes[user]['canonical']
+    home = info['home']
+    canonical = info['canonical']
     is_shared = home_counts[canonical] > 1
     if is_shared
       # dedup on the canonical path, not the raw /etc/passwd string -- two

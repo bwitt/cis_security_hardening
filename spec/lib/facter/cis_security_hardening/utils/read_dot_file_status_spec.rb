@@ -45,28 +45,28 @@ describe 'read_dot_file_status' do
   end
 
   it 'flags .forward and .rhosts as alert-only, without inspecting their permissions' do
-    result = read_dot_file_status(users)
+    result = read_dot_file_status(read_canonical_homes(users))
     expect(result['dotfiles_alert_only']).to contain_exactly('/home/alice/.forward', '/home/alice/.rhosts')
   end
 
   it 'flags .netrc and .bash_history with excess permissions under the strict mask' do
-    result = read_dot_file_status(users)
+    result = read_dot_file_status(read_canonical_homes(users))
     # .bash_history and .netrc above are 0644, which trips the 0177 strict mask (group/other read bits)
     expect(result['dotfiles_strict_perm']).to contain_exactly('/home/alice/.bash_history', '/home/alice/.netrc')
   end
 
   it 'flags an ordinary dotfile with excess permissions under the moderate mask' do
-    result = read_dot_file_status(users)
+    result = read_dot_file_status(read_canonical_homes(users))
     expect(result['dotfiles_moderate_perm']).to include('/home/alice/.loosefile')
   end
 
   it 'does not flag an ordinary dotfile that is already within the moderate mask' do
-    result = read_dot_file_status(users)
+    result = read_dot_file_status(read_canonical_homes(users))
     expect(result['dotfiles_moderate_perm']).not_to include('/home/alice/.bashrc')
   end
 
   it 'flags a dotfile whose owner does not match the user' do
-    result = read_dot_file_status(users)
+    result = read_dot_file_status(read_canonical_homes(users))
     expect(result['dotfiles_wrong_owner']).to eq('/home/alice/.wrongowner' => 'alice')
   end
 
@@ -94,18 +94,18 @@ describe 'read_dot_file_status' do
     end
 
     it 'globs the shared home exactly once (not once per sharing user)' do
-      read_dot_file_status(shared_users)
+      read_dot_file_status(read_canonical_homes(shared_users))
       expect(Dir).to have_received(:glob).with('/home/shared/.*').once
     end
 
     it 'reports the shared dotfile via dotfiles_shared instead of guessing an owner (regression: previously duplicate array entries that crashed the catalog compile with a duplicate Exec declaration, same bug class fixed in passwd_gid_exists.pp / PR #98 / ITCPE-722)' do
-      result = read_dot_file_status(shared_users)
+      result = read_dot_file_status(read_canonical_homes(shared_users))
       expect(result['dotfiles_shared']).to eq(['/home/shared/.bash_history'])
       expect(result['dotfiles_wrong_owner']).not_to have_key('/home/shared/.bash_history')
     end
 
     it 'still flags the shared dotfile for excess permissions exactly once' do
-      result = read_dot_file_status(shared_users)
+      result = read_dot_file_status(read_canonical_homes(shared_users))
       expect(result['dotfiles_strict_perm']).to eq(['/home/shared/.bash_history'])
     end
   end
@@ -125,8 +125,8 @@ describe 'read_dot_file_status' do
 
     it 'skips a file that vanishes between the existence check and stat, instead of raising' do
       allow(File).to receive(:stat).with('/home/alice/.vanishing').and_raise(Errno::ENOENT)
-      expect { read_dot_file_status(toctou_users) }.not_to raise_error
-      result = read_dot_file_status(toctou_users)
+      expect { read_dot_file_status(read_canonical_homes(toctou_users)) }.not_to raise_error
+      result = read_dot_file_status(read_canonical_homes(toctou_users))
       expect(result['dotfiles_strict_perm']).to be_empty
       expect(result['dotfiles_moderate_perm']).to be_empty
     end
@@ -149,7 +149,7 @@ describe 'read_dot_file_status' do
     end
 
     it 'reports the dotfile via dotfiles_group_unresolvable instead of silently skipping the group check' do
-      result = read_dot_file_status(unresolvable_users)
+      result = read_dot_file_status(read_canonical_homes(unresolvable_users))
       expect(result['dotfiles_group_unresolvable']).to eq(['/home/ghost/.bashrc'])
       expect(result['dotfiles_wrong_group']).not_to have_key('/home/ghost/.bashrc')
     end
@@ -173,7 +173,7 @@ describe 'read_dot_file_status' do
     end
 
     it 'still flags a symlinked .forward as alert-only' do
-      result = read_dot_file_status(symlink_users)
+      result = read_dot_file_status(read_canonical_homes(symlink_users))
       expect(result['dotfiles_alert_only']).to eq(['/home/bob/.forward'])
     end
   end
@@ -209,12 +209,12 @@ describe 'read_dot_file_status' do
     end
 
     it 'globs only the first-seen alias, not both (regression: seen-homes dedup previously keyed on the raw string, not the canonical path)' do
-      read_dot_file_status(aliased_users)
+      read_dot_file_status(read_canonical_homes(aliased_users))
       expect(Dir).not_to have_received(:glob).with('/home/aliased-link/.*')
     end
 
     it 'reports the shared dotfile exactly once, under the first-seen alias' do
-      result = read_dot_file_status(aliased_users)
+      result = read_dot_file_status(read_canonical_homes(aliased_users))
       expect(result['dotfiles_shared']).to eq(['/home/aliased/.bash_history'])
     end
   end

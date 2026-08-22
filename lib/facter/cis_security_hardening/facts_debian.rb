@@ -74,8 +74,9 @@ def facts_debian(os, distid, release)
   accounts['duplicate_groupnames'] = read_duplicate_names('/etc/group', 0)
   local_interactive_users = read_local_interactive_users
   accounts['local_interactive_users'] = local_interactive_users
-  accounts['home_dir_status'] = read_home_dir_status(local_interactive_users)
-  accounts['dot_file_status'] = read_dot_file_status(local_interactive_users)
+  canonical_homes = read_canonical_homes(local_interactive_users)
+  accounts['home_dir_status'] = read_home_dir_status(canonical_homes)
+  accounts['dot_file_status'] = read_dot_file_status(canonical_homes)
   cis_security_hardening['accounts'] = accounts
 
   # check for x11 packages

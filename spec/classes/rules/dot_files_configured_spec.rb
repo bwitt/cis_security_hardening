@@ -32,9 +32,9 @@ describe 'cis_security_hardening::rules::dot_files_configured' do
           if enforce
             is_expected.to contain_notify('dot file flagged for manual review: /home/alice/.forward')
             is_expected.to contain_notify('dot file ownership ambiguous, home directory shared: /home/shared/.bash_history')
-            is_expected.to contain_exec('restrict dot file permissions: /home/alice/.netrc').
+            is_expected.to contain_exec('restrict dot file permissions (strict): /home/alice/.netrc').
               with_command('/bin/chmod u-x,go-rwx /home/alice/.netrc')
-            is_expected.to contain_exec('restrict dot file permissions: /home/alice/.loosefile').
+            is_expected.to contain_exec('restrict dot file permissions (moderate): /home/alice/.loosefile').
               with_command('/bin/chmod u-x,go-wx /home/alice/.loosefile')
             is_expected.to contain_exec('correct dot file owner: /home/alice/.wrongowner').
               with_command('/bin/chown alice /home/alice/.wrongowner')
@@ -43,7 +43,7 @@ describe 'cis_security_hardening::rules::dot_files_configured' do
           else
             is_expected.not_to contain_notify('dot file flagged for manual review: /home/alice/.forward')
             is_expected.not_to contain_notify('dot file ownership ambiguous, home directory shared: /home/shared/.bash_history')
-            is_expected.not_to contain_exec('restrict dot file permissions: /home/alice/.netrc')
+            is_expected.not_to contain_exec('restrict dot file permissions (strict): /home/alice/.netrc')
           end
         }
       end
@@ -86,7 +86,7 @@ describe 'cis_security_hardening::rules::dot_files_configured' do
 
       it 'declares the permission-fix exec exactly once and alerts on the shared dotfile' do
         is_expected.to compile
-        is_expected.to contain_exec('restrict dot file permissions: /home/shared/.bash_history')
+        is_expected.to contain_exec('restrict dot file permissions (strict): /home/shared/.bash_history')
         is_expected.to contain_notify('dot file ownership ambiguous, home directory shared: /home/shared/.bash_history')
         is_expected.not_to contain_exec('correct dot file owner: /home/shared/.bash_history')
       end

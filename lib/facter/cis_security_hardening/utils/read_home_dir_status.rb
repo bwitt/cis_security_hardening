@@ -16,18 +16,46 @@ require 'etc'
 # the raw /etc/passwd string, so two entries pointing at the same real
 # directory via differently-formatted paths (trailing slash, a symlink, etc.)
 # are still recognized as shared rather than each being treated as unshared.
-def read_home_dir_status(local_interactive_users)
+# A shared home is reported/acted on via its canonical path exactly once,
+# not once per raw alias -- otherwise two users sharing a home via
+# differently-formatted paths would each get their own notify/exec resource
+# for what is really the same directory.
+#
+# Takes the already-computed read_canonical_homes result (not
+# local_interactive_users directly) so callers that also call
+# read_dot_file_status on the same users only pay the File.stat/realpath
+# syscalls once, not once per fact.
+def read_home_dir_status(canonical_homes)
   missing = []
   wrong_owner = {}
   excess_perms = []
   shared = []
+  seen_canonical_homes = []
 
-  canonical_homes = read_canonical_homes(local_interactive_users)
   home_counts = canonical_homes.values.map { |info| info['canonical'] }.tally
 
-  local_interactive_users.each do |user, home|
-    unless canonical_homes[user]['exists']
+  canonical_homes.each do |user, info|
+    unless info['exists']
       missing.push(user)
+      next
+    end
+
+    home = info['home']
+    canonical = info['canonical']
+
+    if home_counts[canonical] > 1
+      next if seen_canonical_homes.include?(canonical)
+
+      seen_canonical_homes.push(canonical)
+
+      stat = begin
+        File.stat(home)
+      rescue SystemCallError
+        next
+      end
+
+      shared.push(canonical)
+      excess_perms.push(canonical) if (stat.mode & 0o027) != 0
       next
     end
 
@@ -37,12 +65,6 @@ def read_home_dir_status(local_interactive_users)
       # home vanished between the directory? check above and here (e.g.
       # deleted, unmounted, or an automounter tearing it down mid-scan) --
       # nothing left to evaluate
-      next
-    end
-
-    if home_counts[canonical_homes[user]['canonical']] > 1
-      shared.push(home) unless shared.include?(home)
-      excess_perms.push(home) if (stat.mode & 0o027) != 0 && !excess_perms.include?(home)
       next
     end
 

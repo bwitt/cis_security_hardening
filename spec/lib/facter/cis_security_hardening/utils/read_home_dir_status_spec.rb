@@ -42,27 +42,27 @@ describe 'read_home_dir_status' do
     end
 
     it 'skips a home directory that vanishes between the existence check and stat, instead of raising' do
-      expect { read_home_dir_status(toctou_users) }.not_to raise_error
-      status = read_home_dir_status(toctou_users)
+      expect { read_home_dir_status(read_canonical_homes(toctou_users)) }.not_to raise_error
+      status = read_home_dir_status(read_canonical_homes(toctou_users))
       expect(status['home_dir_wrong_owner']).not_to have_key('/home/vanishing')
       expect(status['home_dir_excess_perms']).not_to include('/home/vanishing')
     end
   end
 
   it 'flags a user with no home directory' do
-    expect(read_home_dir_status(users)['missing_home_dir']).to include('missinguser')
+    expect(read_home_dir_status(read_canonical_homes(users))['missing_home_dir']).to include('missinguser')
   end
 
   it 'flags a home directory whose owner does not match the username' do
-    expect(read_home_dir_status(users)['home_dir_wrong_owner']).to eq('/home/wrongowner' => 'wrongowner')
+    expect(read_home_dir_status(read_canonical_homes(users))['home_dir_wrong_owner']).to eq('/home/wrongowner' => 'wrongowner')
   end
 
   it 'flags a home directory with group-write or other-rwx bits set' do
-    expect(read_home_dir_status(users)['home_dir_excess_perms']).to include('/home/looseperms')
+    expect(read_home_dir_status(read_canonical_homes(users))['home_dir_excess_perms']).to include('/home/looseperms')
   end
 
   it 'does not flag a correctly owned, correctly permissioned home directory' do
-    status = read_home_dir_status(users)
+    status = read_home_dir_status(read_canonical_homes(users))
     expect(status['home_dir_excess_perms']).not_to include('/home/gooduser')
     expect(status['home_dir_wrong_owner']).not_to have_key('/home/gooduser')
   end
@@ -83,17 +83,17 @@ describe 'read_home_dir_status' do
     end
 
     it 'reports the shared home exactly once, not once per sharing user' do
-      status = read_home_dir_status(shared_users)
+      status = read_home_dir_status(read_canonical_homes(shared_users))
       expect(status['home_dir_shared']).to eq(['/home/shared'])
     end
 
     it 'reports excess permissions exactly once, not once per sharing user (regression: previously a duplicate array entry that crashed the catalog compile with a duplicate Exec declaration, same bug class fixed in passwd_gid_exists.pp / PR #98 / ITCPE-722)' do
-      status = read_home_dir_status(shared_users)
+      status = read_home_dir_status(read_canonical_homes(shared_users))
       expect(status['home_dir_excess_perms']).to eq(['/home/shared'])
     end
 
     it 'does not guess an owner for the shared home' do
-      status = read_home_dir_status(shared_users)
+      status = read_home_dir_status(read_canonical_homes(shared_users))
       expect(status['home_dir_wrong_owner']).not_to have_key('/home/shared')
     end
   end
@@ -118,9 +118,9 @@ describe 'read_home_dir_status' do
       allow(File).to receive(:stat).with('/home/aliased/').and_return(stat_aliased)
     end
 
-    it 'recognizes both differently-formatted paths as shared, not as two independent homes' do
-      status = read_home_dir_status(aliased_users)
-      expect(status['home_dir_shared']).to contain_exactly('/home/aliased', '/home/aliased/')
+    it 'reports the shared home exactly once via its canonical path, not once per raw alias (regression: previously both raw strings were reported as separate entries, which would have declared two Puppet resources for the same real directory)' do
+      status = read_home_dir_status(read_canonical_homes(aliased_users))
+      expect(status['home_dir_shared']).to eq(['/home/aliased'])
       expect(status['home_dir_wrong_owner']).to be_empty
     end
   end
