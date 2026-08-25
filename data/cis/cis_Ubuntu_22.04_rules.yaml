@@ -247,6 +247,7 @@ cis_security_hardening::benchmark::ubuntu::v22:
         - sudo_use_pty
         - sudo_log
         - sudo_timeout
+        - sudo_passwd_required
         - restrict_su
     configure_pam:
       level1:
@@ -273,6 +274,8 @@ cis_security_hardening::benchmark::ubuntu::v22:
         - passwd_gid_exists
         - passwd_duplicate_uid
         - passwd_duplicate_username
+        - home_dirs_configured
+        - dot_files_configured
     system_file_permissions:
       level1:
         - passwd_perms
