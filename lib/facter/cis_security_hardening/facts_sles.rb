@@ -9,6 +9,10 @@ require 'facter/cis_security_hardening/utils/read_invalid_shell_accounts'
 require 'facter/cis_security_hardening/utils/read_orphan_gid_users'
 require 'facter/cis_security_hardening/utils/read_duplicate_ids'
 require 'facter/cis_security_hardening/utils/read_duplicate_names'
+require 'facter/cis_security_hardening/utils/read_local_interactive_users'
+require 'facter/cis_security_hardening/utils/read_canonical_homes'
+require 'facter/cis_security_hardening/utils/read_home_dir_status'
+require 'facter/cis_security_hardening/utils/read_dot_file_status'
 
 # gather SLES specific facts
 def facts_sles(os, distid, release)
@@ -56,6 +60,11 @@ def facts_sles(os, distid, release)
   accounts['duplicate_usernames'] = read_duplicate_names('/etc/passwd', 0)
   accounts['duplicate_gids'] = read_duplicate_ids('/etc/group', 2, 0)
   accounts['duplicate_groupnames'] = read_duplicate_names('/etc/group', 0)
+  local_interactive_users = read_local_interactive_users
+  accounts['local_interactive_users'] = local_interactive_users
+  canonical_homes = read_canonical_homes(local_interactive_users)
+  accounts['home_dir_status'] = read_home_dir_status(canonical_homes)
+  accounts['dot_file_status'] = read_dot_file_status(canonical_homes)
   cis_security_hardening['accounts'] = accounts
 
   # check for x11 packages
