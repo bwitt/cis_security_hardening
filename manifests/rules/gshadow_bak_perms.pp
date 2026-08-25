@@ -12,6 +12,13 @@
 # @param enforce
 #    Enforce the rule
 #
+# @param mode
+#    File mode to enforce. Falls back to the per-OS default when undef.
+#    The benchmark asks for 0640 or more restrictive.
+#
+# @param group
+#    Group owner to enforce. The benchmark allows either root or shadow.
+#
 # @example
 #   class { 'cis_security_hardening::rules::gshadow_bak_perms':
 #       enforce => true,
@@ -19,26 +26,22 @@
 #
 # @api private
 class cis_security_hardening::rules::gshadow_bak_perms (
-  Boolean $enforce = false,
+  Boolean                                       $enforce = false,
+  Optional[Cis_security_hardening::Shadowmode]  $mode    = undef,
+  Cis_security_hardening::Shadowgroup           $group   = 'root',
 ) {
   if $enforce {
     if $facts['os']['name'].downcase() == 'debian' {
-      $attrs = {
-        ensure => file,
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0640',
-      }
+      $default_mode = '0640'
     } else {
-      $attrs = {
-        ensure => file,
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0000',
-      }
+      $default_mode = '0000'
     }
+
     file { '/etc/gshadow-':
-      * => $attrs,
+      ensure => file,
+      owner  => 'root',
+      group  => $group,
+      mode   => pick($mode, $default_mode),
     }
   }
 }
