@@ -188,7 +188,7 @@ audited
 * `cis_security_hardening::rules::firewire_core`: @summary#    Ensure the operating system disables the ability to load the firewire-core kernel module  The operating system must disable IEEE
 * `cis_security_hardening::rules::freevxfs`: Ensure mounting of freevxfs filesystems is disabled
 * `cis_security_hardening::rules::ftp`: Ensure FTP Server is not installed
-* `cis_security_hardening::rules::gdm_auto_mount`: Ensure automatic mounting of removable media is disabled
+* `cis_security_hardening::rules::gdm_auto_mount`: Ensure automatic mounting and autorun of removable media is disabled
 * `cis_security_hardening::rules::gdm_autologin`: Ensure automatic logon via GUI is not allowed
 * `cis_security_hardening::rules::gdm_lock_enabled`: Ensure user's session lock is enabled
 * `cis_security_hardening::rules::gdm_mfa`: Ensure users must authenticate users using MFA via a graphical user logon
