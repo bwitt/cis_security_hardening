@@ -12,6 +12,12 @@
 # @param enforce
 #    Enforce the rule
 #
+# @param mode
+#    File mode to enforce. The benchmark asks for 0640 or more restrictive.
+#
+# @param group
+#    Group owner to enforce. The benchmark allows either root or shadow.
+#
 # @example
 #   class { 'cis_security_hardening::rules::gshadow_perms':
 #       enforce => true,
@@ -19,14 +25,16 @@
 #
 # @api private
 class cis_security_hardening::rules::gshadow_perms (
-  Boolean $enforce = false,
+  Boolean                             $enforce = false,
+  Cis_security_hardening::Shadowmode  $mode    = '0000',
+  Cis_security_hardening::Shadowgroup $group   = 'root',
 ) {
   if $enforce {
     file { '/etc/gshadow':
       ensure => file,
       owner  => 'root',
-      group  => 'root',
-      mode   => '0000',
+      group  => $group,
+      mode   => $mode,
     }
   }
 }
