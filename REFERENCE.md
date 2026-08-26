@@ -231,6 +231,7 @@ audited
 * `cis_security_hardening::rules::iptables_loopback`: Ensure loopback traffic is configured
 * `cis_security_hardening::rules::iptables_open_ports`: Ensure firewall rules exist for all open ports
 * `cis_security_hardening::rules::iptables_outbound_established`: Ensure outbound and established connections are configured
+* `cis_security_hardening::rules::iptables_persistent`: Ensure iptables-persistent is not installed with ufw
 * `cis_security_hardening::rules::ipv6_router_advertisements`: Ensure IPv6 router advertisements are not accepted
 * `cis_security_hardening::rules::issue_net_perms`: Ensure permissions on /etc/issue.net are configured
 * `cis_security_hardening::rules::issue_perms`: Ensure permissions on /etc/issue are configured
