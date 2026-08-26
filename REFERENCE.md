@@ -476,6 +476,8 @@ Ensure systemd-journal-remote is enabled
 * [`Cis_security_hardening::Nftables_address_families`](#Cis_security_hardening--Nftables_address_families): Valid nftables address families
 * [`Cis_security_hardening::Numbers_letters`](#Cis_security_hardening--Numbers_letters): Check for only numbers and letters
 * [`Cis_security_hardening::Servicename`](#Cis_security_hardening--Servicename): Check service name
+* [`Cis_security_hardening::Shadowgroup`](#Cis_security_hardening--Shadowgroup): A group owner permitted by CIS for the shadow-family files.
+* [`Cis_security_hardening::Shadowmode`](#Cis_security_hardening--Shadowmode): A file mode permitted by CIS for the shadow-family files.
 * [`Cis_security_hardening::Word`](#Cis_security_hardening--Word): Word datatype
 
 ### Tasks
@@ -1269,6 +1271,27 @@ Alias of `Pattern[/^[0-9a-zA-Z]+$/, /^$/]`
 Check service name
 
 Alias of `Pattern[/^[a-zA-Z0-9\.\-_]+$/]`
+
+### <a name="Cis_security_hardening--Shadowgroup"></a>`Cis_security_hardening::Shadowgroup`
+
+The benchmark allows "Gid 0/root or {GID}/shadow" and nothing else.
+
+Note that root and shadow are not interchangeable in practice: setting root
+removes access for setgid-shadow helpers such as unix_chkpwd, which non-root
+PAM uses to read /etc/shadow.
+
+Alias of `Enum['root', 'shadow']`
+
+### <a name="Cis_security_hardening--Shadowmode"></a>`Cis_security_hardening::Shadowmode`
+
+The benchmark asks for "640 or more restrictive", so the owner may have at
+most read and write, the group at most read, and other nothing at all.
+
+Permits 0000, 0200, 0400, 0440, 0600, 0640 and the other combinations that
+set no bit outside 0640. Rejects anything looser, e.g. 0644 (other can read),
+0660 (group can write) or 0740 (owner can execute).
+
+Alias of `Pattern[/\A0[0246][04]0\z/]`
 
 ### <a name="Cis_security_hardening--Word"></a>`Cis_security_hardening::Word`
 
