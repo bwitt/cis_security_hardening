@@ -29,13 +29,6 @@ class cis_security_hardening::rules::gdm_auto_mount (
   $gnome_gdm = fact('cis_security_hardening.gnome_gdm')
   if  $enforce and $gnome_gdm != undef and $gnome_gdm {
     include dconf
-    # automount/automount-open and autorun-never are independent CIS controls (1.7.6/1.7.7 vs
-    # 1.7.8/1.7.9) and both apply regardless of OS -- previously these were mutually exclusive
-    # (an if/else keyed on `os.name == 'debian'`), which meant Ubuntu (os.name == 'Ubuntu', not
-    # an exact match) only ever got automount/automount-open and never autorun-never, while actual
-    # Debian only ever got autorun-never and never automount/automount-open. One combined
-    # dconf::db resource, gated only on gnome_gdm being present, covers all four settings on any
-    # OS that has GDM at all.
     dconf::db { 'media-automount':
       db_dir         => "${dconf::db_base_dir}/local.d",
       db_filename    => '00-media-automount',

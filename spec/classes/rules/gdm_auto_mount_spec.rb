@@ -26,11 +26,6 @@ describe 'cis_security_hardening::rules::gdm_auto_mount' do
           is_expected.to compile
 
           if enforce
-            # automount/automount-open (CIS 1.7.6/1.7.7) and autorun-never (CIS 1.7.8/1.7.9) are
-            # independent controls, both enforced together regardless of OS -- regression: these
-            # used to be mutually exclusive based on an os.name == 'debian' check that never
-            # matched Ubuntu (os.name == 'Ubuntu'), so Ubuntu never got autorun-never and Debian
-            # never got automount/automount-open.
             is_expected.to contain_dconf__db('media-automount').
               with(
                 'db_dir'         => '/etc/dconf/db/local.d',
@@ -42,14 +37,13 @@ describe 'cis_security_hardening::rules::gdm_auto_mount' do
                     'automount-open' => 'false',
                     'autorun-never'  => 'true',
                   },
-                },
-                # rubocop:disable Layout/HashAlignment
-                'locks' => [
+                }
+              ).with_locks(
+                [
                   '/org/gnome/desktop/media-handling/automount',
                   '/org/gnome/desktop/media-handling/automount-open',
-                  '/org/gnome/desktop/media-handling/autorun-never'
+                  '/org/gnome/desktop/media-handling/autorun-never',
                 ]
-                # rubocop:enable Layout/HashAlignment
               )
           else
             is_expected.not_to contain_dconf__db('media-automount')
