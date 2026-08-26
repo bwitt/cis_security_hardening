@@ -42,5 +42,27 @@ describe 'cis_security_hardening::rules::gshadow_bak_perms' do
         }
       end
     end
+
+    context "on #{os} with mode and group overridden" do
+      let(:facts) { os_facts }
+      let(:params) do
+        {
+          'enforce' => true,
+          'mode'    => '0640',
+          'group'   => 'shadow',
+        }
+      end
+
+      it {
+        is_expected.to compile
+        is_expected.to contain_file('/etc/gshadow-').
+          with(
+            'ensure' => 'file',
+            'owner'  => 'root',
+            'group'  => 'shadow',
+            'mode'   => '0640'
+          )
+      }
+    end
   end
 end
