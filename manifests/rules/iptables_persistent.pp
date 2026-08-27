@@ -21,17 +21,13 @@ class cis_security_hardening::rules::iptables_persistent (
   Boolean $enforce = false,
 ) {
   if $enforce {
-    $ufw_enforced = lookup('cis_security_hardening::rules::ufw_install::enforce', Boolean, 'first', false)
-
-    if $ufw_enforced {
-      $ensure = $facts['os']['family'].downcase() ? {
-        'suse'  => 'absent',
-        default => 'purged',
-      }
-
-      stdlib::ensure_packages(['iptables-persistent'], {
-        ensure => $ensure,
-      })
+    $ensure = $facts['os']['family'].downcase() ? {
+      'suse'  => 'absent',
+      default => 'purged',
     }
+
+    stdlib::ensure_packages(['iptables-persistent'], {
+      ensure => $ensure,
+    })
   }
 }
