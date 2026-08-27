@@ -6,7 +6,7 @@ require 'yaml'
 enforce_options = [true, false]
 
 # Mirrors what the class's own `lookup('cis_security_hardening::rules::ufw_install::enforce', ...)`
-# resolves to for a given OS, by reading the same real data file hiera.yaml points at — rather than
+# resolves to for a given OS, by reading the same real data file hiera.yaml points at, rather than
 # hardcoding a duplicate true/false table that could silently drift from the data.
 def real_ufw_install_enforce(os_facts)
   params_file = File.expand_path(
