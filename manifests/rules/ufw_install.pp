@@ -32,14 +32,5 @@ class cis_security_hardening::rules::ufw_install (
     stdlib::ensure_packages(['ufw'], {
       ensure => installed,
     })
-
-    $ensure = $facts['os']['family'].downcase() ? {
-      'suse'  => 'absent',
-      default => 'purged',
-    }
-
-    stdlib::ensure_packages(['iptables-persistent'], {
-      ensure => $ensure,
-    })
   }
 }

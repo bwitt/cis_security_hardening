@@ -112,6 +112,7 @@ cis_security_hardening::benchmark::ubuntu::v18:
     configure_ufw:
       level1:
         - ufw_install
+        - iptables_persistent
         - ufw_service
         - ufw_loopback
         - ufw_outbound
