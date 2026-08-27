@@ -26,7 +26,6 @@ cis_security_hardening::rules::passwd_inactive_days::enforce: false  # Password 
 cis_security_hardening::rules::passwd_min_days::enforce: false  # Password aging not persistent in containers
 cis_security_hardening::rules::pti::enforce: false
 cis_security_hardening::rules::selinux_bootloader::enforce: false
-cis_security_hardening::rules::tmp_filesystem::enforce: false
 
 # iptables/nftables have some problems in containers TODO: what can we enable?
 cis_security_hardening::rules::firewalld_default_zone::enforce: false
@@ -176,3 +175,6 @@ cis_security_hardening::rules::sshd_use_pam::enforce: false
 cis_security_hardening::rules::sshd_user_environment::enforce: false
 cis_security_hardening::rules::sshd_x11_forward::enforce: false
 cis_security_hardening::rules::sshd_x11_use_localhost::enforce: false
+
+cis_security_hardening::rules::tmp_filesystem::enable: true
+cis_security_hardening::rules::tmp_filesystem::ensure: 'running'
