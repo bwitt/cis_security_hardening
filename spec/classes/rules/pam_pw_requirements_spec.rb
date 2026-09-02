@@ -210,7 +210,7 @@ describe 'cis_security_hardening::rules::pam_pw_requirements' do
                     'type'      => 'password',
                     'control'   => 'requisite',
                     'module'    => 'pam_pwquality.so',
-                    'arguments' => ['try_first_pass', 'retry=3', 'enforce-for-root', 'local_users_only', 'remember=5'],
+                    'arguments' => ['try_first_pass', 'retry=3', 'enforce_for_root', 'local_users_only', 'remember=5'],
                     'target'    => '/etc/authselect/custom/testprofile/system-auth'
                   ).
                   that_notifies('Exec[authselect-apply-changes]')
@@ -222,7 +222,7 @@ describe 'cis_security_hardening::rules::pam_pw_requirements' do
                     'type'      => 'password',
                     'control'   => 'requisite',
                     'module'    => 'pam_pwquality.so',
-                    'arguments' => ['try_first_pass', 'retry=3', 'enforce-for-root', 'local_users_only', 'remember=5'],
+                    'arguments' => ['try_first_pass', 'retry=3', 'enforce_for_root', 'local_users_only', 'remember=5'],
                     'target'    => '/etc/authselect/custom/testprofile/password-auth'
                   ).
                   that_notifies('Exec[authselect-apply-changes]')
@@ -415,6 +415,47 @@ describe 'cis_security_hardening::rules::pam_pw_requirements' do
           end
         }
       end
+    end
+
+    context "on #{os} with enforce_for_root = false" do
+      let(:facts) do
+        os_facts.merge(
+          cis_security_hardening: {
+            authselect: {
+              profile: 'testprofile',
+            },
+            pam: {
+              pwquality: {
+                status: false,
+              },
+            },
+          }
+        )
+      end
+      let(:params) do
+        {
+          'enforce' => true,
+          'retry' => 3,
+          'enforce_for_root' => false,
+        }
+      end
+
+      it {
+        is_expected.to compile
+
+        next unless os_facts[:os]['family'].casecmp('redhat').zero?
+
+        is_expected.not_to contain_file_line('pam enforce_for_root')
+
+        next unless os_facts[:os]['release']['major'] > '7'
+
+        %w[system-auth password-auth].each do |service|
+          is_expected.to contain_pam("authselect configure pw requirements in #{service}").
+            with(
+              'arguments' => ['try_first_pass', 'retry=3', 'local_users_only', 'remember=5']
+            )
+        end
+      }
     end
   end
 end
