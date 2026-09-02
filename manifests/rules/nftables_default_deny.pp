@@ -72,7 +72,7 @@ class cis_security_hardening::rules::nftables_default_deny (
         unless $chain =~ /^[0-9a-zA-Z\-_\.]+$/ {
           fail("Illegal chain: ${chain}")
         }
-        unless $rule =~ /^[0-9a-zA-Z\-_\.\s]+$/ {
+        unless $rule =~ /^[0-9a-zA-Z\-_\.\s\/:{},]+$/ {
           fail("Illegal rule: ${rule}")
         }
         $cmd = "nft add rule ${table} filter ${chain} ${rule}"

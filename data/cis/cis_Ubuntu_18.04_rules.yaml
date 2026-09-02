@@ -112,6 +112,7 @@ cis_security_hardening::benchmark::ubuntu::v18:
     configure_ufw:
       level1:
         - ufw_install
+        - iptables_persistent
         - ufw_service
         - ufw_loopback
         - ufw_outbound
@@ -247,6 +248,8 @@ cis_security_hardening::benchmark::ubuntu::v18:
         - shadow_bak_perms
         - gshadow_perms
         - gshadow_bak_perms
+        - shells_perms
+        - opassword_perms
     configure_user_groups:
       level1:
         - shadowed_passwords

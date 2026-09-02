@@ -38,6 +38,20 @@ describe 'cis_security_hardening::rules::ufw_outbound' do
                 'proto' => 'tcp',
                 'action' => 'allow',
               },
+              'allow dns with integer port' => {
+                'queue' => 'out',
+                'to' => 'any',
+                'port' => 53,
+                'proto' => 'udp',
+                'action' => 'allow',
+              },
+              'allow port range' => {
+                'queue' => 'out',
+                'to' => 'any',
+                'port' => '37000:38000',
+                'proto' => 'tcp',
+                'action' => 'allow',
+              },
             },
           }
         end
@@ -57,6 +71,18 @@ describe 'cis_security_hardening::rules::ufw_outbound' do
                 'command' => 'ufw allow out to any port 80',
                 'path'    => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
                 'onlyif'  => 'test -z "$(ufw status verbose | grep -E -i \'^80.*ALLOW out\')"'
+              )
+            is_expected.to contain_exec('allow dns with integer port').
+              with(
+                'command' => 'ufw allow out to any port 53',
+                'path'    => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
+                'onlyif'  => 'test -z "$(ufw status verbose | grep -E -i \'^53.*ALLOW out\')"'
+              )
+            is_expected.to contain_exec('allow port range').
+              with(
+                'command' => 'ufw allow out to any port 37000:38000',
+                'path'    => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
+                'onlyif'  => 'test -z "$(ufw status verbose | grep -E -i \'^37000:38000.*ALLOW out\')"'
               )
           else
             is_expected.not_to contain_exec('allow DNS outbound')

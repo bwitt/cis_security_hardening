@@ -16,7 +16,7 @@ permissions:
 jobs:
   release:
     name: Release
-    uses: voxpupuli/gha-puppet/.github/workflows/release.yml@v3
+    uses: voxpupuli/gha-puppet/.github/workflows/release.yml@e56b2bd19ccc36c8cefffa70b6bcb79c2a705381 # v3
     with:
       allowed_owner: 'bwitt'
     secrets:

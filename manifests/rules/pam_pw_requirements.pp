@@ -379,6 +379,26 @@ class cis_security_hardening::rules::pam_pw_requirements (
           }
         }
 
+        if $maxrepeat > 0 {
+          file_line { 'pam maxrepeat debian':
+            ensure             => 'present',
+            path               => '/etc/security/pwquality.conf',
+            line               => "maxrepeat = ${maxrepeat}",
+            match              => '^#? ?maxrepeat',
+            append_on_no_match => true,
+          }
+        }
+
+        if $maxsequence > 0 {
+          file_line { 'pam maxsequence debian':
+            ensure             => 'present',
+            path               => '/etc/security/pwquality.conf',
+            line               => "maxsequence = ${maxsequence}",
+            match              => '^#? ?maxsequence',
+            append_on_no_match => true,
+          }
+        }
+
         if $usercheck {
           file_line { 'pam usercheck debian':
             ensure             => 'present',

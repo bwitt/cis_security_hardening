@@ -145,6 +145,7 @@ cis_security_hardening::rules::disable_sctp::enforce: true
 cis_security_hardening::rules::disable_rds::enforce: true
 cis_security_hardening::rules::disable_tipc::enforce: true
 
+cis_security_hardening::rules::iptables_persistent::enforce: false
 cis_security_hardening::rules::ufw_install::enforce: false
 cis_security_hardening::rules::ufw_service::enforce: false
 cis_security_hardening::rules::ufw_loopback::enforce: false
@@ -434,6 +435,8 @@ cis_security_hardening::rules::passwd_perms::enforce: true
 cis_security_hardening::rules::shadow_perms::enforce: true
 cis_security_hardening::rules::group_perms::enforce: true
 cis_security_hardening::rules::gshadow_perms::enforce: true
+cis_security_hardening::rules::shells_perms::enforce: true
+cis_security_hardening::rules::opassword_perms::enforce: true
 cis_security_hardening::rules::passwd_bak_perms::enforce: true
 cis_security_hardening::rules::group_bak_perms::enforce: true
 cis_security_hardening::rules::shadow_bak_perms::enforce: true

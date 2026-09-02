@@ -64,7 +64,9 @@ describe 'cis_security_hardening::rules::nftables_default_deny' do
             'input' => ['tcp dport ssh accept',
                         'tcp dport 22 accept',
                         'udp dport 123 accept',
-                        'udp dport 53 accept'],
+                        'udp dport 53 accept',
+                        'ip saddr 192.168.1.0/24 tcp dport 22 accept',
+                        'tcp dport {80, 443} accept'],
             'output' => ['tcp dport 21 accept',
                          'tcp dport 20 accept',
                          'tcp dport 443 accept',
@@ -133,6 +135,22 @@ describe 'cis_security_hardening::rules::nftables_default_deny' do
               'command' => 'nft add rule inet filter input udp dport 53 accept',
               'path'    => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
               'onlyif'  => 'test -z "$(nft list chain inet filter input | grep \'udp dport 53 accept\')"'
+            ).
+            that_notifies('Exec[dump nftables ruleset]').
+            that_requires('Package[nftables]')
+          is_expected.to contain_exec('adding rule input-ip saddr 192.168.1.0/24 tcp dport 22 accept').
+            with(
+              'command' => 'nft add rule inet filter input ip saddr 192.168.1.0/24 tcp dport 22 accept',
+              'path'    => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
+              'onlyif'  => 'test -z "$(nft list chain inet filter input | grep \'ip saddr 192.168.1.0/24 tcp dport 22 accept\')"'
+            ).
+            that_notifies('Exec[dump nftables ruleset]').
+            that_requires('Package[nftables]')
+          is_expected.to contain_exec('adding rule input-tcp dport {80, 443} accept').
+            with(
+              'command' => 'nft add rule inet filter input tcp dport {80, 443} accept',
+              'path'    => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
+              'onlyif'  => 'test -z "$(nft list chain inet filter input | grep \'tcp dport {80, 443} accept\')"'
             ).
             that_notifies('Exec[dump nftables ruleset]').
             that_requires('Package[nftables]')

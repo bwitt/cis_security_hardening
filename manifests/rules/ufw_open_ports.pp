@@ -43,17 +43,17 @@ class cis_security_hardening::rules::ufw_open_ports (
       }
 
       if cis_security_hardening::hash_key($data, 'port') {
-        unless $data['port'] =~ /^\d+$/ {
+        $port = String($data['port'])
+        unless $port =~ /^\d+(:\d+)?$/ {
           fail("Illegal port: ${data['port']}")
         }
-        $port = $data['port']
       } else {
         $port = ''
       }
 
       if ($data['queue'] == 'in') {
         if(cis_security_hardening::hash_key($data, 'from')) {
-          unless $data['from'] =~ /^[a-zA-Z0-9\-_\.]+$/ {
+          unless $data['from'] =~ /^[a-zA-Z0-9\-_\.\/:]+$/ {
             fail("Illegal from value: ${data['from']}")
           }
           $from = "from ${data['from']} "
@@ -62,7 +62,7 @@ class cis_security_hardening::rules::ufw_open_ports (
         }
 
         if (cis_security_hardening::hash_key($data, 'to')) {
-          unless $data['to'] =~ /^[a-zA-Z0-9\-_\.]+$/ {
+          unless $data['to'] =~ /^[a-zA-Z0-9\-_\.\/:]+$/ {
             fail("Illegal to value: ${data['to']}")
           }
           $to = "to ${data['to']} "
@@ -79,12 +79,21 @@ class cis_security_hardening::rules::ufw_open_ports (
           $proto = ''
         }
 
+        $from_match = ($from == '' or $data['from'] == 'any') ? {
+          true    => '',
+          default => ".*${data['from']}",
+        }
+        $to_match = ($to == '' or $data['to'] == 'any') ? {
+          true    => '',
+          default => "${data['to']} ",
+        }
+
         if($from == '') and ($to == '') {
           $cmd = "ufw allow ${port}/${proto}"
         } else {
           $cmd = "ufw ${action} proto ${proto} ${from}${to}port ${port}"
         }
-        $check = "test -z \"$(ufw status verbose | grep -E -i '^${port}/${proto}.*ALLOW ${queue}')\""
+        $check = "test -z \"$(ufw status verbose | grep -E -i '^${to_match}${port}/${proto}.*ALLOW ${queue}${from_match}')\""
       } elsif ($data['queue'] == 'out') {
         $cmd = "ufw ${action} ${queue} to ${data['to']} port ${port}"
         $check = "test -z \"$(ufw status verbose | grep -E -i '^${port}.*ALLOW ${queue}')\""
