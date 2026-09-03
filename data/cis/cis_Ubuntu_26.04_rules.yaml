@@ -1,0 +1,323 @@
+---
+# Interim bundle: seeded verbatim from the Ubuntu 24.04 bundle so that
+# Ubuntu 26.04 hosts compile a catalog instead of hard-failing with
+# "No bundles found for this OS" (there was previously no v26 key at all).
+# Not yet audited control-by-control against the official CIS Ubuntu Linux
+# 26.04 LTS Benchmark v1.0.0 -- rule selection/defaults may not match it.
+cis_security_hardening::benchmark::ubuntu::v26:
+  bundles:
+    filesystem_config:
+      level1:
+        - cramfs
+        - freevxfs
+        - hfs
+        - hfsplus
+        - jffs2
+        - overlayfs
+        - squashfs
+        - udf
+        - disable_usb_storage
+        - tmp_filesystem
+        - tmp_nodev
+        - tmp_nosuid
+        - tmp_noexec
+        - var_nodev
+        - var_nosuid
+        - var_tmp_nodev
+        - var_tmp_nosuid
+        - var_tmp_noexec
+        - var_log_nodev
+        - var_log_noexec
+        - var_log_nosuid
+        - var_log_audit_nodev
+        - var_log_audit_noexec
+        - var_log_audit_nosuid
+        - home_nodev
+        - home_nosuid
+        - dev_shm
+        - dev_shm_nodev
+        - dev_shm_nosuid
+        - dev_shm_noexec
+        - sticky_world_writeable_files
+        - disable_automount
+    filesystem_integrety:
+      level1:
+        - aide_installed
+        - aide_regular_checks
+    boot_settings:
+      level1:
+        - grub_bootloader_config
+        - grub_password
+        - single_user_mode
+    process_hardening:
+      level1:
+        - enable_aslr
+        - ptrace_scope
+        - disable_prelink
+        - restrict_core_dumps
+        - automatic_error_reporting
+    mandatory_access_control:
+      level1:
+        - apparmor
+        - apparmor_bootloader
+        - apparmor_profiles
+      level2:
+        - apparmor_profiles_enforcing
+    warning_banners:
+      level1:
+        - issue_perms
+        - issue_net_perms
+        - motd_perms
+    gnome_display_manager:
+      level1:
+        - gnome_gdm
+        - gdm_auto_mount
+        - gdm_lock_delay
+        - gdm_lock_enabled
+        - gdm_screensaver
+        - xdmcp_config
+      level2:
+        - gnome_gdm_package
+    special_purpose_services:
+      level1:
+        - systemd_timesyncd
+        - chrony
+        - ntpd
+        - x11_installed
+        - avahi
+        - cups
+        - dhcp
+        - ldapd
+        - nfs
+        - bind
+        - vsftp
+        - httpd
+        - dovecot
+        - samba
+        - squid
+        - net_snmp
+        - nis
+        - mta_local
+        - rsyncd
+        - dnsmasq
+        - tftp_server
+        - xinetd
+    service_clients:
+      level1:
+        - nis_client
+        - rsh_client
+        - talk_client
+        - telnet_client
+        - ldap_client
+        - rpcbind
+        - ftp
+        - tftp_client
+    unused_network_protocols:
+      level1:
+        - disable_bluetooth
+        - disable_wireless
+      level2:
+        - disable_ipv6
+    network_parameters_host:
+      level1:
+        - disable_packet_redirect
+        - disable_ip_forwarding
+    network_parameters_host_router:
+      level1:
+        - source_routed_packets
+        - icmp_redirects
+        - secure_icmp_redirects
+        - log_suspicious_packets
+        - ignore_icmp_broadcast
+        - ignore_bogus_icmp_responses
+        - enable_reverse_path_filtering
+        - enable_tcp_syn_cookies
+        - ipv6_router_advertisements
+    uncommon_network_protocols:
+      level2:
+        - disable_dccp
+        - disable_sctp
+        - disable_rds
+        - disable_tipc
+    configure_ufw:
+      level1:
+        - ufw_install
+        - iptables_persistent
+        - ufw_service
+        - ufw_loopback
+        - ufw_outbound
+        - ufw_open_ports
+        - ufw_default_deny
+    configure_nftables:
+      level1:
+        - nftables_install
+        - nftables_flush_iptables
+        - nftables_table
+        - nftables_base_chains
+        - nftables_loopback
+        - nftables_outbound_established
+        - nftables_default_deny
+        - nftables_service
+        - nftables_persistence
+    configure_iptables:
+      level1:
+        - iptables_install
+        - iptables_deny_policy
+        - iptables_loopback
+        - iptables_outbound_established
+        - iptables_open_ports
+    configure_ip6tables:
+      level1:
+        - ip6tables_deny_policy
+        - ip6tables_loopback
+        - ip6tables_outbound_established
+        - ip6tables_open_ports
+    configure_accounting:
+      level1:
+        - auditd_init
+        - auditd_log_perms
+        - auditd_log_dir_perms
+        - auditd_conf_perms
+        - auditd_tools_perms
+        - aide_audit_integrity
+      level2:
+        - auditd_package
+        - auditd_service
+        - auditd_process
+        - auditd_backlog_limit
+        - auditd_max_log_file
+        - auditd_max_log_file_action
+        - auditd_when_disk_full
+        - auditd_scope
+        - auditd_user_emulation
+        - auditd_actions
+        - auditd_time_change
+        - auditd_system_locale
+        - auditd_identity
+        - auditd_privileged_commands
+        - auditd_access
+        - auditd_mac_policy
+        - auditd_logins
+        - auditd_session_logins
+        - auditd_perm_mod
+        - auditd_chcon_use
+        - auditd_setfacl_use
+        - auditd_chacl_use
+        - auditd_usermod_use
+        - auditd_kernel_modules
+        - auditd_mounts
+        - auditd_delete
+        - auditd_actions
+        - auditd_modules
+        - auditd_immutable
+    configure_logging:
+      level1:
+        - systemd_journal_remote
+        - systemd_journal_remote_config
+        - systemd_journal_remote_service
+        - systemd_journal_remote_receive
+        - systemd_journald_service
+        - journald_rsyslog
+        - journald_compress
+        - journald_persistent
+        - rsyslog_installed
+        - rsyslog_service
+        - rsyslog_default_file_perms
+        - rsyslog_logging
+        - rsyslog_remote_logs
+        - rsyslog_remote_syslog
+        - logfile_permissions
+        - logrotate
+        - logrotate_configuration
+    configure_job_schedulers:
+      level1:
+        - crond_service
+        - crontab
+        - cron_hourly
+        - cron_daily
+        - cron_weekly
+        - cron_monthly
+        - etc_crond
+        - cron_restrict
+        - at_restrict
+    configure_ssh:
+      level1:
+        - sshd_config_permissions
+        - sshd_private_keys
+        - sshd_public_keys
+        - sshd_limit_access
+        - sshd_loglevel
+        - sshd_x11_forward
+        - sshd_max_auth_tries
+        - sshd_ignore_rhosts
+        - sshd_hostbased_authentication
+        - sshd_root_login
+        - sshd_empty_passwords
+        - sshd_user_environment
+        - sshd_ciphers
+        - sshd_macs
+        - sshd_kex
+        - sshd_timeouts
+        - sshd_login_gracetime
+        - sshd_banner
+        - sshd_use_pam
+        - sshd_tcp_forwarding
+        - sshd_gssapi
+        - sshd_max_startups
+        - sshd_max_sessions
+    sudo_config:
+      level1:
+        - sudo_installed
+        - sudo_use_pty
+        - sudo_log
+        - sudo_timeout
+        - sudo_passwd_required
+        - restrict_su
+    configure_pam:
+      level1:
+        - pam_pw_requirements
+        - pam_lockout
+        - pam_old_passwords
+        - pam_passwd_sha512
+        - pam_libpwquality
+    configure_user_accounts:
+      level1:
+        - passwd_min_days
+        - passwd_expiration
+        - passwd_warn_days
+        - passwd_inactive_days
+        - shell_nologin
+        - root_gid
+        - umask_setting
+        - timeout_setting
+        - lock_root
+        - root_umask
+        - login_shell_lock
+        - passwd_last_change_date
+        - passwd_uid_zero
+        - passwd_gid_zero
+        - group_gid_zero
+        - passwd_gid_exists
+        - passwd_duplicate_uid
+        - passwd_duplicate_username
+        - home_dirs_configured
+        - dot_files_configured
+    system_file_permissions:
+      level1:
+        - passwd_perms
+        - passwd_bak_perms
+        - group_perms
+        - group_bak_perms
+        - shadow_perms
+        - shadow_bak_perms
+        - gshadow_perms
+        - gshadow_bak_perms
+        - shells_perms
+        - opassword_perms
+    configure_user_groups:
+      level1:
+        - shadowed_passwords
+        - shadow_password_empty
+        - shadow_group_empty
+        - group_duplicate_gid
+        - group_duplicate_groupname

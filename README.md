@@ -80,6 +80,7 @@ The code of this security hardening module is based on the following CIS Benchma
 | Ubuntu 20.04 | CIS Ubuntu Linux 20.04 LTS STIG Benchmark                    | 1.0.0   | 07-26-2021 |
 | Ubuntu 22.04 | CIS Ubuntu Linux 22.04 LTS Benchmark                         | 1.0.0   | 06-30-2022 |
 | Ubuntu 24.04 | CIS Ubuntu Linux 24.04 LTS Benchmark                         | 1.0.0   | 06-30-2024 |
+| Ubuntu 26.04 | CIS Ubuntu Linux 26.04 LTS Benchmark (interim, see Limitations) | 1.0.0 | 04-23-2026 |
 | Debian 10    | CIS Debian Linux 10 Benchmark                                | 1.0.0   | 02-13-2020 |
 | Debian 11    | CIS Debian Linux 11 Benchmark                                | 1.0.0   | 09-22-2022 |
 | Debian 12.   | CIS Debian Linus 12 Benchmark                                | 1.0.1   | 04-15-2024 |
@@ -219,6 +220,14 @@ Currently the module is tested with RedHat 7, 8, 9, CentOS 7, 8, AlmaLinux 8,
 
 More testing is needed as for every supported OS there are different setups in
 the wild and some of them might not be covered.
+
+Ubuntu 26.04's `v26` bundle (`data/cis/cis_Ubuntu_26.04_{rules,params}.yaml`)
+is an interim placeholder copied verbatim from the 24.04 bundle, added only so
+that Ubuntu 26.04 hosts get a catalog instead of a hard compile failure. It
+has not been audited control-by-control against the official CIS Ubuntu Linux
+26.04 LTS Benchmark v1.0.0, is not yet part of the module's `on_supported_os`
+test matrix (not added to `metadata.json`), and should not be treated as a
+verified/compliant benchmark implementation.
 
 For a list of supported OSes please look into the `metadata.json` file.
 
