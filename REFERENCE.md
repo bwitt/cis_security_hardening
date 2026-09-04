@@ -32,7 +32,13 @@
 * `cis_security_hardening::rules::apparmor_bootloader`: Ensure AppArmor is enabled in the bootloader configuration
 * `cis_security_hardening::rules::apparmor_profiles`: Ensure all AppArmor Profiles are enforcing
 * `cis_security_hardening::rules::apparmor_profiles_enforcing`: Ensure all AppArmor Profiles are in enforce or complain mode
+* `cis_security_hardening::rules::apparmor_restrict_unprivileged`: Ensure kernel.apparmor_restrict_unprivileged_unconfined is enabled
+* `cis_security_hardening::rules::apt_auth_conf_perms`: Ensure access to the /etc/apt/auth.conf.d directory is configured
+* `cis_security_hardening::rules::apt_keyring_perms`: Ensure access to APT gpg key files and keyring directories is configured
+* `cis_security_hardening::rules::apt_repo_options`: Ensure insecure and weak APT repository options are disabled
+* `cis_security_hardening::rules::apt_sources_list_perms`: Ensure access to the /etc/apt/sources.list.d directory is configured
 * `cis_security_hardening::rules::apt_unused`: Ensure the Advance Package Tool removes all software components after updated versions have been installed
+* `cis_security_hardening::rules::apt_weak_dependencies`: Ensure APT weak dependencies are not installed
 * `cis_security_hardening::rules::at_restrict`: Ensure at is restricted to authorized users
 * `cis_security_hardening::rules::auditd_access`: Ensure unsuccessful unauthorized file access attempts are collected
 * `cis_security_hardening::rules::auditd_actions`: Ensure system administrator actions (sudolog) are collected
@@ -221,6 +227,7 @@ audited
 * `cis_security_hardening::rules::ignore_bogus_icmp_responses`: Ensure bogus ICMP responses are ignored
 * `cis_security_hardening::rules::ignore_icmp_broadcast`: Ensure broadcast ICMP requests are ignored
 * `cis_security_hardening::rules::inactive_password_lock`: Ensure inactive password lock is 0 days
+* `cis_security_hardening::rules::interface_ip_forwarding`: Ensure packet forwarding on network interfaces is disabled
 * `cis_security_hardening::rules::ip6tables_deny_policy`: Ensure default deny firewall policy
 * `cis_security_hardening::rules::ip6tables_loopback`: Ensure loopback traffic is configured
 * `cis_security_hardening::rules::ip6tables_open_ports`: Ensure IPv6 firewall rules exist for all open ports
@@ -323,6 +330,7 @@ audited
 * `cis_security_hardening::rules::rngd`: Ensure the operating system has enabled the hardware random number generator entropy gatherer service
 * `cis_security_hardening::rules::root_gid`: Ensure default group for the root account is GID 0
 * `cis_security_hardening::rules::root_umask`: Ensure root user umask is configured
+* `cis_security_hardening::rules::route_localnet`: Ensure net.ipv4.conf.all.route_localnet is disabled
 * `cis_security_hardening::rules::rpcbind`: Ensure rpcbind is not installed or the rpcbind services are masked
 * `cis_security_hardening::rules::rsh_client`: Ensure rsh client is not installed
 * `cis_security_hardening::rules::rsh_server`: Ensure rsh-server is not installed
@@ -396,12 +404,14 @@ audited
 * `cis_security_hardening::rules::sudo_installed`: Ensure sudo is installed
 * `cis_security_hardening::rules::sudo_log`: Ensure sudo log file exists
 * `cis_security_hardening::rules::sudo_passwd_required`: Ensure users password required for privilege escalation when using sudo
+* `cis_security_hardening::rules::sudo_reauthentication`: Ensure re-authentication for privilege escalation is not disabled globally
+* `cis_security_hardening::rules::sudo_require_password`: Ensure users must provide password for escalation
 * `cis_security_hardening::rules::sudo_timeout`: Ensure sudo authentication timeout is configured correctly
 * `cis_security_hardening::rules::sudo_use_pty`: Ensure sudo commands use pty
 * `cis_security_hardening::rules::system_cmd_group`: Ensure system command files are group-owned by root
 * `cis_security_hardening::rules::systemd_journal_remote`: Ensure systemd-journal-remote is installed
 * `cis_security_hardening::rules::systemd_journal_remote_config`: Ensure systemd-journal-remote is configured
-* `cis_security_hardening::rules::systemd_journal_remote_receive`: Ensure journald is not configured to receive logs from a remote client (Automated)
+* `cis_security_hardening::rules::systemd_journal_remote_receive`: Ensure systemd-journal-remote service is not in use
 * `cis_security_hardening::rules::systemd_journal_remote_service`: A
 Ensure systemd-journal-remote is enabled
 * `cis_security_hardening::rules::systemd_journald_service`: Ensure journald service is enabled (Automated)
@@ -428,6 +438,7 @@ Ensure systemd-journal-remote is enabled
 * `cis_security_hardening::rules::ufw_service`: Ensure ufw service is enabled
 * `cis_security_hardening::rules::umask_setting`: Ensure default user umask is configured
 * `cis_security_hardening::rules::unprivileged_bpf_disabled`: Ensure the operating system prevents privilege escalation through the kernel by disabling access to the bpf syscall
+* `cis_security_hardening::rules::update_notifier_motd`: Ensure update-notifier-motd.service and update-notifier-motd.timer are not in use
 * `cis_security_hardening::rules::usbguard_package`: Ensure USBGuard is installed on the operating system
 * `cis_security_hardening::rules::usbguard_service`: Ensure the operating system has enabled the use of the USBGuard
 * `cis_security_hardening::rules::user_namespaces`: Ensure the operating system disables the use of user namespaces
@@ -449,6 +460,7 @@ Ensure systemd-journal-remote is enabled
 * `cis_security_hardening::rules::x11_installed`: Ensure X Window System is not installed
 * `cis_security_hardening::rules::xdmcp_config`: Ensure XDCMP is not enabled
 * `cis_security_hardening::rules::xinetd`: Ensure xinetd is not installed
+* `cis_security_hardening::rules::xwayland`: Ensure Xwayland is configured
 * `cis_security_hardening::rules::yum_clean_requirements`: Ensure removal of software components after update
 * `cis_security_hardening::rules::yum_gpgcheck`: Ensure gpgcheck is globally activated
 * `cis_security_hardening::rules::yum_local_gpgcheck`: Ensure software packages have been digitally signed by a Certificate Authority

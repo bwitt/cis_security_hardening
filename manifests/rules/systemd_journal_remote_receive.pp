@@ -1,33 +1,51 @@
 # @summary
-#   Ensure journald is not configured to receive logs from a remote client (Automated)
+#    Ensure systemd-journal-remote service is not in use
 #
-# Journald supports the ability to receive messages from remote hosts, thus acting as a log server. Clients should not
-# receive data from other hosts.
-#
-# NOTE:
-# * The same package, systemd-journal-remote, is used for both sending logs to remote hosts and receiving incoming logs.
-# * With regards to receiving logs, there are two services; systemd-journal- remote.socket and systemd-journal-remote.service.
+# systemd-journal-remote listens for journal records forwarded by systemd-journal-upload on
+# other hosts. Masking is preferred over disabling, because disabling only removes the
+# enablement symlinks and the unit can still be activated through its socket.
 #
 # Rationale:
-# If a client is configured to also receive data, thus turning it into a server, the client system is acting outside it's
-# operational boundary.
+# A listening journal receiver accepts log data from the network. If it is not needed it is
+# an unnecessary listening service, and if misconfigured it allows forged journal records.
 #
 # @param enforce
-#    Enforce the rule.
+#    Enforce the rule
+#
+# @param mask
+#    Mask the units instead of only stopping and disabling them
+#
+# @param units
+#    The units to stop, and to mask when mask is true
 #
 # @example
 #   class { 'cis_security_hardening::rules::systemd_journal_remote_receive':
-#     enforce => true,
+#       enforce => true,
+#       mask    => true,
 #   }
 #
 # @api private
 class cis_security_hardening::rules::systemd_journal_remote_receive (
-  Boolean $enforce = false,
+  Boolean $enforce        = false,
+  Boolean $mask           = false,
+  Array[String[1]] $units = ['systemd-journal-remote.socket'],
 ) {
   if $enforce {
-    service { 'systemd-journal-remote.socket':
-      ensure => stopped,
-      enable => false,
+    $units.each |String[1] $unit| {
+      service { $unit:
+        ensure => stopped,
+        enable => false,
+      }
+
+      if $mask {
+        exec { "mask ${unit}":
+          command => "systemctl mask ${unit}",
+          path    => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
+          unless  => "systemctl is-enabled ${unit} 2>/dev/null | grep -q '^masked'",
+          require => Service[$unit],
+          notify  => Exec['systemd-daemon-reload'],
+        }
+      }
     }
   }
 }
