@@ -91,5 +91,45 @@ describe 'cis_security_hardening::rules::ufw_outbound' do
         }
       end
     end
+
+    context "on #{os} with an illegal action" do
+      let(:facts) { os_facts }
+      let(:params) do
+        {
+          'enforce' => true,
+          'firewall_rules' => {
+            'bad action' => {
+              'queue' => 'out',
+              'to' => 'any',
+              'port' => '53',
+              'proto' => 'udp',
+              'action' => 'allow; rm -rf /',
+            },
+          },
+        }
+      end
+
+      it { is_expected.to compile.and_raise_error(%r{Illegal action: allow; rm -rf /}) }
+    end
+
+    context "on #{os} with an illegal queue" do
+      let(:facts) { os_facts }
+      let(:params) do
+        {
+          'enforce' => true,
+          'firewall_rules' => {
+            'bad queue' => {
+              'queue' => 'sideways',
+              'to' => 'any',
+              'port' => '53',
+              'proto' => 'udp',
+              'action' => 'allow',
+            },
+          },
+        }
+      end
+
+      it { is_expected.to compile.and_raise_error(%r{Illegal queue: sideways}) }
+    end
   end
 end

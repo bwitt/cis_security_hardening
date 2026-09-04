@@ -116,5 +116,47 @@ describe 'cis_security_hardening::rules::ufw_open_ports' do
         }
       end
     end
+
+    context "on #{os} with an illegal action" do
+      let(:facts) { os_facts }
+      let(:params) do
+        {
+          'enforce' => true,
+          'firewall_rules' => {
+            'bad action' => {
+              'queue' => 'in',
+              'from' => 'any',
+              'to' => 'any',
+              'port' => '22',
+              'proto' => 'tcp',
+              'action' => 'allow; rm -rf /',
+            },
+          },
+        }
+      end
+
+      it { is_expected.to compile.and_raise_error(%r{Illegal action: allow; rm -rf /}) }
+    end
+
+    context "on #{os} with an illegal queue" do
+      let(:facts) { os_facts }
+      let(:params) do
+        {
+          'enforce' => true,
+          'firewall_rules' => {
+            'bad queue' => {
+              'queue' => 'sideways',
+              'from' => 'any',
+              'to' => 'any',
+              'port' => '22',
+              'proto' => 'tcp',
+              'action' => 'allow',
+            },
+          },
+        }
+      end
+
+      it { is_expected.to compile.and_raise_error(%r{Illegal queue: sideways}) }
+    end
   end
 end
