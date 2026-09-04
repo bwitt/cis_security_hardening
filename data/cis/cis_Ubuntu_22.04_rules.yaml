@@ -93,6 +93,8 @@ cis_security_hardening::benchmark::ubuntu::v22:
         - ldap_client
         - rpcbind
     unused_network_protocols:
+      level1:
+        - disable_bluetooth
       level2:
         - disable_ipv6
         - disable_wireless
