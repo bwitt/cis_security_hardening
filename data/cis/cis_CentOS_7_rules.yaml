@@ -82,7 +82,7 @@ cis_security_hardening::benchmark::centos::v7:
         - samba
         - vsftp
         - dovecot
-        - nfs_utils
+        - nfs
         - nis
         - cups
         - rpcbind

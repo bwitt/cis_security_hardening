@@ -136,10 +136,9 @@ cis_security_hardening::benchmark::redhat::v8:
         - nis
         - telnet_server
         - mta_local
-        - nfs_utils
+        - nfs
         - rpcbind
         - rsyncd
-        - nfs
         - ldapd
       stig:
         - rngd
