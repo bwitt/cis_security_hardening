@@ -81,77 +81,77 @@ describe 'cis_security_hardening::rules::rsyslog_logging' do
             is_expected.to contain_file('/etc/rsyslog.d/emerg.conf').
               with(
                 'ensure'  => 'file',
-                'content' => '*.emerg *.emerg'
+                'content' => "*.emerg *.emerg\n"
               ).
               that_notifies('Exec[reload-rsyslog]')
 
             is_expected.to contain_file('/etc/rsyslog.d/mail.conf').
               with(
                 'ensure'  => 'file',
-                'content' => 'mail.* -/var/log/mail'
+                'content' => "mail.* -/var/log/mail\n"
               ).
               that_notifies('Exec[reload-rsyslog]')
 
             is_expected.to contain_file('/etc/rsyslog.d/messages.conf').
               with(
                 'ensure'  => 'file',
-                'content' => '*.info;mail.none;authpriv.none;cron.none;local0.none /var/log/messages'
+                'content' => "*.info;mail.none;authpriv.none;cron.none;local0.none /var/log/messages\n"
               ).
               that_notifies('Exec[reload-rsyslog]')
 
             is_expected.to contain_file('/etc/rsyslog.d/cron.conf').
               with(
                 'ensure'  => 'file',
-                'content' => 'cron.* /var/log/cron'
+                'content' => "cron.* /var/log/cron\n"
               ).
               that_notifies('Exec[reload-rsyslog]')
 
             is_expected.to contain_file('/etc/rsyslog.d/secure.conf').
               with(
                 'ensure'  => 'file',
-                'content' => '*.info;mail.none;authpriv.none;cron.none;local0.none -/var/log/secure'
+                'content' => "*.info;mail.none;authpriv.none;cron.none;local0.none -/var/log/secure\n"
               ).
               that_notifies('Exec[reload-rsyslog]')
 
             is_expected.to contain_file('/etc/rsyslog.d/spooler.conf').
               with(
                 'ensure'  => 'file',
-                'content' => 'uucp,news.crit /var/log/spooler'
+                'content' => "uucp,news.crit /var/log/spooler\n"
               ).
               that_notifies('Exec[reload-rsyslog]')
 
             is_expected.to contain_file('/etc/rsyslog.d/boot.conf').
               with(
                 'ensure'  => 'file',
-                'content' => 'local7.* /var/log/boot.log'
+                'content' => "local7.* /var/log/boot.log\n"
               ).
               that_notifies('Exec[reload-rsyslog]')
 
             is_expected.to contain_file('/etc/rsyslog.d/ldap.conf').
               with(
                 'ensure'  => 'file',
-                'content' => 'local4.* /var/log/ldap.log'
+                'content' => "local4.* /var/log/ldap.log\n"
               ).
               that_notifies('Exec[reload-rsyslog]')
 
             is_expected.to contain_file('/etc/rsyslog.d/daemon.conf').
               with(
                 'ensure'  => 'file',
-                'content' => 'daemon.* /var/log/daemon.log'
+                'content' => "daemon.* /var/log/daemon.log\n"
               ).
               that_notifies('Exec[reload-rsyslog]')
 
             is_expected.to contain_file('/etc/rsyslog.d/debug.conf').
               with(
                 'ensure'  => 'file',
-                'content' => '*.debug /var/log/debug'
+                'content' => "*.debug /var/log/debug\n"
               ).
               that_notifies('Exec[reload-rsyslog]')
 
             is_expected.to contain_file('/etc/rsyslog.d/kern.conf').
               with(
                 'ensure'  => 'file',
-                'content' => 'kern.* -/var/log/kern.log'
+                'content' => "kern.* -/var/log/kern.log\n"
               ).
               that_notifies('Exec[reload-rsyslog]')
           else

@@ -33,7 +33,7 @@ class cis_security_hardening::rules::rsyslog_logging (
       $dst = $data['dst']
       file { "/etc/rsyslog.d/${config}.conf":
         ensure  => file,
-        content => "${src} ${dst}",
+        content => "${src} ${dst}\n",
         notify  => Exec['reload-rsyslog'],
         require => Package['rsyslog'],
       }
