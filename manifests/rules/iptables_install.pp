@@ -41,14 +41,14 @@ class cis_security_hardening::rules::iptables_install (
       }
     }
 
-    if $facts['os']['name'].downcase() == 'ubuntu' and $facts['os']['release']['major'] >= '20' {
+    if $facts['os']['name'].downcase() == 'ubuntu' and versioncmp($facts['os']['release']['major'], '20') >= 0 {
       stdlib::ensure_packages(['iptables-persistent'], {
         ensure => installed,
       })
     }
 
     if ($facts['os']['name'].downcase() == 'redhat' or $facts['os']['name'].downcase() == 'centos') and
-    $facts['os']['release']['major'] > '7' {
+    versioncmp($facts['os']['release']['major'], '7') > 0 {
       $params_rh = {
         service_name => ['iptables'],
         service_name_v6 => 'ip6tables',

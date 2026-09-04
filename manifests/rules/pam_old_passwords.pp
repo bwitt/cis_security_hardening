@@ -57,7 +57,7 @@ class cis_security_hardening::rules::pam_old_passwords (
           $pf_path = ''
         }
 
-        if ($facts['os']['release']['major'] > '7') {
+        if (versioncmp($facts['os']['release']['major'], '7') > 0) {
           if $pf_path != '' {
             $pf_file = "${pf_path}/system-auth"
 
@@ -124,8 +124,8 @@ class cis_security_hardening::rules::pam_old_passwords (
         }
       }
       'debian', 'suse': {
-        if ($facts['os']['name'].downcase() == 'debian' and $facts['os']['release']['major'] > '10') or
-        ($facts['os']['name'].downcase() == 'ubuntu' and $facts['os']['release']['major'] >= '22') {
+        if ($facts['os']['name'].downcase() == 'debian' and versioncmp($facts['os']['release']['major'], '10') > 0) or
+        ($facts['os']['name'].downcase() == 'ubuntu' and versioncmp($facts['os']['release']['major'], '22') >= 0) {
           $pwhistory_arguments = $enforce_for_root ? {
             true    => ['use_authtok', 'enforce_for_root', "remember=${oldpasswords}"],
             default => ['use_authtok', "remember=${oldpasswords}"],
@@ -140,7 +140,7 @@ class cis_security_hardening::rules::pam_old_passwords (
             position  => 'before *[type="password" and module="pam_unix.so"]',
             arguments => $pwhistory_arguments,
           }
-        } elsif ($facts['os']['name'].downcase() == 'ubuntu' and $facts['os']['release']['major'] >= '20') {
+        } elsif ($facts['os']['name'].downcase() == 'ubuntu' and versioncmp($facts['os']['release']['major'], '20') >= 0) {
           Pam { 'ubuntu-remember-old-pw':
             ensure           => present,
             service          => 'common-password',

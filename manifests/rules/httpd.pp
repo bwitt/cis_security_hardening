@@ -32,7 +32,7 @@ class cis_security_hardening::rules::httpd (
         })
       }
       'redhat': {
-        if $facts['os']['release']['major'] >= '9' {
+        if versioncmp($facts['os']['release']['major'], '9') >= 0 {
           stdlib::ensure_packages(['nginx'], {
             ensure => purged,
           })

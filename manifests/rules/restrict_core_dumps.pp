@@ -93,7 +93,7 @@ class cis_security_hardening::rules::restrict_core_dumps (
       }
       default: {}
     }
-  } elsif $facts['os']['name'].downcase() == 'ubuntu' and $facts['os']['release']['major'] >= '22' {
+  } elsif $facts['os']['name'].downcase() == 'ubuntu' and versioncmp($facts['os']['release']['major'], '22') >= 0 {
     package { 'apport':
       ensure => purged,
     }

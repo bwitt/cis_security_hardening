@@ -30,7 +30,7 @@ class cis_security_hardening::rules::avahi (
 
     case $facts['os']['name'].downcase {
       'redhat', 'centos': {
-        if $facts['os']['release']['major'] >= '8' {
+        if versioncmp($facts['os']['release']['major'], '8') >= 0 {
           ensure_resource('service', ['avahi-daemon.socket'], {
             ensure => 'stopped',
             enable => false,
@@ -73,7 +73,7 @@ class cis_security_hardening::rules::avahi (
         })
       }
       'debian': {
-        if $facts['os']['release']['major'] > '10' {
+        if versioncmp($facts['os']['release']['major'], '10') > 0 {
           exec { 'stop avahi service':
             command => 'systemctl stop avahi-demon.service',
             path    => ['/bin', '/usr/bin'],

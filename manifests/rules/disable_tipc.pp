@@ -23,7 +23,7 @@ class cis_security_hardening::rules::disable_tipc (
   if $enforce {
     case $facts['os']['name'].downcase() {
       'debian': {
-        if $facts['os']['release']['major'] > '10' {
+        if versioncmp($facts['os']['release']['major'], '10') > 0 {
           $command = '/bin/false'
           kmod::blacklist { 'tipc': }
         } else {
@@ -31,7 +31,7 @@ class cis_security_hardening::rules::disable_tipc (
         }
       }
       'redhat': {
-        if $facts['os']['release']['major'] > '8' {
+        if versioncmp($facts['os']['release']['major'], '8') > 0 {
           $command = '/bin/false'
           kmod::blacklist { 'tipc': }
         } else {
@@ -39,7 +39,7 @@ class cis_security_hardening::rules::disable_tipc (
         }
       }
       'ubuntu': {
-        if $facts['os']['release']['major'] >= '20' {
+        if versioncmp($facts['os']['release']['major'], '20') >= 0 {
           $command = '/bin/false'
           kmod::blacklist { 'tipc': }
         } else {

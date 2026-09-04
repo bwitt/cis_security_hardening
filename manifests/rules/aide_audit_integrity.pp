@@ -43,7 +43,7 @@ class cis_security_hardening::rules::aide_audit_integrity (
         $conffile = '/etc/aide.conf'
       }
       'ubuntu': {
-        if $facts['os']['release']['major'] >= '20' {
+        if versioncmp($facts['os']['release']['major'], '20') >= 0 {
           $conffile = '/etc/aide/aide.conf'
         } else {
           $conffile = '/etc/aide.conf'

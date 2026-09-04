@@ -36,7 +36,7 @@ class cis_security_hardening::rules::disable_bluetooth (
   if $enforce {
     case $facts['os']['name'].downcase() {
       'ubuntu': {
-        if $facts['os']['release']['major'] >= '20' {
+        if versioncmp($facts['os']['release']['major'], '20') >= 0 {
           service { 'bluetooth.service':
             ensure => 'stopped',
             enable => false,
@@ -48,7 +48,7 @@ class cis_security_hardening::rules::disable_bluetooth (
         }
       }
       'debian': {
-        if $facts['os']['release']['major'] >= '12' {
+        if versioncmp($facts['os']['release']['major'], '12') >= 0 {
           service { 'bluetooth.service':
             ensure => 'stopped',
             enable => false,
