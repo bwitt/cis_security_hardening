@@ -19,7 +19,7 @@
 #
 # @example
 #   class { 'cis_security_hardening::rules::pam_mfa_redhat':
-#     enfirce = true,
+#     enforce = true,
 #   }
 #
 # @api private

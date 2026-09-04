@@ -35,7 +35,7 @@ benchmarks.
 The *cis_security_hardening* module does not use benchmark numbers for the class
 names of the rules. These numbers change from OS version to OS version and even
 from benchmark version to benchmark version. One main purpose is to ensure this
-module can be extended by further security settings and monitorings without
+module can be extended by further security settings and monitoring without
 changing the code of this module. Therefore the module uses a generic interface
 to call classes implementing particular security baseline rules.
 

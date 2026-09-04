@@ -9,7 +9,7 @@
 # determine if unauthorized access to their system is occurring.
 #
 # @param enforce
-#    Sets rule enforcementen. If set to true, code will be exeuted to bring the system into a compliant state.
+#    Sets rule enforcement. If set to true, code will be executed to bring the system into a compliant state.
 #
 # @param packages
 #    Packages for auditd to install

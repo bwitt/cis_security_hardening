@@ -49,7 +49,7 @@
 * `cis_security_hardening::rules::auditd_chcon_use`: Ensure successful and unsuccessful attempts to use the chcon command are recorded
 * `cis_security_hardening::rules::auditd_chfn_use`: Ensure successful and unsuccessful uses of the chfn command are collected
 * `cis_security_hardening::rules::auditd_chsh_use`: Ensure successful and unsuccessful attempts to use the chsh command are recorded
-* `cis_security_hardening::rules::auditd_conf_perms`: Ensure audit configuration files are 0640 or more restrictive and confibgure user and group
+* `cis_security_hardening::rules::auditd_conf_perms`: Ensure audit configuration files are 0640 or more restrictive and configure user and group
 * `cis_security_hardening::rules::auditd_crontab_use`: Ensure successful and unsuccessful attempts to use the crontab command are recorded
 * `cis_security_hardening::rules::auditd_delete`: Ensure file deletion events by users are collected
 * `cis_security_hardening::rules::auditd_delete_module`: Ensure the operating system generates an audit record when there are successful/unsuccessful attempts to use the
@@ -355,7 +355,7 @@ audited
 * `cis_security_hardening::rules::shadow_password_empty`: Ensure /etc/shadow password fields are not empty
 * `cis_security_hardening::rules::shadow_perms`: Ensure permissions on /etc/shadow are configured
 * `cis_security_hardening::rules::shadowed_passwords`: Ensure accounts in /etc/passwd use shadowed passwords
-* `cis_security_hardening::rules::shell_nologin`: Ensure system accounts aresecured
+* `cis_security_hardening::rules::shell_nologin`: Ensure system accounts are secured
 * `cis_security_hardening::rules::shells_perms`: Ensure permissions on /etc/shells are configured
 * `cis_security_hardening::rules::single_user_mode`: Ensure authentication required for single user mode
 * `cis_security_hardening::rules::source_routed_packets`: Ensure source routed packets are not accepted
@@ -363,7 +363,7 @@ audited
 * `cis_security_hardening::rules::squid`: Ensure HTTP Proxy Server is not enabled
 * `cis_security_hardening::rules::sshd_banner`
 * `cis_security_hardening::rules::sshd_ciphers`: Ensure only strong Ciphers are used
-* `cis_security_hardening::rules::sshd_compression`: Ensure SSH compressions setting is delayed
+* `cis_security_hardening::rules::sshd_compression`: Ensure SSH compression setting is delayed
 * `cis_security_hardening::rules::sshd_config_permissions`: Ensure permissions on /etc/ssh/sshd_config are configured
 * `cis_security_hardening::rules::sshd_crypto_policy`: Ensure system-wide crypto policy is not over-ridden
 * `cis_security_hardening::rules::sshd_empty_passwords`: Ensure SSH PermitEmptyPasswords is disabled
@@ -476,7 +476,7 @@ Ensure systemd-journal-remote is enabled
 
 #### Public Functions
 
-* [`sanitize_input`](#sanitize_input): sanitize_input.rb Uses Shellwords.escape to sabitize cmd.
+* [`sanitize_input`](#sanitize_input): sanitize_input.rb Uses Shellwords.escape to sanitize cmd.
 
 #### Private Functions
 
@@ -534,7 +534,7 @@ Define a complete security baseline and monitor the rules. The definition of the
 The purpose of the module is to give the ability to setup complete security baseline which not necessarily have to stick
 to an industry security guide like the CIS benchmarks.
 
-The easiest way to use the module is to put all rule data into a hiera file. For more information please coinsult the README file.
+The easiest way to use the module is to put all rule data into a hiera file. For more information please consult the README file.
 
 #### Examples
 
@@ -573,7 +573,7 @@ Default value: `'server'`
 
 Data type: `Enum['1', '2', 'stig']`
 
-The CIS Benchmark server security level. Higher levels include all rules of lover levels. Therefore level1 rules are all included
+The CIS Benchmark server security level. Higher levels include all rules of lower levels. Therefore level1 rules are all included
 in the level2 rules and stig includes level1 and level 2 rules.
 
 Default value: `'2'`
@@ -598,7 +598,7 @@ Default value: `'/usr/share/cis_security_hardening/bin/fact_upload.sh'`
 
 Data type: `Array`
 
-Araay of directories to exclude from the search for world writable directories with sticky bit
+Array of directories to exclude from the search for world writable directories with sticky bit
 
 Default value: `[]`
 
@@ -665,7 +665,7 @@ Default value: `true`
 
 Auditd rules can monitor privileged command use. As filesystems cn be huge and searching
 the relevant commands can be time consuming this cron job will create a custom fact to
-provide the auditd rule with appriate input.
+provide the auditd rule with appropriate input.
 
 #### Examples
 
@@ -848,7 +848,7 @@ The following parameters are available in the `cis_security_hardening::rules::au
 
 Data type: `Boolean`
 
-Sets rule enforcemt. If set to true, code will be exeuted to bring the system into a compliant state.
+Sets rule enforcement. If set to true, code will be executed to bring the system into a compliant state.
 
 Default value: `false`
 
@@ -1118,7 +1118,7 @@ Create all missing directories
 ##### 
 
 ```puppet
-pxe_installarent_dirs{ 'create script dir':
+cis_security_hardening::parent_dirs { 'create script dir':
  dir_path => '/var/www/scripts',
 ```
 
@@ -1158,7 +1158,7 @@ Default value: `undef`
 
 Data type: `Optional[String]`
 
-The directoray group.
+The directory group.
 
 Default value: `undef`
 
@@ -1238,12 +1238,12 @@ The service to unmask
 Type: Ruby 4.x API
 
 sanitize_input.rb
-Uses Shellwords.escape to sabitize cmd.
+Uses Shellwords.escape to sanitize cmd.
 
 #### `sanitize_input(String $cmd)`
 
 sanitize_input.rb
-Uses Shellwords.escape to sabitize cmd.
+Uses Shellwords.escape to sanitize cmd.
 
 Returns: `String`
 

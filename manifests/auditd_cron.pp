@@ -3,7 +3,7 @@
 #
 # Auditd rules can monitor privileged command use. As filesystems cn be huge and searching
 # the relevant commands can be time consuming this cron job will create a custom fact to
-# provide the auditd rule with appriate input.
+# provide the auditd rule with appropriate input.
 #
 # @param ensure
 #   Whether the cron job should be present or absent.

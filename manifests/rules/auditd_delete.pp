@@ -13,7 +13,7 @@
 # privileged files that are being deleted or altered.
 #
 # @param enforce
-#    Sets rule enforcement. If set to true, code will be exeuted to bring the system into a compliant state.
+#    Sets rule enforcement. If set to true, code will be executed to bring the system into a compliant state.
 #
 # @example
 #   class { 'cis_security_hardening::rules::auditd_delete':

@@ -1,5 +1,5 @@
 # @summary
-#    Ensure SSH compressions setting is delayed
+#    Ensure SSH compression setting is delayed
 #
 # The operating system must be configured so that the SSH daemon does not allow compression or only allows compression after
 # successful authentication.

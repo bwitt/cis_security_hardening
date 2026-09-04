@@ -8,7 +8,7 @@
 # A custom profile is required to customize many of the pam options.
 #
 # @param enforce
-#    Sets rule enforcemt. If set to true, code will be exeuted to bring the system into a compliant state.
+#    Sets rule enforcement. If set to true, code will be executed to bring the system into a compliant state.
 #
 # @param custom_profile
 #    name of the custom profile to create
@@ -17,7 +17,7 @@
 #    Base profile to use for custom profile creation
 #
 # @param profile_options
-#    The authsselect feartures to enable.
+#    The authselect features to enable.
 #
 # @example
 #   class { 'cis_security_hardening::rules::authselect_profile':

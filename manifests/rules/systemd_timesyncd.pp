@@ -28,7 +28,7 @@
 #    The ntp server to use for time synchronisation.
 #
 # @param ntp_fallback_servers
-#     The ntp fallbach server.
+#     The ntp fallback server.
 #
 # @param fix_file_perms
 # .   Flag if to fix file permissions.

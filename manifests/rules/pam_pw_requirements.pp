@@ -30,7 +30,7 @@
 #    Minimum number of digits a password must contain
 #
 # @param ucredit
-#    Minimum number of upper case characters a apassword mt contain
+#    Minimum number of upper case characters a password must contain
 #
 # @param ocredit
 #    Minimum number of special characters a password must contain
