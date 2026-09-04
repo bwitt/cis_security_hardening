@@ -151,12 +151,12 @@ def facts_redhat(os, distid, release)
 
   # get iptables config
   cis_security_hardening['iptables'] = read_iptables_rules('4')
-  cis_security_hardening['ip6tables'] = read_iptables_rules('6') if release > '6'
+  cis_security_hardening['ip6tables'] = read_iptables_rules('6') if release.to_i > 6
 
   # collect accounts data
   accounts = {}
   wrong_shell = []
-  min_uid = if release > '6'
+  min_uid = if release.to_i > 6
               1000
             else
               500

@@ -30,7 +30,7 @@ class cis_security_hardening::rules::overlayfs (
         kmod::blacklist { 'overlay': }
       }
       'redhat': {
-        if $facts['os']['release']['major'] > '7' {
+        if versioncmp($facts['os']['release']['major'], '7') > 0 {
           kmod::install { 'overlay':
             command => '/bin/false',
           }
@@ -42,7 +42,7 @@ class cis_security_hardening::rules::overlayfs (
         }
       }
       'debian': {
-        if $facts['os']['release']['major'] > '10' {
+        if versioncmp($facts['os']['release']['major'], '10') > 0 {
           kmod::install { 'overlay':
             command => '/bin/false',
           }
@@ -54,7 +54,7 @@ class cis_security_hardening::rules::overlayfs (
         }
       }
       'ubuntu': {
-        if $facts['os']['release']['major'] >= '20' {
+        if versioncmp($facts['os']['release']['major'], '20') >= 0 {
           kmod::install { 'overlay':
             command => '/bin/false',
           }

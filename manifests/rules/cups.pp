@@ -39,7 +39,7 @@ class cis_security_hardening::rules::cups (
         })
       }
       'debian': {
-        if $facts['os']['release']['major'] > '10' {
+        if versioncmp($facts['os']['release']['major'], '10') > 0 {
           stdlib::ensure_packages('cups', {
             ensure => $ensure,
           })
