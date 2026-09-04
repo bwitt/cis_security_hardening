@@ -27,6 +27,13 @@ cis_security_hardening::rules::passwd_min_days::enforce: false  # Password aging
 cis_security_hardening::rules::pti::enforce: false
 cis_security_hardening::rules::selinux_bootloader::enforce: false
 cis_security_hardening::rules::tmp_filesystem::enforce: false
+# kernel.* and fs.* sysctls are not namespaced, so setting them changes the CI host
+# kernel rather than the container. Namespaced net.* rules are left enabled.
+cis_security_hardening::rules::dmesg_restrict::enforce: false
+cis_security_hardening::rules::kptr_restrict::enforce: false
+cis_security_hardening::rules::dac_on_hardlinks::enforce: false
+cis_security_hardening::rules::dac_on_symlinks::enforce: false
+cis_security_hardening::rules::apparmor_restrict_unprivileged::enforce: false
 
 # iptables/nftables have some problems in containers TODO: what can we enable?
 cis_security_hardening::rules::firewalld_default_zone::enforce: false
