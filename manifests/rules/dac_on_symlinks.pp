@@ -36,7 +36,7 @@
 #     enforce => true,
 #   }
 #
-# @api privare
+# @api private
 class cis_security_hardening::rules::dac_on_symlinks (
   Boolean $enforce = false,
 ) {
