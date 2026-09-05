@@ -5,7 +5,7 @@
     "tmout": {
       "description": "Maximal timeout setting.",
       "type": "Integer",
-      "default": "900"
+      "default": 900
     }
   }
 }
