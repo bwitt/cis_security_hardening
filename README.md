@@ -12,17 +12,18 @@
     * [Beginning with cis_security_hardening](#beginning-with-cis_security_hardening)
     * [Cronjobs](#cronjobs)
 5. [Usage](#usage)
-6. [Reference](#reference)
-7. [Limitations](#limitations)
+6. [Tasks](#tasks)
+7. [Reference](#reference)
+8. [Limitations](#limitations)
     * [Auditd](#auditd)
     * [SELinux and Apparmor](#selinux-and-apparmor)
     * [Automatic reboot](#automatic-reboot)
     * [Suse SLES 12 and 15](#suse-sles-12-and-15)
-8. [Credits](#credits)
-9. [Development](#development)
-10. [Changelog](#changelog)
-11. [Contributors](#contributors)
-12. [Warranty](#warranty)
+9. [Credits](#credits)
+10. [Development](#development)
+11. [Changelog](#changelog)
+12. [Contributors](#contributors)
+13. [Warranty](#warranty)
 
 ## Description
 
@@ -207,6 +208,66 @@ cis_security_hardening::rules::udf::enforce: true
 The `data` folder contains files named `*_param.yaml` which contain all
 configurable options for each benchmark. You also can look into the reference
 documentation.
+
+## Tasks
+
+The `tasks` folder contains Bolt tasks for benchmark rules the module can not
+enforce during a Puppet run, because the remediation depends on a local
+decision, for example which of two users with a duplicate UID is the wrong one.
+The tasks collect and report this information.
+
+```bash
+bolt task show | grep cis_security_hardening
+
+bolt task run cis_security_hardening::check_pass_max_days --targets host.example.com
+bolt task run cis_security_hardening::check_shell_timeout --targets host.example.com tmout=600
+```
+
+Most tasks read files or run commands only root may use, therefore add
+`--run-as root` unless you connect as root. All tasks exit with 0, even when
+they find something, so read the output rather than the exit code. For most
+check tasks no output means nothing was found.
+
+`audit_suid_executables`, `audit_sgid_executables` and
+`check_auditd_dirs_and_files` always report a list for manual review, for
+example the SUID executables every system has.
+
+### Check tasks
+
+* Accounts: `check_for_duplicate_uids`, `check_for_duplicate_gids`,
+  `check_for_duplicate_user_names`, `check_for_duplicate_group_names`,
+  `check_uid_0_files`, `check_shadow_group_is_empty`,
+  `check_system_accounts_secured`
+* Passwords: `check_pass_max_days`, `check_pass_min_days`,
+  `check_pass_warn_age`, `check_inactive_passwd_lock`,
+  `check_user_last_passwd_in_past`
+* Home directories: `check_user_home_dirs_exist`, `check_users_own_home_dirs`,
+  `check_users_dot_files`, `check_for_forward_files`, `check_for_rhosts_files`,
+  `check_for_nertrc_files`
+* Files and directories: `audit_suid_executables`, `audit_sgid_executables`,
+  `find_world_writable_files`, `find_unowned_files_dirs`,
+  `find_ungrouped_files_dirs`, `check_auditd_dirs_and_files`
+* Miscellaneous: `check_root_path_integrety`, `check_shell_timeout`,
+  `check_unconfines_services` (SELinux), `check_stig_cert_fingerprints` (DoD
+  certificates)
+
+These tasks take a parameter:
+
+| Task                          | Parameter        | Default           |
+|-------------------------------|------------------|-------------------|
+| `check_auditd_dirs_and_files` | `audit_dir`      | `/var/log/audit`  |
+| `check_inactive_passwd_lock`  | `inactive`       | `30`              |
+| `check_shell_timeout`         | `tmout`          | `900`             |
+| `check_users_dot_files`       | `stig` (`y`/`n`) | `n`               |
+
+### Other tasks
+
+* `fix_wrong_home_dir_permissions` reports home directories with wrong
+  permissions and, when called with `fix=yes`, removes the group write and the
+  other read, write and execute permission.
+* `cleanup_old_stuff` removes cronjobs and scripts left behind by the
+  predecessor `cis` module. It stops the Puppet agent while it runs and has to
+  be called only once.
 
 ## Reference
 
