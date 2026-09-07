@@ -35,7 +35,7 @@ class cis_security_hardening::rules::apt_keyring_perms (
 ) {
   if $enforce {
     $directories.each |Stdlib::Absolutepath $dir| {
-      recursive_file_permissions { $dir:
+      cis_security_hardening::recursive_file_permissions { $dir:
         file_mode => $file_mode,
         dir_mode  => $dir_mode,
         owner     => 'root',

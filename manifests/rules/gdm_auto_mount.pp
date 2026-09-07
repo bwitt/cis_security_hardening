@@ -30,7 +30,7 @@ class cis_security_hardening::rules::gdm_auto_mount (
   if  $enforce and $gnome_gdm != undef and $gnome_gdm {
     include dconf
     dconf::db { 'media-automount':
-      db_dir         => "${dconf::db_base_dir}/local.d",
+      db_dir         => '/etc/dconf/db/local.d',
       db_filename    => '00-media-automount',
       locks_filename => '00-media-automount',
       settings       => {

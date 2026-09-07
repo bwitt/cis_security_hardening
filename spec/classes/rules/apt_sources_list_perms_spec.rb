@@ -20,7 +20,7 @@ describe 'cis_security_hardening::rules::apt_sources_list_perms' do
 
           ['/etc/apt/sources.list.d'].each do |dir|
             if enforce
-              is_expected.to contain_recursive_file_permissions(dir).
+              is_expected.to contain_cis_security_hardening__recursive_file_permissions(dir).
                 with(
                   'dir_mode'  => '0755',
                   'file_mode' => '0644',
@@ -28,7 +28,7 @@ describe 'cis_security_hardening::rules::apt_sources_list_perms' do
                   'group'     => 'root'
                 )
             else
-              is_expected.not_to contain_recursive_file_permissions(dir)
+              is_expected.not_to contain_cis_security_hardening__recursive_file_permissions(dir)
             end
           end
         }

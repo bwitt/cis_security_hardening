@@ -30,7 +30,7 @@ class cis_security_hardening::rules::gdm_mfa (
   if  $enforce and $gnome_gdm != undef and $gnome_gdm {
     include dconf
     dconf::db { 'mfa':
-      db_dir         => "${dconf::db_base_dir}/local.d",
+      db_dir         => '/etc/dconf/db/local.d',
       db_filename    => '06-mfa',
       locks_filename => '06-mfa',
       settings       => {

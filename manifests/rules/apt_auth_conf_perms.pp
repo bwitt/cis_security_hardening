@@ -29,7 +29,7 @@ class cis_security_hardening::rules::apt_auth_conf_perms (
   Stdlib::Filemode $file_mode = '0640',
 ) {
   if $enforce {
-    recursive_file_permissions { '/etc/apt/auth.conf.d':
+    cis_security_hardening::recursive_file_permissions { '/etc/apt/auth.conf.d':
       file_mode => $file_mode,
       dir_mode  => $dir_mode,
       owner     => 'root',

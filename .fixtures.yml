@@ -6,7 +6,6 @@ fixtures:
     stdlib:                     "puppetlabs/stdlib"
     concat:                     "puppetlabs/concat"
     kmod:                       "puppet/kmod"
-    echo:                       "ipcrm/echo"
     sysctl:                     "puppet/augeasproviders_sysctl"
     augeasproviders_pam:        "puppet/augeasproviders_pam"
     augeasproviders_core:       "puppet/augeasproviders_core"
@@ -22,7 +21,6 @@ fixtures:
     inifile:                    "puppetlabs/inifile"
     puppet_agent:               "puppetlabs/puppet_agent"
     facts:                      "puppetlabs/facts"
-    recursive_file_permissions: "npwalker/recursive_file_permissions"
     systemd:                    "puppet/systemd"
     dconf:
       repo: "jmckenzie/dconf"

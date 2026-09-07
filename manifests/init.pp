@@ -128,7 +128,7 @@ class cis_security_hardening (
       }
 
       if $verbose_logging {
-        echo { "cis_security_hardening applying bundle ${bundle}":
+        notify { "cis_security_hardening applying bundle ${bundle}":
           message  => "cis_security_hardening applying bundle ${bundle}",
           loglevel => 'info',
           withpath => false,
@@ -139,7 +139,7 @@ class cis_security_hardening (
         $class = "cis_security_hardening::rules::${rule}"
 
         if $verbose_logging {
-          echo { "Applying ${class}":
+          notify { "Applying ${class}":
             message  => "Applying ${class}",
             loglevel => 'info',
             withpath => false,

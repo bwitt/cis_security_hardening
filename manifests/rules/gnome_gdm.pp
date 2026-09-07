@@ -49,7 +49,7 @@ class cis_security_hardening::rules::gnome_gdm (
         }
 
         dconf::db { 'gdm-banner':
-          db_dir         => "${dconf::db_base_dir}/gdm.d",
+          db_dir         => '/etc/dconf/db/gdm.d',
           db_filename    => '01-banner-message',
           locks_filename => '01-banner-message',
           settings       => {
@@ -65,7 +65,7 @@ class cis_security_hardening::rules::gnome_gdm (
         }
 
         dconf::db { 'gdm-login-screen':
-          db_dir         => "${dconf::db_base_dir}/gdm.d",
+          db_dir         => '/etc/dconf/db/gdm.d',
           db_filename    => '00-login-screen',
           locks_filename => '00-login-screen',
           settings       => {
@@ -98,7 +98,7 @@ class cis_security_hardening::rules::gnome_gdm (
           }
 
           dconf::db { 'cis-banner':
-            db_dir         => "${dconf::db_base_dir}/cis.d",
+            db_dir         => '/etc/dconf/db/cis.d',
             db_filename    => '01-banner-message',
             locks_filename => '01-banner-message',
             settings       => {
@@ -152,7 +152,7 @@ class cis_security_hardening::rules::gnome_gdm (
         }
 
         dconf::db { 'gdm-banner':
-          db_dir         => "${dconf::db_base_dir}/gdm.d",
+          db_dir         => '/etc/dconf/db/gdm.d',
           db_filename    => '01-banner-message',
           locks_filename => '01-banner-message',
           settings       => {
@@ -168,7 +168,7 @@ class cis_security_hardening::rules::gnome_gdm (
         }
 
         dconf::db { 'gdm-login-screen':
-          db_dir         => "${dconf::db_base_dir}/gdm.d",
+          db_dir         => '/etc/dconf/db/gdm.d',
           db_filename    => '00-login-screen',
           locks_filename => '00-login-screen',
           settings       => {

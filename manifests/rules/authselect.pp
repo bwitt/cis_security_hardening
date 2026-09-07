@@ -82,7 +82,7 @@ class cis_security_hardening::rules::authselect (
           require => Exec['select authselect profile'],
         }
       } else {
-        echo { "unavailable feature ${opt}":
+        notify { "unavailable feature ${opt}":
           message  => "authselect: unavailable feature ${opt} with base profile ${base_profile}",
           loglevel => 'warning',
           withpath => false,

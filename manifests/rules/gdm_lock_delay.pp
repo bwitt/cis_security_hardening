@@ -26,7 +26,7 @@ class cis_security_hardening::rules::gdm_lock_delay (
   if  $enforce and $gnome_gdm != undef and $gnome_gdm {
     include dconf
     dconf::db { 'lock-delay':
-      db_dir         => "${dconf::db_base_dir}/local.d",
+      db_dir         => '/etc/dconf/db/local.d',
       db_filename    => '02-lock-delay',
       locks_filename => '02-lock-delay',
       settings       => {

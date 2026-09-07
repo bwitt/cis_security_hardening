@@ -469,6 +469,7 @@ Ensure systemd-journal-remote is enabled
 ### Defined types
 
 * [`cis_security_hardening::parent_dirs`](#cis_security_hardening--parent_dirs): Create directories recursively
+* [`cis_security_hardening::recursive_file_permissions`](#cis_security_hardening--recursive_file_permissions): Manage permissions below a directory
 * [`cis_security_hardening::set_mount_options`](#cis_security_hardening--set_mount_options): Change mount options
 * [`cis_security_hardening::unmask_systemd_service`](#cis_security_hardening--unmask_systemd_service): Unmask a systemd service
 
@@ -1167,6 +1168,72 @@ Default value: `undef`
 Data type: `Optional[String]`
 
 The directory permissions.
+
+Default value: `undef`
+
+### <a name="cis_security_hardening--recursive_file_permissions"></a>`cis_security_hardening::recursive_file_permissions`
+
+Enforce modes and ownership on everything below a directory without declaring
+a file resource per entry.
+
+#### Examples
+
+##### 
+
+```puppet
+cis_security_hardening::recursive_file_permissions { '/var/log':
+  file_mode => '0640',
+  dir_mode  => '0755',
+}
+```
+
+#### Parameters
+
+The following parameters are available in the `cis_security_hardening::recursive_file_permissions` defined type:
+
+* [`target_dir`](#-cis_security_hardening--recursive_file_permissions--target_dir)
+* [`file_mode`](#-cis_security_hardening--recursive_file_permissions--file_mode)
+* [`dir_mode`](#-cis_security_hardening--recursive_file_permissions--dir_mode)
+* [`owner`](#-cis_security_hardening--recursive_file_permissions--owner)
+* [`group`](#-cis_security_hardening--recursive_file_permissions--group)
+
+##### <a name="-cis_security_hardening--recursive_file_permissions--target_dir"></a>`target_dir`
+
+Data type: `Stdlib::Absolutepath`
+
+Directory to work on
+
+Default value: `$title`
+
+##### <a name="-cis_security_hardening--recursive_file_permissions--file_mode"></a>`file_mode`
+
+Data type: `Optional[Stdlib::Filemode]`
+
+Mode to enforce on files
+
+Default value: `undef`
+
+##### <a name="-cis_security_hardening--recursive_file_permissions--dir_mode"></a>`dir_mode`
+
+Data type: `Optional[Stdlib::Filemode]`
+
+Mode to enforce on directories
+
+Default value: `undef`
+
+##### <a name="-cis_security_hardening--recursive_file_permissions--owner"></a>`owner`
+
+Data type: `Optional[String[1]]`
+
+Owner to enforce
+
+Default value: `undef`
+
+##### <a name="-cis_security_hardening--recursive_file_permissions--group"></a>`group`
+
+Data type: `Optional[String[1]]`
+
+Group to enforce
 
 Default value: `undef`
 

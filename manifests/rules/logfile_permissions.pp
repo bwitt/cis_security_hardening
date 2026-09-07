@@ -39,7 +39,7 @@ class cis_security_hardening::rules::logfile_permissions (
         dir_mode => $dir_mode,
       },
     }
-    recursive_file_permissions { '/var/log':
+    cis_security_hardening::recursive_file_permissions { '/var/log':
       * => $data,
     }
   }

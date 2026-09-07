@@ -32,7 +32,7 @@ class cis_security_hardening::rules::gdm_screensaver (
   if $enforce and $gnome_gdm != undef and $gnome_gdm {
     include dconf
     dconf::db { 'screensaver-timeout':
-      db_dir         => "${dconf::db_base_dir}/local.d",
+      db_dir         => '/etc/dconf/db/local.d',
       db_filename    => '03-screensaver-timeout',
       locks_filename => '03-screensaver-timeout',
       settings       => {

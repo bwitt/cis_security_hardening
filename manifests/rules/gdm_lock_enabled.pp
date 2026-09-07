@@ -25,7 +25,7 @@ class cis_security_hardening::rules::gdm_lock_enabled (
   if  $enforce and $gnome_gdm != undef and $gnome_gdm {
     include dconf
     dconf::db { 'lock-enabled':
-      db_dir         => "${dconf::db_base_dir}/local.d",
+      db_dir         => '/etc/dconf/db/local.d',
       db_filename    => '01-lock-enabled',
       locks_filename => '01-lock-enabled',
       settings       => {

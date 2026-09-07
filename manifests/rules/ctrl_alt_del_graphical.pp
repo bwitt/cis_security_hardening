@@ -25,7 +25,7 @@ class cis_security_hardening::rules::ctrl_alt_del_graphical (
   if  $enforce and $gnome_gdm != undef and $gnome_gdm {
     include dconf
     dconf::db { 'disable-cad':
-      db_dir         => "${dconf::db_base_dir}/local.d",
+      db_dir         => '/etc/dconf/db/local.d',
       db_filename    => '00-disable-CAD',
       locks_filename => '00-disable-CAD',
       settings       => {
