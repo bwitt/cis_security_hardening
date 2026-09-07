@@ -1,29 +1,32 @@
 # This file can be used to install module dependencies for unit testing
 # See https://github.com/puppetlabs/puppetlabs_spec_helper#using-fixtures for details
+#
+# Fixtures float to latest; pin only where latest breaks us. Use "N.x" refs,
+# not spaced ranges, since fixtures.rb interpolates ref into a shell command.
 ---
 fixtures:
   forge_modules:
     stdlib:                     "puppetlabs/stdlib"
     concat:                     "puppetlabs/concat"
+    augeas_core:                "puppetlabs/augeas_core"
+    augeasproviders_core:       "puppet/augeasproviders_core"
     kmod:                       "puppet/kmod"
     echo:                       "ipcrm/echo"
     sysctl:                     "puppet/augeasproviders_sysctl"
     augeasproviders_pam:        "puppet/augeasproviders_pam"
-    augeasproviders_core:       "puppet/augeasproviders_core"
     augeasproviders_grub:       "puppet/augeasproviders_grub"
-    augeas_core:                "puppetlabs/augeas_core"
     logrotate:                  "puppet/logrotate"
+    systemd:                    "puppet/systemd"
     ntp:                        "puppetlabs/ntp"
-    chrony:
-      repo: "puppet/chrony"
-      ref: "2.5.0"
     firewall:                   "puppetlabs/firewall"
     reboot:                     "puppetlabs/reboot"
     inifile:                    "puppetlabs/inifile"
-    puppet_agent:               "puppetlabs/puppet_agent"
-    facts:                      "puppetlabs/facts"
     recursive_file_permissions: "npwalker/recursive_file_permissions"
-    systemd:                    "puppet/systemd"
+    # 5.0.0 manages /etc/sysconfig/chronyd itself, clashing with rules/chrony.pp
+    chrony:
+      repo: "puppet/chrony"
+      ref: "4.x"
+    # 1.x has dconf::db manage File[$db_dir]; gnome_gdm.pp shares one dir
     dconf:
       repo: "jmckenzie/dconf"
-      ref: "0.2.3"
+      ref: "0.2.x"
