@@ -24,16 +24,14 @@ class cis_security_hardening::rules::gdm_lock_enabled (
   $gnome_gdm = fact('cis_security_hardening.gnome_gdm')
   if  $enforce and $gnome_gdm != undef and $gnome_gdm {
     include dconf
-    dconf::db { 'lock-enabled':
-      db_dir         => "${dconf::db_base_dir}/local.d",
-      db_filename    => '01-lock-enabled',
-      locks_filename => '01-lock-enabled',
-      settings       => {
+    cis_security_hardening::dconf_db_entry { '01-lock-enabled':
+      db       => 'local',
+      settings => {
         'org/gnome/desktop/screensaver' => {
           'lock-enabled' => 'true',
         },
       },
-      locks          => [
+      locks    => [
         '/org/gnome/desktop/screensaver/lock-enabled',
       ],
     }
