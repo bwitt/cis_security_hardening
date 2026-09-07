@@ -29,7 +29,7 @@ class cis_security_hardening::rules::apt_sources_list_perms (
   Stdlib::Filemode $file_mode = '0644',
 ) {
   if $enforce {
-    recursive_file_permissions { '/etc/apt/sources.list.d':
+    cis_security_hardening::recursive_file_permissions { '/etc/apt/sources.list.d':
       file_mode => $file_mode,
       dir_mode  => $dir_mode,
       owner     => 'root',
