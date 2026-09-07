@@ -13,6 +13,10 @@
 # @param configure_ip6tables
 #    Flag if ip6tables should be configured
 #
+# @param purge_rules
+#    Purge iptables rules not managed by Puppet. Off by default, since purging
+#    can drop the rules keeping the current session alive.
+#
 # @example
 #   class { 'cis_security_hardening::rules::iptables_install':
 #       enforce => true,
@@ -23,6 +27,7 @@
 class cis_security_hardening::rules::iptables_install (
   Boolean $enforce             = false,
   Boolean $configure_ip6tables = false,
+  Boolean $purge_rules         = false,
 ) {
   if $enforce {
     if fact('network6') != undef {
@@ -66,8 +71,13 @@ class cis_security_hardening::rules::iptables_install (
       }
     }
 
-    resources { 'firewall':
-      purge => true,
+    if $purge_rules {
+      # add the managed rules before dropping any unmanaged ones
+      Firewall <| |> -> Resources['firewall']
+
+      resources { 'firewall':
+        purge => true,
+      }
     }
 
     case $facts['os']['name'].downcase() {

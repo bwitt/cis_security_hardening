@@ -13,6 +13,13 @@ describe 'cis_security_hardening::rules::iptables_deny_policy' do
       unless     => 'test -z "$(grep -e AlmaLinux -e Rocky /etc/redhat-release 2>/dev/null)"',
       refreshonly => true,
     }
+
+    firewall { '010 open ssh port inbound':
+      chain => 'INPUT',
+      proto => 'tcp',
+      dport => 22,
+      jump  => 'ACCEPT',
+    }
     EOF
   end
 
@@ -50,6 +57,9 @@ describe 'cis_security_hardening::rules::iptables_deny_policy' do
                 'ensure' => 'present',
                 'policy' => 'drop'
               )
+
+            is_expected.to contain_firewall('010 open ssh port inbound').
+              that_comes_before('Firewallchain[INPUT:filter:IPv4]')
           else
             is_expected.not_to contain_firewallchain('OUTPUT:filter:IPv4')
             is_expected.not_to contain_firewallchain('FORWARD:filter:IPv4')
