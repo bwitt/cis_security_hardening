@@ -48,32 +48,28 @@ class cis_security_hardening::rules::gnome_gdm (
           },
         }
 
-        dconf::db { 'gdm-banner':
-          db_dir         => "${dconf::db_base_dir}/gdm.d",
-          db_filename    => '01-banner-message',
-          locks_filename => '01-banner-message',
-          settings       => {
+        cis_security_hardening::dconf_db_entry { '01-banner-message':
+          db       => 'gdm',
+          settings => {
             'org/gnome/login-screen' => {
               'banner-message-enable' => 'true',
               'banner-message-text'   => "'${banner_message}'",
             },
           },
-          locks          => [
+          locks    => [
             '/org/gnome/login-screen/banner-message-enable',
             '/org/gnome/login-screen/banner-message-text',
           ],
         }
 
-        dconf::db { 'gdm-login-screen':
-          db_dir         => "${dconf::db_base_dir}/gdm.d",
-          db_filename    => '00-login-screen',
-          locks_filename => '00-login-screen',
-          settings       => {
+        cis_security_hardening::dconf_db_entry { '00-login-screen':
+          db       => 'gdm',
+          settings => {
             'org/gnome/login-screen' => {
               'disable-user-list' => 'true',
             },
           },
-          locks          => [
+          locks    => [
             '/org/gnome/login-screen/disable-user-list',
           ],
         }
@@ -97,18 +93,16 @@ class cis_security_hardening::rules::gnome_gdm (
             },
           }
 
-          dconf::db { 'cis-banner':
-            db_dir         => "${dconf::db_base_dir}/cis.d",
-            db_filename    => '01-banner-message',
-            locks_filename => '01-banner-message',
-            settings       => {
+          cis_security_hardening::dconf_db_entry { '01-banner-message':
+            db       => 'cis',
+            settings => {
               'org/gnome/login-screen' => {
                 'banner-message-enable' => 'true',
                 'banner-message-text'   => "'${banner_message}'",
                 'disable-user-list'     => 'true',
               },
             },
-            locks          => [
+            locks    => [
               '/org/gnome/login-screen/banner-message-enable',
               '/org/gnome/login-screen/banner-message-text',
               '/org/gnome/login-screen/disable-user-list',
@@ -151,32 +145,28 @@ class cis_security_hardening::rules::gnome_gdm (
           },
         }
 
-        dconf::db { 'gdm-banner':
-          db_dir         => "${dconf::db_base_dir}/gdm.d",
-          db_filename    => '01-banner-message',
-          locks_filename => '01-banner-message',
-          settings       => {
+        cis_security_hardening::dconf_db_entry { '01-banner-message':
+          db       => 'gdm',
+          settings => {
             'org/gnome/login-screen' => {
               'banner-message-enable' => 'true',
               'banner-message-text'   => "'${banner_message}'",
             },
           },
-          locks          => [
+          locks    => [
             '/org/gnome/login-screen/banner-message-enable',
             '/org/gnome/login-screen/banner-message-text',
           ],
         }
 
-        dconf::db { 'gdm-login-screen':
-          db_dir         => "${dconf::db_base_dir}/gdm.d",
-          db_filename    => '00-login-screen',
-          locks_filename => '00-login-screen',
-          settings       => {
+        cis_security_hardening::dconf_db_entry { '00-login-screen':
+          db       => 'gdm',
+          settings => {
             'org/gnome/login-screen' => {
               'disable-user-list' => 'true',
             },
           },
-          locks          => [
+          locks    => [
             '/org/gnome/login-screen/disable-user-list',
           ],
         }

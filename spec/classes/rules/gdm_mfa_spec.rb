@@ -26,24 +26,20 @@ describe 'cis_security_hardening::rules::gdm_mfa' do
           is_expected.to compile
 
           if enforce
-            is_expected.to contain_dconf__db('mfa').
+            is_expected.to contain_cis_security_hardening__dconf_db_entry('06-mfa').
               with(
-                'db_dir'         => '/etc/dconf/db/local.d',
-                'db_filename'    => '06-mfa',
-                'locks_filename' => '06-mfa',
-                'settings'       => {
+                'db' => 'local',
+                'settings' => {
                   'org/gnome/login-screen' => {
                     'enable-smartcard-authentication' => 'true',
                   },
                 },
-                # rubocop:disable Layout/HashAlignment
                 'locks' => [
                   '/org/gnome/login-screen/enable-smartcard-authentication'
                 ]
-                # rubocop:enable Layout/HashAlignment
               )
           else
-            is_expected.not_to contain_dconf__db('mfa')
+            is_expected.not_to contain_cis_security_hardening__dconf_db_entry('06-mfa')
           end
         }
       end
