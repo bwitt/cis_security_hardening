@@ -19,7 +19,7 @@ describe 'cis_security_hardening::rules::chrony' do
             }
           end
 
-          it { is_expected.to create_echo('no ntp servers warning').with_message(%r{You have not defined any ntp servers, time updating may not work unless provided by your network DHCP}) } if enforce && !os_facts[:os]['name'].casecmp('sles').zero?
+          it { is_expected.to create_notify('no ntp servers warning').with_message(%r{You have not defined any ntp servers, time updating may not work unless provided by your network DHCP}) } if enforce && !os_facts[:os]['name'].casecmp('sles').zero?
         end
 
         describe "with ntp servers defined, enforce = #{enforce}" do

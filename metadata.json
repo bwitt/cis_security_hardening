@@ -21,10 +21,6 @@
       "version_requirement": ">= 4.0.0 < 5.0.0"
     },
     {
-      "name": "ipcrm-echo",
-      "version_requirement": ">= 0.1.7 < 1.0.0"
-    },
-    {
       "name": "puppet-augeasproviders_sysctl",
       "version_requirement": ">= 3.3.0 < 5.0.0"
     },

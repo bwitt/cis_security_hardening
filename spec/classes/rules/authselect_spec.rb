@@ -97,7 +97,7 @@ describe 'cis_security_hardening::rules::authselect' do
                 ).
                 that_requires('Exec[select authselect profile]')
 
-              is_expected.to contain_echo('unavailable feature with-bad').
+              is_expected.to contain_notify('unavailable feature with-bad').
                 with(
                   'message'  => 'authselect: unavailable feature with-bad with base profile sssd',
                   'loglevel' => 'warning',
@@ -109,7 +109,7 @@ describe 'cis_security_hardening::rules::authselect' do
               is_expected.not_to contain_exec('enable feature with-sudo')
               is_expected.not_to contain_exec('enable feature with-faillock')
               is_expected.not_to contain_exec('enable feature with-nullok')
-              is_expected.not_to contain_echo('unavailable feature with-bad')
+              is_expected.not_to contain_notify('unavailable feature with-bad')
               is_expected.not_to contain_exec('fix authselect profile')
             end
           }
@@ -168,31 +168,31 @@ describe 'cis_security_hardening::rules::authselect' do
                 is_expected.not_to contain_exec('fix authselect profile')
               end
 
-              is_expected.to contain_echo('unavailable feature with-bad').
+              is_expected.to contain_notify('unavailable feature with-bad').
                 with(
                   'message'  => 'authselect: unavailable feature with-bad with base profile sssd',
                   'loglevel' => 'warning',
                   'withpath' => false
                 )
-              is_expected.to contain_echo('unavailable feature with-sudo').
+              is_expected.to contain_notify('unavailable feature with-sudo').
                 with(
                   'message'  => 'authselect: unavailable feature with-sudo with base profile sssd',
                   'loglevel' => 'warning',
                   'withpath' => false
                 )
-              is_expected.to contain_echo('unavailable feature with-faillock').
+              is_expected.to contain_notify('unavailable feature with-faillock').
                 with(
                   'message'  => 'authselect: unavailable feature with-faillock with base profile sssd',
                   'loglevel' => 'warning',
                   'withpath' => false
                 )
-              is_expected.to contain_echo('unavailable feature without-nullok').
+              is_expected.to contain_notify('unavailable feature without-nullok').
                 with(
                   'message'  => 'authselect: unavailable feature without-nullok with base profile sssd',
                   'loglevel' => 'warning',
                   'withpath' => false
                 )
-              is_expected.to contain_echo('unavailable feature with-pwhistory').
+              is_expected.to contain_notify('unavailable feature with-pwhistory').
                 with(
                   'message'  => 'authselect: unavailable feature with-pwhistory with base profile sssd',
                   'loglevel' => 'warning',
@@ -204,7 +204,7 @@ describe 'cis_security_hardening::rules::authselect' do
               is_expected.not_to contain_exec('unavailable feature with-sudo')
               is_expected.not_to contain_exec('unavailable feature with-faillock')
               is_expected.not_to contain_exec('unavailable feature with-nullok')
-              is_expected.not_to contain_echo('unavailable feature with-bad')
+              is_expected.not_to contain_notify('unavailable feature with-bad')
               is_expected.not_to contain_exec('fix authselect profile')
             end
           }
