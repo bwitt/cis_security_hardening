@@ -23,21 +23,8 @@ describe 'cis_security_hardening::rules::ufw_install' do
               with(
                 'ensure' => 'installed'
               )
-
-            if os_facts[:os]['family'].casecmp('suse').zero?
-              is_expected.to contain_package('iptables-persistent').
-                with(
-                  'ensure' => 'absent'
-                )
-            else
-              is_expected.to contain_package('iptables-persistent').
-                with(
-                  'ensure' => 'purged'
-                )
-            end
           else
             is_expected.not_to contain_package('ufw')
-            is_expected.not_to contain_package('iptables-persistent')
           end
         }
       end

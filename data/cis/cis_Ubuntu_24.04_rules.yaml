@@ -137,6 +137,7 @@ cis_security_hardening::benchmark::ubuntu::v24:
     configure_ufw:
       level1:
         - ufw_install
+        - iptables_persistent
         - ufw_service
         - ufw_loopback
         - ufw_outbound
@@ -265,6 +266,7 @@ cis_security_hardening::benchmark::ubuntu::v24:
         - sudo_use_pty
         - sudo_log
         - sudo_timeout
+        - sudo_passwd_required
         - restrict_su
     configure_pam:
       level1:
@@ -284,6 +286,17 @@ cis_security_hardening::benchmark::ubuntu::v24:
         - umask_setting
         - timeout_setting
         - lock_root
+        - root_umask
+        - login_shell_lock
+        - passwd_last_change_date
+        - passwd_uid_zero
+        - passwd_gid_zero
+        - group_gid_zero
+        - passwd_gid_exists
+        - passwd_duplicate_uid
+        - passwd_duplicate_username
+        - home_dirs_configured
+        - dot_files_configured
     system_file_permissions:
       level1:
         - passwd_perms
@@ -299,3 +312,7 @@ cis_security_hardening::benchmark::ubuntu::v24:
     configure_user_groups:
       level1:
         - shadowed_passwords
+        - shadow_password_empty
+        - shadow_group_empty
+        - group_duplicate_gid
+        - group_duplicate_groupname

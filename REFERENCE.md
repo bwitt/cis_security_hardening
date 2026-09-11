@@ -32,7 +32,13 @@
 * `cis_security_hardening::rules::apparmor_bootloader`: Ensure AppArmor is enabled in the bootloader configuration
 * `cis_security_hardening::rules::apparmor_profiles`: Ensure all AppArmor Profiles are enforcing
 * `cis_security_hardening::rules::apparmor_profiles_enforcing`: Ensure all AppArmor Profiles are in enforce or complain mode
+* `cis_security_hardening::rules::apparmor_restrict_unprivileged`: Ensure kernel.apparmor_restrict_unprivileged_unconfined is enabled
+* `cis_security_hardening::rules::apt_auth_conf_perms`: Ensure access to the /etc/apt/auth.conf.d directory is configured
+* `cis_security_hardening::rules::apt_keyring_perms`: Ensure access to APT gpg key files and keyring directories is configured
+* `cis_security_hardening::rules::apt_repo_options`: Ensure insecure and weak APT repository options are disabled
+* `cis_security_hardening::rules::apt_sources_list_perms`: Ensure access to the /etc/apt/sources.list.d directory is configured
 * `cis_security_hardening::rules::apt_unused`: Ensure the Advance Package Tool removes all software components after updated versions have been installed
+* `cis_security_hardening::rules::apt_weak_dependencies`: Ensure APT weak dependencies are not installed
 * `cis_security_hardening::rules::at_restrict`: Ensure at is restricted to authorized users
 * `cis_security_hardening::rules::auditd_access`: Ensure unsuccessful unauthorized file access attempts are collected
 * `cis_security_hardening::rules::auditd_actions`: Ensure system administrator actions (sudolog) are collected
@@ -168,6 +174,7 @@ audited
 * `cis_security_hardening::rules::dmesg_restrict`: Ensure the operating system is configured to restrict access to the kernel message buffer
 * `cis_security_hardening::rules::dns`: Ensure DNS is servers are configured
 * `cis_security_hardening::rules::dnsmasq`: Ensure dnsmasq is not installed (Automated)
+* `cis_security_hardening::rules::dot_files_configured`: Ensure local interactive user dot files access is configured
 * `cis_security_hardening::rules::dovecot`: Ensure IMAP and POP3 server is not enabled
 * `cis_security_hardening::rules::dracut_fips`: Ensure NIST FIPS-validated cryptography is configured
 * `cis_security_hardening::rules::enable_aslr`: Ensure address space layout randomization (ASLR) is enabled
@@ -187,7 +194,7 @@ audited
 * `cis_security_hardening::rules::firewire_core`: @summary#    Ensure the operating system disables the ability to load the firewire-core kernel module  The operating system must disable IEEE
 * `cis_security_hardening::rules::freevxfs`: Ensure mounting of freevxfs filesystems is disabled
 * `cis_security_hardening::rules::ftp`: Ensure FTP Server is not installed
-* `cis_security_hardening::rules::gdm_auto_mount`: Ensure automatic mounting of removable media is disabled
+* `cis_security_hardening::rules::gdm_auto_mount`: Ensure automatic mounting and autorun of removable media is disabled
 * `cis_security_hardening::rules::gdm_autologin`: Ensure automatic logon via GUI is not allowed
 * `cis_security_hardening::rules::gdm_lock_enabled`: Ensure user's session lock is enabled
 * `cis_security_hardening::rules::gdm_mfa`: Ensure users must authenticate users using MFA via a graphical user logon
@@ -195,6 +202,9 @@ audited
 * `cis_security_hardening::rules::gnome_gdm`
 * `cis_security_hardening::rules::gnome_gdm_package`: Ensure GNOME Display Manager is removed
 * `cis_security_hardening::rules::group_bak_perms`: Ensure permissions on /etc/group- are configured
+* `cis_security_hardening::rules::group_duplicate_gid`: Alert when a GID is shared by more than one group
+* `cis_security_hardening::rules::group_duplicate_groupname`: Alert when a group name is shared by more than one group
+* `cis_security_hardening::rules::group_gid_zero`: Alert when a group other than root has GID 0
 * `cis_security_hardening::rules::group_perms`: Ensure permissions on /etc/group are configured
 * `cis_security_hardening::rules::grub_bootloader_config`: Ensure permissions on bootloader config are configured
 * `cis_security_hardening::rules::grub_page_poison`: Ensure GRUB 2 is configured to enable page poisoning to mitigate use-after-free vulnerabilities
@@ -206,6 +216,7 @@ audited
 * `cis_security_hardening::rules::gssproxy`: Ensure the gssproxy package has not been installed on the system
 * `cis_security_hardening::rules::hfs`: Ensure mounting of hfs filesystems is disabled
 * `cis_security_hardening::rules::hfsplus`: Ensure mounting of hfsplus filesystems is disabled
+* `cis_security_hardening::rules::home_dirs_configured`: Ensure local interactive user home directories are configured
 * `cis_security_hardening::rules::home_grpquota`: Ensure grpquota option set on /home partition
 * `cis_security_hardening::rules::home_nodev`: Ensure nodev option set on /home partition
 * `cis_security_hardening::rules::home_noexec`: Ensure file systems that contain user home directories are mounted with the "noexec" option
@@ -216,6 +227,7 @@ audited
 * `cis_security_hardening::rules::ignore_bogus_icmp_responses`: Ensure bogus ICMP responses are ignored
 * `cis_security_hardening::rules::ignore_icmp_broadcast`: Ensure broadcast ICMP requests are ignored
 * `cis_security_hardening::rules::inactive_password_lock`: Ensure inactive password lock is 0 days
+* `cis_security_hardening::rules::interface_ip_forwarding`: Ensure packet forwarding on network interfaces is disabled
 * `cis_security_hardening::rules::ip6tables_deny_policy`: Ensure default deny firewall policy
 * `cis_security_hardening::rules::ip6tables_loopback`: Ensure loopback traffic is configured
 * `cis_security_hardening::rules::ip6tables_open_ports`: Ensure IPv6 firewall rules exist for all open ports
@@ -226,6 +238,7 @@ audited
 * `cis_security_hardening::rules::iptables_loopback`: Ensure loopback traffic is configured
 * `cis_security_hardening::rules::iptables_open_ports`: Ensure firewall rules exist for all open ports
 * `cis_security_hardening::rules::iptables_outbound_established`: Ensure outbound and established connections are configured
+* `cis_security_hardening::rules::iptables_persistent`: Ensure iptables-persistent is not installed with ufw
 * `cis_security_hardening::rules::ipv6_router_advertisements`: Ensure IPv6 router advertisements are not accepted
 * `cis_security_hardening::rules::issue_net_perms`: Ensure permissions on /etc/issue.net are configured
 * `cis_security_hardening::rules::issue_perms`: Ensure permissions on /etc/issue are configured
@@ -246,6 +259,7 @@ audited
 * `cis_security_hardening::rules::logfile_permissions`: Ensure permissions on all logfiles are configured
 * `cis_security_hardening::rules::login_create_home`: Ensure upon user creation a home directory is assigned.
 * `cis_security_hardening::rules::login_fail_delay`: Ensure delay between logon prompts on failure
+* `cis_security_hardening::rules::login_shell_lock`: Ensure accounts without a valid login shell are locked
 * `cis_security_hardening::rules::logrotate`: Ensure logrotate is configured
 * `cis_security_hardening::rules::logrotate_configuration`: Ensure logrotate assigns appropriate permissions
 * `cis_security_hardening::rules::mcstrans`: Ensure the MCS Translation Service (mcstrans) is not installed
@@ -291,11 +305,17 @@ audited
 * `cis_security_hardening::rules::pam_pw_requirements`: Ensure password creation requirements are configured
 * `cis_security_hardening::rules::pam_use_mappers`: Ensure authenticated identity is mapped to the user or group account for PKI-based authentication
 * `cis_security_hardening::rules::passwd_bak_perms`: Ensure permissions on /etc/group- are configured
+* `cis_security_hardening::rules::passwd_duplicate_uid`: Alert when a UID is shared by more than one account
+* `cis_security_hardening::rules::passwd_duplicate_username`: Alert when a user name is shared by more than one account
 * `cis_security_hardening::rules::passwd_expiration`: Ensure password expiration is 365 days or less
+* `cis_security_hardening::rules::passwd_gid_exists`: Alert when a user's GID does not exist in /etc/group
+* `cis_security_hardening::rules::passwd_gid_zero`: Alert when an account other than root has GID 0 as its primary group
 * `cis_security_hardening::rules::passwd_inactive_days`: Ensure inactive password lock is 30 days or less
+* `cis_security_hardening::rules::passwd_last_change_date`: Alert when a user's last password change date is in the future
 * `cis_security_hardening::rules::passwd_min_days`: Ensure minimum days between password changes is 7 or more
 * `cis_security_hardening::rules::passwd_perms`: Ensure permissions on /etc/passwd are configured
 * `cis_security_hardening::rules::passwd_sha512`: Ensure ENCRYPT_METHOD is SHA512
+* `cis_security_hardening::rules::passwd_uid_zero`: Alert when an account other than root has UID 0
 * `cis_security_hardening::rules::passwd_warn_days`: Ensure password expiration warning days is 7 or more
 * `cis_security_hardening::rules::perf_event_paranoid`: .   Ensure the operating system is configured to prevent kernel profiling by unprivileged users  The operating system must prevent kernel pro
 * `cis_security_hardening::rules::pki_certs_validation`: Ensure certificates are validated by constructing a certification path to an accepted trust anchor
@@ -309,6 +329,8 @@ audited
 * `cis_security_hardening::rules::rng_tools`: Ensure the system has the packages required to enable the hardware random number generator entropy gatherer service
 * `cis_security_hardening::rules::rngd`: Ensure the operating system has enabled the hardware random number generator entropy gatherer service
 * `cis_security_hardening::rules::root_gid`: Ensure default group for the root account is GID 0
+* `cis_security_hardening::rules::root_umask`: Ensure root user umask is configured
+* `cis_security_hardening::rules::route_localnet`: Ensure net.ipv4.conf.all.route_localnet is disabled
 * `cis_security_hardening::rules::rpcbind`: Ensure rpcbind is not installed or the rpcbind services are masked
 * `cis_security_hardening::rules::rsh_client`: Ensure rsh client is not installed
 * `cis_security_hardening::rules::rsh_server`: Ensure rsh-server is not installed
@@ -329,6 +351,8 @@ audited
 * `cis_security_hardening::rules::setroubleshoot`: Ensure SETroubleshoot is not installed
 * `cis_security_hardening::rules::shadow_bak_perms`: Ensure permissions on /etc/shadow- are configured
 * `cis_security_hardening::rules::shadow_encrypt_sha512`: Ensure password hashing algorithm is SHA-512
+* `cis_security_hardening::rules::shadow_group_empty`: Ensure shadow group is empty
+* `cis_security_hardening::rules::shadow_password_empty`: Ensure /etc/shadow password fields are not empty
 * `cis_security_hardening::rules::shadow_perms`: Ensure permissions on /etc/shadow are configured
 * `cis_security_hardening::rules::shadowed_passwords`: Ensure accounts in /etc/passwd use shadowed passwords
 * `cis_security_hardening::rules::shell_nologin`: Ensure system accounts aresecured
@@ -380,12 +404,14 @@ audited
 * `cis_security_hardening::rules::sudo_installed`: Ensure sudo is installed
 * `cis_security_hardening::rules::sudo_log`: Ensure sudo log file exists
 * `cis_security_hardening::rules::sudo_passwd_required`: Ensure users password required for privilege escalation when using sudo
+* `cis_security_hardening::rules::sudo_reauthentication`: Ensure re-authentication for privilege escalation is not disabled globally
+* `cis_security_hardening::rules::sudo_require_password`: Ensure users must provide password for escalation
 * `cis_security_hardening::rules::sudo_timeout`: Ensure sudo authentication timeout is configured correctly
 * `cis_security_hardening::rules::sudo_use_pty`: Ensure sudo commands use pty
 * `cis_security_hardening::rules::system_cmd_group`: Ensure system command files are group-owned by root
 * `cis_security_hardening::rules::systemd_journal_remote`: Ensure systemd-journal-remote is installed
 * `cis_security_hardening::rules::systemd_journal_remote_config`: Ensure systemd-journal-remote is configured
-* `cis_security_hardening::rules::systemd_journal_remote_receive`: Ensure journald is not configured to receive logs from a remote client (Automated)
+* `cis_security_hardening::rules::systemd_journal_remote_receive`: Ensure systemd-journal-remote service is not in use
 * `cis_security_hardening::rules::systemd_journal_remote_service`: A
 Ensure systemd-journal-remote is enabled
 * `cis_security_hardening::rules::systemd_journald_service`: Ensure journald service is enabled (Automated)
@@ -412,6 +438,7 @@ Ensure systemd-journal-remote is enabled
 * `cis_security_hardening::rules::ufw_service`: Ensure ufw service is enabled
 * `cis_security_hardening::rules::umask_setting`: Ensure default user umask is configured
 * `cis_security_hardening::rules::unprivileged_bpf_disabled`: Ensure the operating system prevents privilege escalation through the kernel by disabling access to the bpf syscall
+* `cis_security_hardening::rules::update_notifier_motd`: Ensure update-notifier-motd.service and update-notifier-motd.timer are not in use
 * `cis_security_hardening::rules::usbguard_package`: Ensure USBGuard is installed on the operating system
 * `cis_security_hardening::rules::usbguard_service`: Ensure the operating system has enabled the use of the USBGuard
 * `cis_security_hardening::rules::user_namespaces`: Ensure the operating system disables the use of user namespaces
@@ -433,6 +460,7 @@ Ensure systemd-journal-remote is enabled
 * `cis_security_hardening::rules::x11_installed`: Ensure X Window System is not installed
 * `cis_security_hardening::rules::xdmcp_config`: Ensure XDCMP is not enabled
 * `cis_security_hardening::rules::xinetd`: Ensure xinetd is not installed
+* `cis_security_hardening::rules::xwayland`: Ensure Xwayland is configured
 * `cis_security_hardening::rules::yum_clean_requirements`: Ensure removal of software components after update
 * `cis_security_hardening::rules::yum_gpgcheck`: Ensure gpgcheck is globally activated
 * `cis_security_hardening::rules::yum_local_gpgcheck`: Ensure software packages have been digitally signed by a Certificate Authority
@@ -461,6 +489,8 @@ Ensure systemd-journal-remote is enabled
 * [`Cis_security_hardening::Nftables_address_families`](#Cis_security_hardening--Nftables_address_families): Valid nftables address families
 * [`Cis_security_hardening::Numbers_letters`](#Cis_security_hardening--Numbers_letters): Check for only numbers and letters
 * [`Cis_security_hardening::Servicename`](#Cis_security_hardening--Servicename): Check service name
+* [`Cis_security_hardening::Shadowgroup`](#Cis_security_hardening--Shadowgroup): A group owner permitted by CIS for the shadow-family files.
+* [`Cis_security_hardening::Shadowmode`](#Cis_security_hardening--Shadowmode): A file mode permitted by CIS for the shadow-family files.
 * [`Cis_security_hardening::Word`](#Cis_security_hardening--Word): Word datatype
 
 ### Tasks
@@ -481,7 +511,7 @@ Ensure systemd-journal-remote is enabled
 * [`check_pass_warn_age`](#check_pass_warn_age): Check password expiration warning days is 7 or more.
 * [`check_root_path_integrety`](#check_root_path_integrety): Check root PATH Integrity.
 * [`check_shadow_group_is_empty`](#check_shadow_group_is_empty): Check shadow group is empty.
-* [`check_shell_timeout`](#check_shell_timeout): Check default user shell timeout is 600 seconds or less.
+* [`check_shell_timeout`](#check_shell_timeout): Check default user shell timeout is 900 seconds or less (configurable via the tmout parameter).
 * [`check_stig_cert_fingerprints`](#check_stig_cert_fingerprints): Check if all certificates match DoD fingerprints.
 * [`check_system_accounts_secured`](#check_system_accounts_secured): Check system accounts are secured.
 * [`check_uid_0_files`](#check_uid_0_files): Check root is the only UID 0 account.
@@ -1255,6 +1285,27 @@ Check service name
 
 Alias of `Pattern[/^[a-zA-Z0-9\.\-_]+$/]`
 
+### <a name="Cis_security_hardening--Shadowgroup"></a>`Cis_security_hardening::Shadowgroup`
+
+The benchmark allows "Gid 0/root or {GID}/shadow" and nothing else.
+
+Note that root and shadow are not interchangeable in practice: setting root
+removes access for setgid-shadow helpers such as unix_chkpwd, which non-root
+PAM uses to read /etc/shadow.
+
+Alias of `Enum['root', 'shadow']`
+
+### <a name="Cis_security_hardening--Shadowmode"></a>`Cis_security_hardening::Shadowmode`
+
+The benchmark asks for "640 or more restrictive", so the owner may have at
+most read and write, the group at most read, and other nothing at all.
+
+Permits 0000, 0200, 0400, 0440, 0600, 0640 and the other combinations that
+set no bit outside 0640. Rejects anything looser, e.g. 0644 (other can read),
+0660 (group can write) or 0740 (owner can execute).
+
+Alias of `Pattern[/\A0[0246][04]0\z/]`
+
 ### <a name="Cis_security_hardening--Word"></a>`Cis_security_hardening::Word`
 
 Word datatype
@@ -1377,7 +1428,7 @@ Check shadow group is empty.
 
 ### <a name="check_shell_timeout"></a>`check_shell_timeout`
 
-Check default user shell timeout is 600 seconds or less.
+Check default user shell timeout is 900 seconds or less (configurable via the tmout parameter).
 
 **Supports noop?** false
 
