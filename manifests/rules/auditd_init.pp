@@ -72,9 +72,12 @@ class cis_security_hardening::rules::auditd_init (
     }
   }
 
+  # Skip the live reload where the audit netlink is unreachable, eg. in a
+  # container. The rules file is still written and is loaded at next boot.
   exec { 'reload auditd rules':
     refreshonly => true,
     command     => "auditctl -R ${rules_file}", #lint:ignore:security_class_or_define_parameter_in_exec
     path        => ['/sbin', '/usr/sbin', '/bin', '/usr/bin'],
+    onlyif      => 'test -n "$(auditctl -s)"',
   }
 }

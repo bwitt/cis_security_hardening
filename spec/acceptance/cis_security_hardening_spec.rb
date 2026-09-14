@@ -19,6 +19,23 @@ describe 'cis_security_hardening class' do
       apply_manifest(pp, catch_changes: true)
     end
 
+    describe 'auditd rules' do
+      it 'writes the audit rules file' do
+        expect(file('/etc/audit/rules.d/cis_security_hardening.rules')).to be_file
+      end
+
+      it 'includes the buffer size and the fragments from individual rules' do
+        rules = shell('cat /etc/audit/rules.d/cis_security_hardening.rules').stdout
+        expect(rules).to match(%r{^-b \d+$})
+        expect(rules).to match(%r{-w /etc/sudoers})
+      end
+
+      it 'does not make the audit config immutable' do
+        rules = shell('cat /etc/audit/rules.d/cis_security_hardening.rules').stdout
+        expect(rules).not_to match(%r{^-e 2$})
+      end
+    end
+
     describe 'dev_shm rules' do
       it 'adds exactly one /dev/shm entry to fstab' do
         expect(shell('grep -c "[[:space:]]/dev/shm[[:space:]]" /etc/fstab').stdout.strip).to eq('1')
