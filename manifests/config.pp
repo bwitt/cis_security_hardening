@@ -58,15 +58,7 @@ class cis_security_hardening::config (
     if fact('cis_security_hardening.puppet_agent_postrun') != "postrun_command = ${fact_upload_command}" {
       file_line { 'append postrun command agent':
         path               => '/etc/puppetlabs/puppet/puppet.conf',
-        after              => '[agent]',
-        match              => 'postrun_command\s*=',
-        line               => "postrun_command = ${fact_upload_command}",
-        append_on_no_match => true,
-      }
-
-      file_line { 'append postrun command main':
-        path               => '/etc/puppetlabs/puppet/puppet.conf',
-        after              => 'certname\s*=.*',
+        after              => '^\[agent\]',
         match              => 'postrun_command\s*=',
         line               => "postrun_command = ${fact_upload_command}",
         append_on_no_match => true,

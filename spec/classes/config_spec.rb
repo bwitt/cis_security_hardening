@@ -61,20 +61,13 @@ describe 'cis_security_hardening::config' do
             is_expected.to contain_file_line('append postrun command agent').
               with(
                 'path'               => '/etc/puppetlabs/puppet/puppet.conf',
-                'after'              => '[agent]',
+                'after'              => '^\[agent\]',
                 'match'              => 'postrun_command\s*=',
                 'line'               => 'postrun_command = /usr/share/cis_security_hardening/bin/fact_upload.sh',
                 'append_on_no_match' => true
               )
 
-            is_expected.to contain_file_line('append postrun command main').
-              with(
-                'path'               => '/etc/puppetlabs/puppet/puppet.conf',
-                'after'              => 'certname\s*=.*',
-                'match'              => 'postrun_command\s*=',
-                'line'               => 'postrun_command = /usr/share/cis_security_hardening/bin/fact_upload.sh',
-                'append_on_no_match' => true
-              )
+            is_expected.not_to contain_file_line('append postrun command main')
           else
             is_expected.not_to contain_file_line('append postrun command main')
             is_expected.not_to contain_file_line('append postrun command agent')
