@@ -93,7 +93,6 @@ cis_security_hardening::benchmark::almalinux::v8:
         - mta_local
         - tftp_server
         - telnet_server
-        - nfs_utils
     service_clients:
       level1:
         - nis_client

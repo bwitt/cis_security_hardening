@@ -176,10 +176,9 @@ cis_security_hardening::rules::net_snmp::enforce: true
 cis_security_hardening::rules::mta_local::enforce: true
 cis_security_hardening::rules::rsyncd::enforce: true
 cis_security_hardening::rules::nis::enforce: true
-cis_security_hardening::rules::nfs: true
 cis_security_hardening::rules::tftp_server::enforce: true
 cis_security_hardening::rules::telnet_server::enforce: true
-cis_security_hardening::rules::nfs_utils::enforce: true
+cis_security_hardening::rules::nfs::enforce: true
 cis_security_hardening::rules::rngd::enforce: true
 cis_security_hardening::rules::abrt::enforce: true
 cis_security_hardening::rules::sendmail::enforce: true

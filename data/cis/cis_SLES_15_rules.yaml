@@ -71,7 +71,7 @@ cis_security_hardening::benchmark::sles::v15:
         - cups
         - dhcp
         - ldapd
-        - nfs_utils
+        - nfs
         - rpcbind
         - bind
         - vsftp
