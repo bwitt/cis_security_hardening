@@ -532,6 +532,7 @@ cis_security_hardening::rules::pam_pw_requirements::minclass: 4
 cis_security_hardening::rules::pam_pw_requirements::retry: 3
 cis_security_hardening::rules::pam_pw_requirements::dictcheck: false
 cis_security_hardening::rules::pam_pw_requirements::difok: 0
+cis_security_hardening::rules::pam_pw_requirements::enforce_for_root: true
 cis_security_hardening::rules::pam_lockout::enforce: true
 cis_security_hardening::rules::pam_lockout::attempts: 3
 cis_security_hardening::rules::pam_lockout::lockouttime: 900
