@@ -131,13 +131,36 @@ describe 'cis_security_hardening::rules::grub_bootloader_config' do
           is_expected.to compile
 
           if enforce
-            is_expected.to contain_file_line('fix /boot/efi').
+            is_expected.to contain_cis_security_hardening__fstab_entry('/boot/efi').
               with(
-                'ensure'             => 'present',
-                'path'               => '/etc/fstab',
-                'match'              => '^UUID=583bc67c-8dfa-42f2-9022-6d3161d34521\\s+/boot/efi\\s+vfat',
-                'line'               => 'UUID=583bc67c-8dfa-42f2-9022-6d3161d34521  /boot/efi       vfat    umask=0077,fmask=0077,uid=0,gid=0      0        1',
-                'append_on_no_match' => true
+                'mountpoint'   => '/boot/efi',
+                'spec'         => 'UUID=583bc67c-8dfa-42f2-9022-6d3161d34521',
+                'fstype'       => 'vfat',
+                'mountoptions' => ['umask=0077', 'fmask=0077', 'uid=0', 'gid=0'],
+                'dump'         => 0,
+                'passno'       => 1
+              )
+            is_expected.not_to contain_file_line('fix /boot/efi')
+
+            # The entry has to be addressed by mountpoint, that is what removes duplicates
+            is_expected.to contain_augeas('/etc/fstab - single entry for /boot/efi').
+              with_changes(
+                [
+                  "rm *[file = '/boot/efi']",
+                  'set 01/spec UUID=583bc67c-8dfa-42f2-9022-6d3161d34521',
+                  'set 01/file /boot/efi',
+                  'set 01/vfstype vfat',
+                  'set 01/opt[1] umask',
+                  'set 01/opt[1]/value 0077',
+                  'set 01/opt[2] fmask',
+                  'set 01/opt[2]/value 0077',
+                  'set 01/opt[3] uid',
+                  'set 01/opt[3]/value 0',
+                  'set 01/opt[4] gid',
+                  'set 01/opt[4]/value 0',
+                  'set 01/dump 0',
+                  'set 01/passno 1',
+                ]
               )
 
             if os_facts[:os]['family'].casecmp('redhat').zero?
@@ -207,7 +230,38 @@ describe 'cis_security_hardening::rules::grub_bootloader_config' do
             is_expected.not_to contain_file('/boot/grub2/grubenv')
             is_expected.not_to contain_file('/boot/grub2/user.cfg')
             is_expected.not_to contain_file_line('fix /boot/efi')
+            is_expected.not_to contain_cis_security_hardening__fstab_entry('/boot/efi')
           end
+        }
+      end
+
+      context "on #{os} with enforce = #{enforce}, efi boot and no partition uuid" do
+        let(:facts) do
+          os_facts.merge(
+            'cis_security_hardening' => {
+              'efi' => true,
+            },
+            'mountpoints' => {
+              '/boot/efi' => {
+                'device' => '/dev/sda1',
+                'filesystem' => 'vfat',
+                'options' => %w[rw relatime],
+              },
+            },
+            'partitions' => {}
+          )
+        end
+        let(:params) do
+          {
+            'enforce' => enforce,
+          }
+        end
+
+        # A missing uuid would produce "UUID=" as the device, fstab must be left alone
+        it {
+          is_expected.to compile
+          is_expected.not_to contain_cis_security_hardening__fstab_entry('/boot/efi')
+          is_expected.not_to contain_augeas('/etc/fstab - single entry for /boot/efi')
         }
       end
     end
