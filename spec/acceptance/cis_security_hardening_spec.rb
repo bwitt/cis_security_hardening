@@ -40,5 +40,15 @@ describe 'cis_security_hardening class' do
         expect(shell('grep "[[:space:]]/dev/shm[[:space:]]" /etc/fstab').stdout).not_to match(%r{seclabel})
       end
     end
+
+    describe 'passwd_inactive_days' do
+      it 'sets the useradd INACTIVE default' do
+        expect(shell('useradd -D | grep INACTIVE').stdout.strip).to eq('INACTIVE=30')
+      end
+
+      it 'applies the inactive days to root' do
+        expect(shell('getent shadow root | cut -d: -f7').stdout.strip).to eq('30')
+      end
+    end
   end
 end

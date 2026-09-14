@@ -30,16 +30,9 @@ class cis_security_hardening::rules::passwd_inactive_days (
 
     if  $local_users != undef {
       $local_users.each |String $user, Hash $attributes| {
-        if (
-          ($attributes['password_expires_days'] != 'never') and
-          ($attributes['password_expires_days'] != 'password must be changed') and
-          ($attributes['password_inactive_days'] != $inactive_pass_days)
-        ) {
-          # lint:ignore:exec_idempotency Idempotency handled by fact comparison above
-          exec { "chage --inactive ${inactive_pass_days} ${user}":
-            path => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
-          }
-          # lint:endignore
+        exec { "chage --inactive ${inactive_pass_days} ${user}":
+          path   => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
+          unless => "test \"$(getent shadow ${user} | cut -d: -f7)\" = \"${inactive_pass_days}\"",
         }
       }
 
