@@ -152,7 +152,7 @@ cis_security_hardening::benchmark::ubuntu::v26:
       level1:
       - ufw_install
       # dropped from CIS's own Ubuntu 22.04 v3.0.0/24.04 v2.0.0 guidance, but
-      # kept enforced here as an intentional Aurora policy choice
+      # kept enforced here as an intentional policy choice
       - iptables_persistent
       - ufw_service
       - ufw_loopback
@@ -162,8 +162,8 @@ cis_security_hardening::benchmark::ubuntu::v26:
     configure_accounting:
       # auditd_init/log_perms/log_dir_perms/conf_perms/tools_perms moved up
       # from level2 (CIS's current classification) to level1: enforced here
-      # as an intentional Aurora policy choice, matching the older Ubuntu
-      # 24.04 v1.0.0-era classification this bundle was originally built to.
+      # as an intentional policy choice, matching the older Ubuntu 24.04
+      # v1.0.0-era classification this bundle was originally built to.
       level1:
       - auditd_init
       - auditd_log_perms
