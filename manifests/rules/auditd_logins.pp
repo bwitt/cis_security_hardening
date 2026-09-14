@@ -49,7 +49,7 @@ class cis_security_hardening::rules::auditd_logins (
           content => '-w /var/run/faillock -p wa -k logins',
         }
 
-        if $facts['os']['release']['major'] < '12' {
+        if versioncmp($facts['os']['release']['major'], '12') < 0 {
           concat::fragment { 'logins policy rule 3':
             order   => '53',
             target  => $cis_security_hardening::rules::auditd_init::rules_file,

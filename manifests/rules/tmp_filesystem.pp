@@ -47,7 +47,7 @@ class cis_security_hardening::rules::tmp_filesystem (
         $epp = 'tmp.mount.sles.epp'
       }
       'redhat': {
-        unless $facts['os']['release']['major'] >= '8' {
+        unless versioncmp($facts['os']['release']['major'], '8') >= 0 {
           $epp = 'tmp.mount.epp'
         } else {
           $epp = ''

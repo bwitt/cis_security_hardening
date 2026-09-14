@@ -45,7 +45,7 @@ class cis_security_hardening::rules::auditd_system_locale (
         $content_rule1 = '-a always,exit -F arch=b32 -S sethostname,setdomainname -k system-locale'
       }
       'redhat': {
-        if $facts['os']['release']['major'] >= '9' {
+        if versioncmp($facts['os']['release']['major'], '9') >= 0 {
           if  $facts['os']['architecture'] == 'x86_64' or $facts['os']['architecture'] == 'amd64' {
             $content_rule7 = '-a always,exit -F arch=b64 -S sethostname,setdomainname -k system-locale'
           }
@@ -95,7 +95,7 @@ class cis_security_hardening::rules::auditd_system_locale (
     }
 
     if $facts['os']['family'].downcase() == 'debian' {
-      if $facts['os']['release']['major'] > '10' {
+      if versioncmp($facts['os']['release']['major'], '10') > 0 {
         concat::fragment { 'watch network environment rule 8':
           order   => '136',
           target  => $cis_security_hardening::rules::auditd_init::rules_file,
@@ -107,7 +107,7 @@ class cis_security_hardening::rules::auditd_system_locale (
         target  => $cis_security_hardening::rules::auditd_init::rules_file,
         content => '-w /etc/network/ -p wa -k system-locale',
       }
-    } elsif $facts['os']['name'].downcase() == 'redhat' and $facts['os']['release']['major'] >= '9' {
+    } elsif $facts['os']['name'].downcase() == 'redhat' and versioncmp($facts['os']['release']['major'], '9') >= 0 {
       concat::fragment { 'watch network environment rule 8':
         order   => '136',
         target  => $cis_security_hardening::rules::auditd_init::rules_file,

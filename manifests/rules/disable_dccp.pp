@@ -25,7 +25,7 @@ class cis_security_hardening::rules::disable_dccp (
   if $enforce {
     case $facts['os']['name'].downcase() {
       'debian': {
-        if $facts['os']['release']['major'] > '10' {
+        if versioncmp($facts['os']['release']['major'], '10') > 0 {
           $command = '/bin/false'
           kmod::blacklist { 'dccp': }
         } else {
@@ -33,7 +33,7 @@ class cis_security_hardening::rules::disable_dccp (
         }
       }
       'ubuntu': {
-        if $facts['os']['release']['major'] >= '20' {
+        if versioncmp($facts['os']['release']['major'], '20') >= 0 {
           $command = '/bin/false'
           kmod::blacklist { 'dccp': }
         } else {

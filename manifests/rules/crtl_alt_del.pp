@@ -28,7 +28,7 @@ class cis_security_hardening::rules::crtl_alt_del (
       notify  => Exec['systemd-daemon-reload'],
     }
 
-    if $facts['os']['name'].downcase() == 'redhat' and $facts['os']['release']['major'] >= '8' {
+    if $facts['os']['name'].downcase() == 'redhat' and versioncmp($facts['os']['release']['major'], '8') >= 0 {
       file_line { 'ctrl-alt-del-burst':
         ensure             => present,
         path               => '/etc/systemd/system.conf',

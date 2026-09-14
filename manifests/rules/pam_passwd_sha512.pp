@@ -32,7 +32,7 @@ class cis_security_hardening::rules::pam_passwd_sha512 (
 
     case $facts['os']['family'].downcase() {
       'redhat': {
-        if $facts['os']['release']['major'] > '7' {
+        if versioncmp($facts['os']['release']['major'], '7') > 0 {
           $profile = fact('cis_security_hardening.authselect.profile')
           if $profile != undef and $profile != 'none' {
             $pf_path = "/etc/authselect/custom/${profile}"
@@ -65,7 +65,7 @@ class cis_security_hardening::rules::pam_passwd_sha512 (
         }
       }
       'debian': {
-        if ($facts['os']['name'].downcase() == 'debian' and $facts['os']['release']['major'] > '10') {
+        if ($facts['os']['name'].downcase() == 'debian' and versioncmp($facts['os']['release']['major'], '10') > 0) {
           $keyring = fact('cis_security_hardening.gnome_keyring.installed')
           $src_file = fact('cis_security_hardening.gnome_keyring.installed') ? {
             default  => 'puppet:///modules/cis_security_hardening/pam_lockout/debian/common-password',
@@ -88,7 +88,7 @@ class cis_security_hardening::rules::pam_passwd_sha512 (
             append_on_no_match => true,
             require            => Class['cis_security_hardening::rules::pam_pw_requirements'],
           }
-        } elsif  ($facts['os']['name'].downcase() == 'ubuntu' and $facts['os']['release']['major'] >= '22') {
+        } elsif  ($facts['os']['name'].downcase() == 'ubuntu' and versioncmp($facts['os']['release']['major'], '22') >= 0) {
           file_line { 'set crypt method':
             ensure             => present,
             path               => '/etc/login.defs',

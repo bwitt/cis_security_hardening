@@ -79,7 +79,7 @@ class cis_security_hardening::rules::gnome_gdm (
         }
       }
       'debian': {
-        if $facts['os']['release']['major'] > '10' {
+        if versioncmp($facts['os']['release']['major'], '10') > 0 {
           dconf::profile { 'cis':
             entries => {
               'user'                                  => {

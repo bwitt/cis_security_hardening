@@ -23,7 +23,7 @@ class cis_security_hardening::rules::freevxfs (
   if $enforce {
     case $facts['os']['name'].downcase() {
       'ubuntu': {
-        if $facts['os']['release']['major'] >= '20' {
+        if versioncmp($facts['os']['release']['major'], '20') >= 0 {
           kmod::install { 'freevxfs':
             command => '/bin/false',
           }
@@ -41,7 +41,7 @@ class cis_security_hardening::rules::freevxfs (
         kmod::blacklist { 'freevxfs': }
       }
       'debian': {
-        if $facts['os']['release']['major'] >= '12' {
+        if versioncmp($facts['os']['release']['major'], '12') >= 0 {
           kmod::install { 'freevxfs':
             command => '/bin/false',
           }

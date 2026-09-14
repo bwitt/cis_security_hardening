@@ -61,7 +61,7 @@ class cis_security_hardening::rules::pam_lockout (
           $pf_path = ''
         }
 
-        if $facts['os']['release']['major'] > '7' {
+        if versioncmp($facts['os']['release']['major'], '7') > 0 {
           if $facts['os']['release']['major'] == '8' {
             $services.each | $service | {
               $pf_file = "${pf_path}/${service}"
@@ -212,8 +212,8 @@ class cis_security_hardening::rules::pam_lockout (
         }
       }
       'debian': {
-        if ($facts['os']['name'].downcase() == 'debian' and $facts['os']['release']['major'] > '10') or
-        ($facts['os']['name'].downcase() == 'ubuntu' and $facts['os']['release']['major'] >= '22') {
+        if ($facts['os']['name'].downcase() == 'debian' and versioncmp($facts['os']['release']['major'], '10') > 0) or
+        ($facts['os']['name'].downcase() == 'ubuntu' and versioncmp($facts['os']['release']['major'], '22') >= 0) {
           require cis_security_hardening::rules::pam_pw_requirements
 
           $_os = $facts['os']['name'].downcase()

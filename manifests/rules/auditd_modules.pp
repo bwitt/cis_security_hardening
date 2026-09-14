@@ -45,7 +45,7 @@ class cis_security_hardening::rules::auditd_modules (
       content => '-w /sbin/modprobe -p x -k modules',
     }
 
-    if $facts['os']['family'].downcase == 'redhat' and $facts['os']['release']['major'] >= '9' {
+    if $facts['os']['family'].downcase == 'redhat' and versioncmp($facts['os']['release']['major'], '9') >= 0 {
       $key = '-F key=modules'
     } else {
       $key = '-k modules'

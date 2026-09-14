@@ -50,7 +50,7 @@ class cis_security_hardening::rules::crypto_policy (
     $facts['os']['name'].downcase() == 'centos' or
     $facts['os']['name'].downcase() == 'almalinux' or
     $facts['os']['name'].downcase() == 'rocky'
-  ) and $facts['os']['release']['major'] >= '8' {
+  ) and versioncmp($facts['os']['release']['major'], '8') >= 0 {
     $policy = fact('cis_security_hardening.crypto_policy.policy') == undef ? {
       true    => 'undefined',
       default => fact('cis_security_hardening.crypto_policy.policy'),

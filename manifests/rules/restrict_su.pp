@@ -34,7 +34,7 @@ class cis_security_hardening::rules::restrict_su (
   Cis_security_hardening::Word $sudo_group = 'wheel',
 ) {
   if($enforce) {
-    if $facts['os']['family'].downcase() == 'redhat'and $facts['os']['release']['major'] >= '9' {
+    if $facts['os']['family'].downcase() == 'redhat'and versioncmp($facts['os']['release']['major'], '9') >= 0 {
       $args = ['use_uid']
     } else {
       $args = ['use_uid',"group=${sudo_group}"]

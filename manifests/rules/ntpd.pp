@@ -92,7 +92,7 @@ class cis_security_hardening::rules::ntpd (
         ensure => stopped,
         enable => false,
       })
-      $ntp_file = if $facts['os']['name'].downcase() == 'debian' and $facts['os']['release']['major'] >= '12' {
+      $ntp_file = if $facts['os']['name'].downcase() == 'debian' and versioncmp($facts['os']['release']['major'], '12') >= 0 {
         '/etc/init.d/ntpsec'
       } else {
         '/etc/init.d/ntp'
