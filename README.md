@@ -8,6 +8,7 @@
     * [Deprecation notices](#deprecation-notices)
 4. [Setup - The basics of getting started with cis_security_hardening](#setup)
     * [What cis_security_hardening affects](#what-cis_security_hardening-affects)
+    * [Enforcement is on by default](#enforcement-is-on-by-default)
     * [Setup requirements](#setup-requirements)
     * [Beginning with cis_security_hardening](#beginning-with-cis_security_hardening)
     * [Cronjobs](#cronjobs)
@@ -126,6 +127,21 @@ information for applying the rules. Some information is collected with cronjobs
 once a day as these jobs might run for a long time (e. g. searching filesystems
 for s-bit programs).
 
+### Enforcement is on by default
+
+Each rule class defaults to `enforce => false`, but this module ships Hiera data
+for every supported OS in `data/cis/cis_<OS>_<release>_params.yaml` which sets
+`enforce: true` for (nearly) all rules. This data is part of the module's own
+Hiera layer, so simply including `cis_security_hardening` on a supported OS will
+enforce the CIS benchmark rules for that OS.
+
+To opt out, set the rule's parameter to `false` in your own Hiera data, which
+takes precedence over the module's data:
+
+```hiera
+cis_security_hardening::rules::cramfs::enforce: false
+```
+
 ### Setup Requirements
 
 The *cis_security_hardening* module needs several other Puppet modules. These modules are defined in the
@@ -147,7 +163,9 @@ or
 include cis_security_hardening
 ```
 
-The `data` folder contains example Hiera definitions for various operation systems.
+The `data` folder is the module's Hiera layer; it holds the
+benchmark definitions for every supported OS and is looked up automatically. See
+[Enforcement is on by default](#enforcement-is-on-by-default).
 
 ### Cronjobs
 
@@ -204,9 +222,9 @@ cis_security_hardening::rules::fat::enforce: false
 cis_security_hardening::rules::udf::enforce: true
 ```
 
-The `data` folder contains files named `*_param.yaml` which contain all
-configurable options for each benchmark. You also can look into the reference
-documentation.
+The module's own `data/cis/*_params.yaml` files contain all configurable options for
+each benchmark and are applied automatically; anything you set in your own Hiera
+overrides them. You also can look into the reference documentation.
 
 ## Reference
 
@@ -316,6 +334,13 @@ This module was originally created and maintained by Thomas Krieger.
 ## Development
 
 Contributions are welcome in any form, pull requests and issues should be filed via GitHub.
+
+When adding a new rule class, keep the class default at `enforce => false`. Then,
+for each OS the rule applies to, list it in the appropriate bundle of
+`data/cis/cis_<OS>_<release>_rules.yaml` and add
+`cis_security_hardening::rules::<rule>::enforce: true` to the matching
+`_params.yaml`. When adding a new OS, add both files the same way. This keeps
+enforcement explicit per OS in Hiera rather than implicit in the code.
 
 ## Changelog
 
