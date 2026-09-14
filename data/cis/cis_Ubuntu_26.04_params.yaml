@@ -62,6 +62,7 @@ cis_security_hardening::rules::aide_notify_admins::enforce: true
 
 cis_security_hardening::rules::grub_password::enforce: false
 cis_security_hardening::rules::grub_bootloader_config::enforce: true
+cis_security_hardening::rules::single_user_mode::enforce: true
 
 cis_security_hardening::rules::enable_aslr::enforce: true
 cis_security_hardening::rules::ptrace_scope::enforce: true
