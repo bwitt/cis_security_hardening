@@ -33,8 +33,12 @@ class cis_security_hardening::rules::pam_passwd_sha512 (
     case $facts['os']['family'].downcase() {
       'redhat': {
         if $facts['os']['release']['major'] > '7' {
-          $profile = fact('cis_security_hardening.authselect.profile')
-          if $profile != undef and $profile != 'none' {
+          include cis_security_hardening::rules::authselect
+          $profile = $cis_security_hardening::rules::authselect::enforce ? {
+            true    => $cis_security_hardening::rules::authselect::custom_profile,
+            default => '',
+          }
+          if $profile != undef and $profile != '' {
             $pf_path = "/etc/authselect/custom/${profile}"
 
             $services.each | $service | {
@@ -45,6 +49,7 @@ class cis_security_hardening::rules::pam_passwd_sha512 (
                 path    => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
                 onlyif  => "test -z \"\$(grep -E '^\\s*password\\s+sufficient\\s+pam_unix.so\\s+.*sha512\\s*.*\$' ${pf_file})\"",
                 notify  => Exec['authselect-apply-changes'],
+                require => Class['cis_security_hardening::rules::authselect'],
               }
             }
           }

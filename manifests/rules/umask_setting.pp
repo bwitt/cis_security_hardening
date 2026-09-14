@@ -150,8 +150,12 @@ class cis_security_hardening::rules::umask_setting (
     $authselect_enforce = lookup('cis_security_hardening::rules::authselect::enforce', Boolean, 'first', false)
     if ($facts['os']['family'].downcase() == 'redhat' and $authselect_enforce) or $facts['os']['family'].downcase() != 'redhat' {
       $services.each |$srv| {
-        $profile = fact('cis_security_hardening.authselect.profile')
-        if $profile != undef and $profile != 'none' {
+        include cis_security_hardening::rules::authselect
+        $profile = $cis_security_hardening::rules::authselect::enforce ? {
+          true    => $cis_security_hardening::rules::authselect::custom_profile,
+          default => '',
+        }
+        if $profile != undef and $profile != '' {
           $pf_path = "/etc/authselect/custom/${profile}"
         } else {
           $pf_path = ''
@@ -170,6 +174,7 @@ class cis_security_hardening::rules::umask_setting (
             match              => '^session\s+optional\s+pam_umask.so',
             append_on_no_match => true,
             notify             => Exec['authselect-apply-changes'],
+            require            => Class['cis_security_hardening::rules::authselect'],
           }
         } else {
           Pam { "pam umask ${srv}":

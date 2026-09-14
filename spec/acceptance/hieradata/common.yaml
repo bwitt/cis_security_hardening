@@ -9,7 +9,6 @@ cis_security_hardening::auto_reboot: false
 
 # Disable things that do not work properly in containers
 cis_security_hardening::rules::apparmor_bootloader::enforce: false
-cis_security_hardening::rules::authselect::enforce: false
 cis_security_hardening::rules::chrony::enforce: false
 cis_security_hardening::rules::enable_aslr::enforce: false
 cis_security_hardening::rules::ptrace_scope::enforce: false

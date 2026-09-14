@@ -50,19 +50,11 @@ class cis_security_hardening::rules::authselect (
       require => Exec['create custom profile'],
     }
 
-    $check = fact('cis_security_hardening.authselect.check') ? {
-      undef   => 0,
-      default => fact('cis_security_hardening.authselect.check'),
-    }
-
-    if $check == 3 {
-      # lint:ignore:exec_idempotency Idempotency handled by fact check ($check == 3)
-      exec { 'fix authselect profile':
-        command => "authselect select custom/${custom_profile} -f",   #lint:ignore:security_class_or_define_parameter_in_exec
-        path    => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
-        require => Exec['create custom profile'],
-      }
-      # lint:endignore
+    exec { 'fix authselect profile':
+      command => "authselect select custom/${custom_profile} -f",   #lint:ignore:security_class_or_define_parameter_in_exec
+      path    => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
+      unless  => 'authselect check',
+      require => Exec['create custom profile'],
     }
 
     $available_features = fact('cis_security_hardening.authselect.available_features') ? {
@@ -74,14 +66,19 @@ class cis_security_hardening::rules::authselect (
         fail("Illegal profile option: ${opt}")
       }
 
-      if $opt in $available_features {
-        exec { "enable feature ${opt}":
-          command => "authselect enable-feature ${opt}",
-          path    => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
-          onlyif  => ["test -d /etc/authselect/custom/${custom_profile}", "test -z \"$(authselect current | grep '${opt}')\""],
-          require => Exec['select authselect profile'],
-        }
-      } else {
+      exec { "enable feature ${opt}":
+        command => "authselect enable-feature ${opt}",
+        path    => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
+        onlyif  => [
+          "test -d /etc/authselect/custom/${custom_profile}",
+          "authselect list-features custom/${custom_profile} | grep -qx ${opt}",
+          "test -z \"$(authselect current | grep '${opt}')\"",
+        ],
+        require => Exec['select authselect profile'],
+      }
+
+      # only warn once the fact is populated
+      if !empty($available_features) and !($opt in $available_features) {
         echo { "unavailable feature ${opt}":
           message  => "authselect: unavailable feature ${opt} with base profile ${base_profile}",
           loglevel => 'warning',
