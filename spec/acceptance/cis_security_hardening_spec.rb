@@ -40,5 +40,9 @@ describe 'cis_security_hardening class' do
         expect(shell('grep "[[:space:]]/dev/shm[[:space:]]" /etc/fstab').stdout).not_to match(%r{seclabel})
       end
     end
+
+    it 'leaves no wireless interface up' do
+      expect(shell('ip link show 2>/dev/null | grep -c "wlan" || true').stdout.strip).to eq('0')
+    end
   end
 end
