@@ -12,18 +12,18 @@
 #    Enforce the rule
 #
 # @param encrypted_root_password
-#    The new root password to be set (has to be encrypted as the OS needs it)
+#    The new root password to be set (has to be encrypted as the OS needs it), wrapped in Sensitive.
 #
 # @example
 #   class { 'cis_security_hardening::rules::root_gid':
 #       enforce => true,
-#       encrypted_root_password => 'encrypted password',
+#       encrypted_root_password => Sensitive('encrypted password'),
 #   }
 #
 # @api private
 class cis_security_hardening::rules::root_gid (
-  Boolean $enforce                          = false,
-  Optional[String] $encrypted_root_password = undef,
+  Boolean $enforce                                     = false,
+  Optional[Sensitive[String]] $encrypted_root_password = undef,
 ) {
   if($enforce) {
     if $encrypted_root_password == undef {

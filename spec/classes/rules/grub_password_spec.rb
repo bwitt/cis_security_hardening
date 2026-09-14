@@ -4,6 +4,12 @@ require 'spec_helper'
 
 enforce_options = [true, false]
 efi_boot = [true, false]
+grub_custom_content = <<~GRUB
+  cat <<EOF
+  set superusers="root"
+  password_pbkdf2 root grub.pbkdf2.sha512.10000.943.....
+  EOF
+GRUB
 
 describe 'cis_security_hardening::rules::grub_password' do
   on_supported_os.each do |os, os_facts|
@@ -32,7 +38,7 @@ describe 'cis_security_hardening::rules::grub_password' do
           let(:params) do
             {
               'enforce' => enforce,
-              'grub_password_pbkdf2' => 'grub.pbkdf2.sha512.10000.943.....',
+              'grub_password_pbkdf2' => sensitive('grub.pbkdf2.sha512.10000.943.....'),
             }
           end
 
@@ -62,10 +68,11 @@ describe 'cis_security_hardening::rules::grub_password' do
               if enforce
                 is_expected.to contain_file("#{grub_path}/user.cfg").
                   with(
-                    'ensure' => 'file',
-                    'owner'  => 'root',
-                    'group'  => 'root',
-                    'mode'   => mode
+                    'ensure'  => 'file',
+                    'owner'   => 'root',
+                    'group'   => 'root',
+                    'mode'    => mode,
+                    'content' => sensitive("GRUB2_PASSWORD=grub.pbkdf2.sha512.10000.943.....\n")
                   ).
                   that_notifies('Exec[bootpw-grub-config]')
 
@@ -80,22 +87,17 @@ describe 'cis_security_hardening::rules::grub_password' do
 
             elsif os_facts[:os]['family'].casecmp('debian').zero?
 
-              command = if efi
-                          "update-grub -o #{grub_path}/grub.cfg"
-                        else
-                          'update-grub'
-                        end
-
               is_expected.not_to contain_file("#{grub_path}/user.cfg")
               is_expected.not_to contain_exec('bootpw-grub-config')
 
               if enforce
                 is_expected.to contain_file('/etc/grub.d/50_custom').
                   with(
-                    'ensure' => 'file',
-                    'owner'  => 'root',
-                    'group'  => 'root',
-                    'mode'   => '0755'
+                    'ensure'  => 'file',
+                    'owner'   => 'root',
+                    'group'   => 'root',
+                    'mode'    => '0755',
+                    'content' => sensitive(grub_custom_content)
                   ).
                   that_notifies('Exec[bootpw-grub-config-ubuntu]')
 
@@ -111,7 +113,7 @@ describe 'cis_security_hardening::rules::grub_password' do
 
                 is_expected.to contain_exec('bootpw-grub-config-ubuntu').
                   with(
-                    'command'     => command,
+                    'command'     => 'update-grub',
                     'path'        => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
                     'refreshonly' => true
                   )
@@ -133,10 +135,11 @@ describe 'cis_security_hardening::rules::grub_password' do
               if enforce
                 is_expected.to contain_file('/etc/grub.d/40_custom').
                   with(
-                    'ensure' => 'file',
-                    'owner' => 'root',
-                    'group' => 'root',
-                    'mode' => '0755'
+                    'ensure'  => 'file',
+                    'owner'   => 'root',
+                    'group'   => 'root',
+                    'mode'    => '0755',
+                    'content' => sensitive(grub_custom_content)
                   ).
                   that_notifies('Exec[bootpw-grub-config-sles]')
 
