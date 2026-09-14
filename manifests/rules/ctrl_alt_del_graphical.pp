@@ -24,16 +24,14 @@ class cis_security_hardening::rules::ctrl_alt_del_graphical (
   $gnome_gdm = fact('cis_security_hardening.gnome_gdm')
   if  $enforce and $gnome_gdm != undef and $gnome_gdm {
     include dconf
-    dconf::db { 'disable-cad':
-      db_dir         => "${dconf::db_base_dir}/local.d",
-      db_filename    => '00-disable-CAD',
-      locks_filename => '00-disable-CAD',
-      settings       => {
+    cis_security_hardening::dconf_db_entry { '00-disable-CAD':
+      db       => 'local',
+      settings => {
         'org/gnome/settings-daemon/plugins/media-keys' => {
           'logout' => '',
         },
       },
-      locks          => [
+      locks    => [
         '/org/gnome/settings-daemon/plugins/media-keys/logout',
       ],
     }

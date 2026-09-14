@@ -27,24 +27,20 @@ describe 'cis_security_hardening::rules::gdm_lock_delay' do
           is_expected.to compile
 
           if enforce
-            is_expected.to contain_dconf__db('lock-delay').
+            is_expected.to contain_cis_security_hardening__dconf_db_entry('02-lock-delay').
               with(
-                'db_dir'         => '/etc/dconf/db/local.d',
-                'db_filename'    => '02-lock-delay',
-                'locks_filename' => '02-lock-delay',
-                'settings'       => {
+                'db' => 'local',
+                'settings' => {
                   'org/gnome/desktop/screensaver' => {
                     'lock-delay' => 'uint32 800',
                   },
                 },
-                # rubocop:disable Layout/HashAlignment
                 'locks' => [
                   '/org/gnome/desktop/screensaver/lock-delay'
                 ]
-                # rubocop:enable Layout/HashAlignment
               )
           else
-            is_expected.not_to contain_dconf__db('lock-delay')
+            is_expected.not_to contain_cis_security_hardening__dconf_db_entry('02-lock-delay')
           end
         }
       end

@@ -468,6 +468,7 @@ Ensure systemd-journal-remote is enabled
 
 ### Defined types
 
+* [`cis_security_hardening::dconf_db_entry`](#cis_security_hardening--dconf_db_entry): Add a keyfile and locks to a dconf database
 * [`cis_security_hardening::parent_dirs`](#cis_security_hardening--parent_dirs): Create directories recursively
 * [`cis_security_hardening::set_mount_options`](#cis_security_hardening--set_mount_options): Change mount options
 * [`cis_security_hardening::unmask_systemd_service`](#cis_security_hardening--unmask_systemd_service): Unmask a systemd service
@@ -1106,6 +1107,53 @@ The script to run
 Default value: `'/usr/share/cis_security_hardening/bin/sticy-world-writable.sh'`
 
 ## Defined types
+
+### <a name="cis_security_hardening--dconf_db_entry"></a>`cis_security_hardening::dconf_db_entry`
+
+dconf::db owns its database directory, so use this where several rules
+contribute settings to the same database.
+
+#### Examples
+
+##### 
+
+```puppet
+cis_security_hardening::dconf_db_entry { '01-lock-enabled':
+  db       => 'local',
+  settings => { 'org/gnome/desktop/screensaver' => { 'lock-enabled' => 'true' } },
+  locks    => ['/org/gnome/desktop/screensaver/lock-enabled'],
+}
+```
+
+#### Parameters
+
+The following parameters are available in the `cis_security_hardening::dconf_db_entry` defined type:
+
+* [`db`](#-cis_security_hardening--dconf_db_entry--db)
+* [`settings`](#-cis_security_hardening--dconf_db_entry--settings)
+* [`locks`](#-cis_security_hardening--dconf_db_entry--locks)
+
+##### <a name="-cis_security_hardening--dconf_db_entry--db"></a>`db`
+
+Data type: `String[1]`
+
+Name of the dconf database, eg local or gdm
+
+##### <a name="-cis_security_hardening--dconf_db_entry--settings"></a>`settings`
+
+Data type: `Optional[Hash]`
+
+Settings to write
+
+Default value: `undef`
+
+##### <a name="-cis_security_hardening--dconf_db_entry--locks"></a>`locks`
+
+Data type: `Optional[Array]`
+
+Keys to lock
+
+Default value: `undef`
 
 ### <a name="cis_security_hardening--parent_dirs"></a>`cis_security_hardening::parent_dirs`
 

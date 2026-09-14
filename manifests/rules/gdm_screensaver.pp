@@ -31,16 +31,14 @@ class cis_security_hardening::rules::gdm_screensaver (
   $gnome_gdm = fact('cis_security_hardening.gnome_gdm')
   if $enforce and $gnome_gdm != undef and $gnome_gdm {
     include dconf
-    dconf::db { 'screensaver-timeout':
-      db_dir         => "${dconf::db_base_dir}/local.d",
-      db_filename    => '03-screensaver-timeout',
-      locks_filename => '03-screensaver-timeout',
-      settings       => {
+    cis_security_hardening::dconf_db_entry { '03-screensaver-timeout':
+      db       => 'local',
+      settings => {
         'org/gnome/desktop/session' => {
           'idle-delay'              => "uint32 ${timeout}",
         },
       },
-      locks          => [
+      locks    => [
         '/org/gnome/desktop/session/idle-delay',
       ],
     }
