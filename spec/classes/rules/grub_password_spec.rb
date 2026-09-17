@@ -62,10 +62,11 @@ describe 'cis_security_hardening::rules::grub_password' do
               if enforce
                 is_expected.to contain_file("#{grub_path}/user.cfg").
                   with(
-                    'ensure' => 'file',
-                    'owner'  => 'root',
-                    'group'  => 'root',
-                    'mode'   => mode
+                    'ensure'  => 'file',
+                    'owner'   => 'root',
+                    'group'   => 'root',
+                    'mode'    => mode,
+                    'content' => "GRUB2_PASSWORD=grub.pbkdf2.sha512.10000.943.....\n"
                   ).
                   that_notifies('Exec[bootpw-grub-config]')
 
@@ -80,11 +81,7 @@ describe 'cis_security_hardening::rules::grub_password' do
 
             elsif os_facts[:os]['family'].casecmp('debian').zero?
 
-              command = if efi
-                          "update-grub -o #{grub_path}/grub.cfg"
-                        else
-                          'update-grub'
-                        end
+              command = 'update-grub'
 
               is_expected.not_to contain_file("#{grub_path}/user.cfg")
               is_expected.not_to contain_exec('bootpw-grub-config')
