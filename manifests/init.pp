@@ -1,17 +1,17 @@
 # @summary
-#    Security baseline enforcement
+#    CIS benchmark enforcement
 #
-# Define a complete security baseline and monitor the rules. The definition of the baseline can be done in Hiera.
-# The purpose of the module is to give the ability to setup complete security baseline which not necessarily have to stick
-# to an industry security guide like the CIS benchmarks.
+# Implements the CIS benchmarks and enforces them by default. The module ships the benchmark definitions for every supported OS in
+# its own Hiera layer, so including this class applies that OS's benchmark with no further configuration.
 #
-# The easiest way to use the module is to put all rule data into a hiera file. For more information please coinsult the README file.
+# Override rules or the level in your own Hiera, which takes precedence. See the README for details.
 #
 # @param profile
-#    The benchmark profile to use. Currently only server profiles are supported.
+#    Benchmark profile. Only the CIS server profiles are implemented.
 # @param level
-#    The CIS Benchmark server security level. Higher levels include all rules of lover levels. Therefore level1 rules are all included
-#    in the level2 rules and stig includes level1 and level 2 rules.
+#    CIS benchmark level: `1` for level 1 server, `2` for level 2 server, `stig` for the CIS STIG benchmark. Levels are cumulative.
+#    The module's Hiera data sets `2` for every supported OS. `stig` only adds rules on RedHat 7, 8, 9 and Ubuntu 20.04; elsewhere
+#    it behaves like `2`.
 # @param update_postrun_command
 #    Update Puppet agent post run command
 # @param fact_upload_command

@@ -3,7 +3,8 @@
 ## Table of Contents
 
 1. [Description](#description)
-2. [Security baseline](#security-baseline)
+2. [CIS levels and what gets enforced](#cis-levels-and-what-gets-enforced)
+    * [STIG level](#stig-level)
 3. [CIS Benchmark Reference](#cis-benchmark-reference)
     * [Deprecation notices](#deprecation-notices)
 4. [Setup - The basics of getting started with cis_security_hardening](#setup)
@@ -27,39 +28,52 @@
 
 ## Description
 
-Define a complete security baseline and monitor the baseline's rules.
-The definition of the baseline should be done in Hiera.
-The purpose of the module is to give the ability to setup a complete security baseline
-which not necessarily have to stick to industry security guides like the CIS
-benchmarks.
+The *cis_security_hardening* module implements the CIS benchmarks and enforces
+them by default. The module ships Hiera data for every supported OS, so
+including the class applies that OS's benchmark with no further configuration.
+See [Enforcement is on by default](#enforcement-is-on-by-default).
 
-The *cis_security_hardening* module does not use benchmark numbers for the class
-names of the rules. These numbers change from OS version to OS version and even
-from benchmark version to benchmark version. One main purpose is to ensure this
-module can be extended by further security settings and monitorings without
-changing the code of this module. Therefore the module uses a generic interface
-to call classes implementing particular security baseline rules.
+Everything the module applies comes from a CIS benchmark. Three levels are
+available: `1`, `2` and `stig`. See
+[CIS levels and what gets enforced](#cis-levels-and-what-gets-enforced).
 
-This module also has the ability to create compliance reports. The reports can be
-created as a Puppet fact uploaded to the Puppet Master or as a CSV file which
-will remain on the servers for later collection.
+Rule classes are not named after benchmark numbers, as those change between OS
+and benchmark versions. Class names are stable and descriptive; the benchmark
+structure lives in Hiera data.
 
-## Security baseline
+## CIS levels and what gets enforced
 
-A security baseline describes how servers in your environment are setup with a
-secure configuration. The baseline may be different for each server class like
-database servers, application or web servers.
+Only the CIS **server** profiles are implemented; `profile` is `Enum['server']`.
+`cis_security_hardening::level` selects one of three levels:
 
-A security baseline can be based on a CIS benchmark but can include more rules
-specific to your environment.
-But depending on server classes not all rules of a CIS benchmark will be used.
-Sometimes the benchmarks contain different ways to achieve a goal, e.g. with
-RedHat 8 you can use firewalld, iptables or nftables to setup a firewall.
-Surely it makes no sense to have all of them running in parallel.
-So it is your task to define a security baseline to define which tool to use or which settings to use.
+* `'1'` -- CIS level 1 server. Baseline hardening.
+* `'2'` -- CIS level 2 server, the **default**. Adds defence-in-depth rules that
+  may affect functionality.
+* `'stig'` -- CIS STIG benchmark. Strictest, and only on some OSes; see
+  [STIG level](#stig-level).
 
-> For this module level 1 and level 2 server tests from the CIS benchmarks below are taken into account.
-> For the STIG benchmarks there's a third level `stig` available as STIG benchmarks are more strict than level 2 is.
+Levels are cumulative, so level 1 is always fully enforced.
+
+Every `data/cis/*_params.yaml` sets `level: '2'`, as does the class parameter.
+For level 1 only:
+
+```hiera
+cis_security_hardening::level: '1'
+```
+
+Where a benchmark offers alternatives -- firewalld, iptables or nftables on
+RedHat -- the Hiera data picks one. Override the rules to change that.
+
+### STIG level
+
+Level `'stig'` is the **CIS STIG Benchmark**, the STIG-aligned profile CIS
+publishes alongside its regular benchmarks. It is a CIS product on the same
+terms; no DoD affiliation is needed. Rule docs quote the `SRG-OS-*` identifiers
+the benchmark cites.
+
+It only adds rules on RedHat 7, 8, 9 and Ubuntu 20.04, and behaves like `'2'`
+elsewhere. Coverage is uneven: beyond level 2, RedHat 8 adds 119 rules, RedHat 7
+adds 68, Ubuntu 20.04 adds 63 and RedHat 9 adds 1.
 
 ## CIS Benchmark Reference
 
@@ -90,6 +104,9 @@ The code of this security hardening module is based on the following CIS Benchma
 | Rocky Linux 8| CIS Rocky Linux 8 Benchmark                                  | 1.0.0   | 03-29-2022 |
 | Rocky Linux 9| CIS Rocky Linux 9 Benchmark                                  | 1.0.0   | 12-13-2022 |
 
+Rows marked *STIG Benchmark* supply the extra rules for level `'stig'`; the
+others supply the level 1 and level 2 rules.
+
 The benchmarks can be found at [CIS Benchmarks Website](https://downloads.cisecurity.org/).
 
 ### Deprecation notices
@@ -101,16 +118,17 @@ The benchmarks can be found at [CIS Benchmarks Website](https://downloads.cisecu
 
 ## Setup
 
-It is highly recommended to have the complete security baseline definition
-written in Hiera definitions. This enables you to have different security
-baselines for groups of servers, environments or even special single servers.
+No configuration is needed on a supported OS; the module carries the benchmark
+definitions in its own Hiera layer. Put any deviations -- a different level, or
+rules turned off -- in your own Hiera, per group of servers, per environment or
+per host.
 
 ### What cis_security_hardening affects
 
 The *cis_security_hardening* module has a parameter `enforce` for each rule. If
 this parameter is set to true all necessary changes are made to make a server
-compliant to the security baseline rules. This can have severe impacts to the
-machines, especially if security settings are defined in a wrong way.
+compliant to that benchmark rule. This can have severe impacts to the machines,
+especially if security settings are defined in a wrong way.
 > Please test your settings before rolling out to production environments.
 
 Some rules have additional parameters available to get a fine grained configuration in place.
@@ -129,17 +147,27 @@ for s-bit programs).
 
 ### Enforcement is on by default
 
-Each rule class defaults to `enforce => false`, but this module ships Hiera data
-for every supported OS in `data/cis/cis_<OS>_<release>_params.yaml` which sets
-`enforce: true` for (nearly) all rules. This data is part of the module's own
-Hiera layer, so simply including `cis_security_hardening` on a supported OS will
-enforce the CIS benchmark rules for that OS.
+Two things decide whether a rule takes effect:
 
-To opt out, set the rule's parameter to `false` in your own Hiera data, which
-takes precedence over the module's data:
+1. **The level** selects which bundles are included; only rule classes listed in
+   those bundles are applied.
+2. **The rule's `enforce` parameter** decides whether an included rule changes
+   anything. Every rule class defaults to `enforce => false`.
+
+`data/cis/cis_<OS>_<release>_params.yaml` sets `level: '2'` and `enforce: true`
+for (nearly) all rules. This is the module's own Hiera layer, so including
+`cis_security_hardening` on a supported OS enforces CIS level 2 for that OS.
+
+Your own Hiera takes precedence. To drop one rule:
 
 ```hiera
 cis_security_hardening::rules::cramfs::enforce: false
+```
+
+To drop a tier, lower the level:
+
+```hiera
+cis_security_hardening::level: '1'
 ```
 
 ### Setup Requirements
@@ -150,7 +178,7 @@ The *cis_security_hardening* module needs several other Puppet modules. These mo
 
 ### Beginning with cis_security_hardening
 
-The most easiest way to use the security baseline module is just calling the class or including the class.
+The easiest way to use the module is just calling the class or including the class.
 
 ```puppet
 class { 'cis_security_hardening':
@@ -186,9 +214,8 @@ This cronjob searched privileged commands to be included into auditd rules.
 
 ## Usage
 
-The most easiest way to use the security baseline module is just calling the
-class or including the class. The security baseline data has to be defined in a
-Hiera configuration file.
+The easiest way to use the module is just calling or including the class. On a
+supported OS that is enough; the benchmark data ships with the module.
 
 ```puppet
 class { 'cis_security_hardening':
@@ -202,7 +229,8 @@ or
 include ::cis_security_hardening
 ```
 
-Hiera data:
+No Hiera data is required on a supported OS. To change the defaults, override
+them in your own Hiera:
 
 ```hiera
 ---

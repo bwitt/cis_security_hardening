@@ -3,6 +3,7 @@
   "version": "1.0.2-rc0",
   "author": "Brian Witt",
   "summary": "Secure your systems according to CIS benchmarks",
+  "description": "Implements the CIS benchmarks and enforces them by default. The module ships benchmark definitions for every supported OS in its own Hiera layer, so including the cis_security_hardening class applies that OS's CIS level 2 server benchmark. Levels 1, 2 and the CIS STIG benchmark are selectable, and rules can be overridden in your own Hiera.",
   "license": "Apache-2.0",
   "source": "https://github.com/bwitt/cis_security_hardening.git",
   "project_page": "https://github.com/bwitt/cis_security_hardening",
