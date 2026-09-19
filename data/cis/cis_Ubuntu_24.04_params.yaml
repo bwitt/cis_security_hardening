@@ -222,7 +222,7 @@ cis_security_hardening::rules::ufw_open_ports::firewall_rules:
 cis_security_hardening::rules::ufw_default_deny::enforce: true
 cis_security_hardening::rules::ufw_default_deny::default_incoming: deny
 cis_security_hardening::rules::ufw_default_deny::default_outgoing: allow
-cis_security_hardening::rules::ufw_default_deny::routed: deny
+cis_security_hardening::rules::ufw_default_deny::default_routed: deny
 
 cis_security_hardening::rules::nftables_install::enforce: false
 cis_security_hardening::rules::nftables_flush_iptables::enforce: false
