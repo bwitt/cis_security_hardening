@@ -139,7 +139,7 @@ cis_security_hardening::rules::avahi::enforce: true
 cis_security_hardening::rules::cups::enforce: true
 cis_security_hardening::rules::dhcp::enforce: true
 cis_security_hardening::rules::ldapd::enforce: true
-cis_security_hardening::rules::nfs_utils::enforce: true
+cis_security_hardening::rules::nfs::enforce: true
 cis_security_hardening::rules::bind::enforce: true
 cis_security_hardening::rules::vsftp::enforce: true
 cis_security_hardening::rules::httpd::enforce: true
