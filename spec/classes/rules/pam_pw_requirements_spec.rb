@@ -376,7 +376,8 @@ describe 'cis_security_hardening::rules::pam_pw_requirements' do
                     'control'          => '[success=1 default=ignore]',
                     'control_is_param' => true,
                     'module'           => 'pam_unix.so',
-                    'arguments'        => %w[obscure use_authtok try_first_pass yescrypt]
+                    'arguments'        => %w[obscure use_authtok try_first_pass yescrypt],
+                    'position'         => 'before *[type="password" and module="pam_deny.so"]'
                   )
               else
                 is_expected.to contain_pam('pam-common-password-requisite').

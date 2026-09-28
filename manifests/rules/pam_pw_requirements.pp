@@ -454,6 +454,7 @@ class cis_security_hardening::rules::pam_pw_requirements (
             control_is_param => true,
             module           => 'pam_unix.so',
             arguments        => ['obscure', 'use_authtok', 'try_first_pass', 'yescrypt'],
+            position         => 'before *[type="password" and module="pam_deny.so"]',
           }
         } else {
           Pam { 'pam-common-password-requisite':
