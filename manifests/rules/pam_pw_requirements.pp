@@ -429,13 +429,41 @@ class cis_security_hardening::rules::pam_pw_requirements (
           }
         }
 
-        Pam { 'pam-common-password-requisite':
-          ensure    => present,
-          service   => 'common-password',
-          type      => 'password',
-          control   => 'requisite',
-          module    => 'pam_pwquality.so',
-          arguments => ["retry=${retry}"],
+        if $facts['os']['name'].downcase() == 'ubuntu' and $facts['os']['release']['major'] >= '22' {
+          # pwquality must run before pam_unix saves the password, or the policy is never
+          # checked; `positioned` also moves an entry an older run appended after pam_deny.
+          # The xpath matches pam_pwhistory or pam_unix so it resolves whether or not
+          # pam_old_passwords is enforced.
+          Pam { 'pam-common-password-requisite':
+            ensure    => positioned,
+            service   => 'common-password',
+            type      => 'password',
+            control   => 'requisite',
+            module    => 'pam_pwquality.so',
+            arguments => ["retry=${retry}"],
+            position  => 'before *[type="password" and (module="pam_pwhistory.so" or module="pam_unix.so")][1]',
+          }
+
+          # use_authtok makes pam_unix save the password pwquality/pwhistory already checked
+          # instead of prompting for (and saving) one of its own.
+          Pam { 'pam-common-password-unix-use-authtok':
+            ensure           => present,
+            service          => 'common-password',
+            type             => 'password',
+            control          => '[success=1 default=ignore]',
+            control_is_param => true,
+            module           => 'pam_unix.so',
+            arguments        => ['obscure', 'use_authtok', 'try_first_pass', 'yescrypt'],
+          }
+        } else {
+          Pam { 'pam-common-password-requisite':
+            ensure    => present,
+            service   => 'common-password',
+            type      => 'password',
+            control   => 'requisite',
+            module    => 'pam_pwquality.so',
+            arguments => ["retry=${retry}"],
+          }
         }
       }
       'suse': {
