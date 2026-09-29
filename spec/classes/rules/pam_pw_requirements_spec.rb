@@ -356,15 +356,41 @@ describe 'cis_security_hardening::rules::pam_pw_requirements' do
                   'append_on_no_match' => true
                 )
 
-              is_expected.to contain_pam('pam-common-password-requisite').
-                with(
-                  'ensure'    => 'present',
-                  'service'   => 'common-password',
-                  'type'      => 'password',
-                  'control'   => 'requisite',
-                  'module'    => 'pam_pwquality.so',
-                  'arguments' => ['retry=3']
-                )
+              if os_facts[:os]['name'].casecmp('ubuntu').zero? && os_facts[:os]['release']['major'] >= '22'
+                is_expected.to contain_pam('pam-common-password-requisite').
+                  with(
+                    'ensure'    => 'positioned',
+                    'service'   => 'common-password',
+                    'type'      => 'password',
+                    'control'   => 'requisite',
+                    'module'    => 'pam_pwquality.so',
+                    'arguments' => ['retry=3'],
+                    'position'  => 'before *[type="password" and (module="pam_pwhistory.so" or module="pam_unix.so")][1]'
+                  )
+
+                is_expected.to contain_pam('pam-common-password-unix-use-authtok').
+                  with(
+                    'ensure'           => 'present',
+                    'service'          => 'common-password',
+                    'type'             => 'password',
+                    'control'          => '[success=1 default=ignore]',
+                    'control_is_param' => true,
+                    'module'           => 'pam_unix.so',
+                    'arguments'        => %w[obscure use_authtok try_first_pass yescrypt],
+                    'position'         => 'before *[type="password" and module="pam_deny.so"]'
+                  )
+              else
+                is_expected.to contain_pam('pam-common-password-requisite').
+                  with(
+                    'ensure'    => 'present',
+                    'service'   => 'common-password',
+                    'type'      => 'password',
+                    'control'   => 'requisite',
+                    'module'    => 'pam_pwquality.so',
+                    'arguments' => ['retry=3']
+                  )
+                is_expected.not_to contain_pam('pam-common-password-unix-use-authtok')
+              end
 
               if os_facts[:os]['name'].casecmp('debian').zero? && os_facts[:os]['release']['major'] > '10'
                 is_expected.to contain_package('libpam-pwquality').
