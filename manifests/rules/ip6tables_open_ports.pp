@@ -31,9 +31,13 @@ class cis_security_hardening::rules::ip6tables_open_ports (
 ) {
   if  $enforce and fact('network6') != undef {
     if(empty($firewall_rules)) {
-      $rule10 = fact('cis_security_hardening.ip6tables.policy').filter |$rule, $data| {
-        $data['chain'] == 'INPUT' and $data['proto'] == 'tcp' and $data['dpt'] == '22' and
-        $data['state'] == 'NEW' and $data['target'] == 'ACCEPT'
+      $policy = fact('cis_security_hardening.ip6tables.policy')
+      $rule10 = $policy ? {
+        undef   => {},
+        default => $policy.filter |$rule, $data| {
+          $data['chain'] == 'INPUT' and $data['proto'] == 'tcp' and $data['dpt'] == '22' and
+          $data['state'] == 'NEW' and $data['target'] == 'ACCEPT'
+        },
       }
       if ($rule10.empty) {
         firewall { '010-6 open ssh port inbound':
