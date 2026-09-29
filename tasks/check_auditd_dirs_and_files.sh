@@ -1,5 +1,6 @@
 #!/bin/bash
-# shellcheck disable=SC2154
-stat -c "%n %a" "${PT_audit_dir}" "${PT_audit_dir}"/*
+
+audit_dir="${PT_audit_dir:-/var/log/audit}"
+stat -c "%n %a" "${audit_dir}" "${audit_dir}"/*
 
 exit 0

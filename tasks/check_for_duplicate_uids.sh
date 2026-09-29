@@ -1,12 +1,8 @@
 #!/bin/bash
 
-cut -f3 -d":" /etc/passwd | sort -n | uniq -c | while read -r x; do
-  [ -z "$x" ] && break
-  set - "$x"
-  if [ "$1" -gt 1 ]; then
-    users=$(awk -F: '($3 == n) { print $1 }' n="$2" /etc/passwd | xargs)
-    echo "Duplicate UID ($2): $users"
-  fi
+cut -f3 -d":" /etc/passwd | sort -n | uniq -d | while read -r uid; do
+  users=$(awk -F: -v n="$uid" '($3 == n) { print $1 }' /etc/passwd | xargs)
+  echo "Duplicate UID ($uid): $users"
 done
 
 exit 0

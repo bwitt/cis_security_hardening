@@ -3,7 +3,6 @@
 output1=""
 output2=""
 
-# shellcheck disable=SC2154
 max_tmout="${PT_tmout:-900}"
 
 [ -f /etc/bash.bashrc ] && BRC="/etc/bash.bashrc"
