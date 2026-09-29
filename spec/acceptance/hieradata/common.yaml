@@ -15,7 +15,6 @@ cis_security_hardening::rules::enable_aslr::enforce: false
 cis_security_hardening::rules::ptrace_scope::enforce: false
 cis_security_hardening::rules::restrict_core_dumps::enforce: false
 cis_security_hardening::rules::disable_ipv6::enforce: false
-cis_security_hardening::rules::disable_wireless::enforce: false  # NetworkManager radio reports enabled in Debian 11 container
 cis_security_hardening::rules::fips_bootloader::enforce: false
 cis_security_hardening::rules::grub_bootloader_config::enforce: false
 cis_security_hardening::rules::grub_page_poison::enforce: false
