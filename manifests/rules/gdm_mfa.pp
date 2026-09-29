@@ -29,16 +29,14 @@ class cis_security_hardening::rules::gdm_mfa (
   $gnome_gdm = fact('cis_security_hardening.gnome_gdm')
   if  $enforce and $gnome_gdm != undef and $gnome_gdm {
     include dconf
-    dconf::db { 'mfa':
-      db_dir         => "${dconf::db_base_dir}/local.d",
-      db_filename    => '06-mfa',
-      locks_filename => '06-mfa',
-      settings       => {
+    cis_security_hardening::dconf_db_entry { '06-mfa':
+      db       => 'local',
+      settings => {
         'org/gnome/login-screen' => {
           'enable-smartcard-authentication' => 'true',
         },
       },
-      locks          => [
+      locks    => [
         '/org/gnome/login-screen/enable-smartcard-authentication',
       ],
     }

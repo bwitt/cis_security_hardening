@@ -26,12 +26,10 @@ describe 'cis_security_hardening::rules::gdm_auto_mount' do
           is_expected.to compile
 
           if enforce
-            is_expected.to contain_dconf__db('media-automount').
+            is_expected.to contain_cis_security_hardening__dconf_db_entry('00-media-automount').
               with(
-                'db_dir'         => '/etc/dconf/db/local.d',
-                'db_filename'    => '00-media-automount',
-                'locks_filename' => '00-media-automount',
-                'settings'       => {
+                'db' => 'local',
+                'settings' => {
                   'org/gnome/desktop/media-handling' => {
                     'automount'      => 'false',
                     'automount-open' => 'false',
@@ -46,7 +44,7 @@ describe 'cis_security_hardening::rules::gdm_auto_mount' do
                 ]
               )
           else
-            is_expected.not_to contain_dconf__db('media-automount')
+            is_expected.not_to contain_cis_security_hardening__dconf_db_entry('00-media-automount')
           end
         }
       end
@@ -59,7 +57,7 @@ describe 'cis_security_hardening::rules::gdm_auto_mount' do
 
     it 'compiles cleanly with no resources declared' do
       is_expected.to compile
-      is_expected.not_to contain_dconf__db('media-automount')
+      is_expected.not_to contain_cis_security_hardening__dconf_db_entry('00-media-automount')
     end
   end
 end
