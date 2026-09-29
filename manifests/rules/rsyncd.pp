@@ -42,7 +42,7 @@ class cis_security_hardening::rules::rsyncd (
         })
       }
       'redhat': {
-        if($facts['os']['release']['major'] > '6') {
+        if(versioncmp($facts['os']['release']['major'], '6') > 0) {
           $rsyncd_srv = 'rsyncd'
         } else {
           $rsyncd_srv = 'rsync'

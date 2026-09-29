@@ -242,7 +242,7 @@ class cis_security_hardening::rules::pam_pw_requirements (
         }
 
         $services.each | $service | {
-          if ($facts['os']['release']['major'] > '7') {
+          if (versioncmp($facts['os']['release']['major'], '7') > 0) {
             if $pf_path != '' {
               $pf_file = "${pf_path}/${service}"
 
@@ -282,9 +282,9 @@ class cis_security_hardening::rules::pam_pw_requirements (
       }
       'debian' : {
         if ($facts['os']['name'].downcase() == 'debian' and
-        $facts['os']['release']['major'] > '10') or
+        versioncmp($facts['os']['release']['major'], '10') > 0) or
         ($facts['os']['name'].downcase() == 'ubuntu' and
-        $facts['os']['release']['major'] >= '22') {
+        versioncmp($facts['os']['release']['major'], '22') >= 0) {
           $pkg_opts = {
             ensure => installed,
             notify => Exec['update-pam-config'],

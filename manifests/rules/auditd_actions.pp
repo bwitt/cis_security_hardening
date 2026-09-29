@@ -31,7 +31,7 @@ class cis_security_hardening::rules::auditd_actions (
     }
     case $facts['os']['name'].downcase() {
       'redhat', 'centos', 'almalinux', 'rocky': {
-        if $facts['os']['release']['major'] >= '8' {
+        if versioncmp($facts['os']['release']['major'], '8') >= 0 {
           concat::fragment { 'watch admin actions rule 1':
             order   => 21,
             target  => $cis_security_hardening::rules::auditd_init::rules_file,
@@ -54,7 +54,7 @@ class cis_security_hardening::rules::auditd_actions (
         }
       }
       'ubuntu': {
-        if $facts['os']['release']['major'] >= '20' {
+        if versioncmp($facts['os']['release']['major'], '20') >= 0 {
           concat::fragment { 'watch admin actions rule 1':
             order   => 21,
             target  => $cis_security_hardening::rules::auditd_init::rules_file,
