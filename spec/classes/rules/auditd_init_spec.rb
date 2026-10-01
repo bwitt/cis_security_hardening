@@ -94,7 +94,8 @@ describe 'cis_security_hardening::rules::auditd_init' do
               with(
                 'refreshonly' => true,
                 'command'     => 'auditctl -R /etc/audit/rules.d/cis_security_hardening.rules',
-                'path'        => ['/sbin', '/usr/sbin', '/bin', '/usr/bin']
+                'path'        => ['/sbin', '/usr/sbin', '/bin', '/usr/bin'],
+                'onlyif'      => 'test -n "$(auditctl -s)"'
               )
           }
         end
