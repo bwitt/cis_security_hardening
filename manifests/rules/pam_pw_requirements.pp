@@ -444,15 +444,8 @@ class cis_security_hardening::rules::pam_pw_requirements (
             position  => 'before *[type="password" and (module="pam_pwhistory.so" or module="pam_unix.so")][1]',
           }
 
-          # use_authtok makes pam_unix save the password pwquality/pwhistory already checked
-          # instead of prompting for (and saving) one of its own. This edits whichever
-          # pam_unix password entry pam-auth-update wrote rather than declaring one, because
-          # its control varies with the other modules in the stack (e.g. [success=2 ...] to
-          # jump over pam_sss), and a Pam resource keyed on a fixed control adds a second
-          # pam_unix entry when it doesn't match. That duplicate (added by an earlier
-          # version of this class) is removed: on an SSSD stack the first pam_unix's
-          # success=2 jumps over pam_sss and the duplicate straight to pam_deny, failing
-          # every local password change.
+          # Edit the existing pam_unix entry rather than declaring one: its control varies
+          # (e.g. success=2 to skip pam_sss), so a fixed one adds a duplicate before pam_deny.
           augeas { 'common-password pam_unix use_authtok':
             context => '/files/etc/pam.d/common-password',
             changes => [
