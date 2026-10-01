@@ -41,7 +41,7 @@ class cis_security_hardening::rules::source_routed_packets (
         value  => 0,
     }
 
-    if fact('network6') != undef {
+    if fact('networking.network6') != undef {
       sysctl {
         'net.ipv6.conf.all.accept_source_route':
           ensure => present,
