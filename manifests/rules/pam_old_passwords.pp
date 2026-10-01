@@ -49,9 +49,13 @@ class cis_security_hardening::rules::pam_old_passwords (
           $real_arguments = ['md5', "remember=${oldpasswords}", 'shadow', 'try_first_pass', 'use_authtok']
         }
 
-        $profile = fact('cis_security_hardening.authselect.profile')
+        include cis_security_hardening::rules::authselect
+        $profile = $cis_security_hardening::rules::authselect::enforce ? {
+          true    => $cis_security_hardening::rules::authselect::custom_profile,
+          default => '',
+        }
 
-        if $profile != undef and $profile != 'none' {
+        if $profile != undef and $profile != '' {
           $pf_path = "/etc/authselect/custom/${profile}"
         } else {
           $pf_path = ''
@@ -67,6 +71,7 @@ class cis_security_hardening::rules::pam_old_passwords (
               onlyif  => "test -z '\$(grep -E '^\\s*password\\s+(sufficient\\s+pam_unix|requi(red|site)\\s+pam_pwhistory).so\\s+ ([^#]+\\s+)*remember=\\S+\s*.*\$' ${pf_file})'", #lint:ignore:140chars
               notify  => Exec['authselect-apply-changes'],
               before  => Pam['pam-_unix_sufficient'],
+              require => Class['cis_security_hardening::rules::authselect'],
             }
 
             Pam { 'pam-_unix_sufficient':

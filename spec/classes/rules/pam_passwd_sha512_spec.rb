@@ -80,17 +80,17 @@ describe 'cis_security_hardening::rules::pam_passwd_sha512' do
 
                   is_expected.to contain_exec('update authselect config for sha512 system-auth').
                     with(
-                      'command' => "sed -ri 's/^\\s*(password\\s+sufficient\\s+pam_unix.so\\s+)(.*)$/\\1\\2 sha512/' /etc/authselect/custom/testprofile/system-auth",
+                      'command' => "sed -ri 's/^\\s*(password\\s+sufficient\\s+pam_unix.so\\s+)(.*)$/\\1\\2 sha512/' /etc/authselect/custom/cis/system-auth",
                       'path'    => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
-                      'onlyif'  => "test -z \"$(grep -E '^\\s*password\\s+sufficient\\s+pam_unix.so\\s+.*sha512\\s*.*$' /etc/authselect/custom/testprofile/system-auth)\""
+                      'onlyif'  => "test -z \"$(grep -E '^\\s*password\\s+sufficient\\s+pam_unix.so\\s+.*sha512\\s*.*$' /etc/authselect/custom/cis/system-auth)\""
                     ).
                     that_notifies('Exec[authselect-apply-changes]')
 
                   is_expected.to contain_exec('update authselect config for sha512 password-auth').
                     with(
-                      'command' => "sed -ri 's/^\\s*(password\\s+sufficient\\s+pam_unix.so\\s+)(.*)$/\\1\\2 sha512/' /etc/authselect/custom/testprofile/password-auth",
+                      'command' => "sed -ri 's/^\\s*(password\\s+sufficient\\s+pam_unix.so\\s+)(.*)$/\\1\\2 sha512/' /etc/authselect/custom/cis/password-auth",
                       'path'    => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
-                      'onlyif'  => "test -z \"$(grep -E '^\\s*password\\s+sufficient\\s+pam_unix.so\\s+.*sha512\\s*.*$' /etc/authselect/custom/testprofile/password-auth)\""
+                      'onlyif'  => "test -z \"$(grep -E '^\\s*password\\s+sufficient\\s+pam_unix.so\\s+.*sha512\\s*.*$' /etc/authselect/custom/cis/password-auth)\""
                     ).
                     that_notifies('Exec[authselect-apply-changes]')
                 end
@@ -203,17 +203,17 @@ describe 'cis_security_hardening::rules::pam_passwd_sha512' do
           if enforce
             is_expected.to contain_exec('update authselect config for sha512 system-auth').
               with(
-                'command' => "sed -ri 's/^\\s*(password\\s+sufficient\\s+pam_unix.so\\s+)(.*)$/\\1\\2 sha512/' /etc/authselect/custom/testprofile/system-auth",
+                'command' => "sed -ri 's/^\\s*(password\\s+sufficient\\s+pam_unix.so\\s+)(.*)$/\\1\\2 sha512/' /etc/authselect/custom/cis/system-auth",
                 'path'    => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
-                'onlyif'  => "test -z \"$(grep -E '^\\s*password\\s+sufficient\\s+pam_unix.so\\s+.*sha512\\s*.*$' /etc/authselect/custom/testprofile/system-auth)\""
+                'onlyif'  => "test -z \"$(grep -E '^\\s*password\\s+sufficient\\s+pam_unix.so\\s+.*sha512\\s*.*$' /etc/authselect/custom/cis/system-auth)\""
               ).
               that_notifies('Exec[authselect-apply-changes]')
 
             is_expected.to contain_exec('update authselect config for sha512 password-auth').
               with(
-                'command' => "sed -ri 's/^\\s*(password\\s+sufficient\\s+pam_unix.so\\s+)(.*)$/\\1\\2 sha512/' /etc/authselect/custom/testprofile/password-auth",
+                'command' => "sed -ri 's/^\\s*(password\\s+sufficient\\s+pam_unix.so\\s+)(.*)$/\\1\\2 sha512/' /etc/authselect/custom/cis/password-auth",
                 'path'    => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
-                'onlyif'  => "test -z \"$(grep -E '^\\s*password\\s+sufficient\\s+pam_unix.so\\s+.*sha512\\s*.*$' /etc/authselect/custom/testprofile/password-auth)\""
+                'onlyif'  => "test -z \"$(grep -E '^\\s*password\\s+sufficient\\s+pam_unix.so\\s+.*sha512\\s*.*$' /etc/authselect/custom/cis/password-auth)\""
               ).
               that_notifies('Exec[authselect-apply-changes]')
           else

@@ -152,7 +152,7 @@ describe 'cis_security_hardening::rules::umask_setting' do
 
                 is_expected.to contain_file_line('umask in system-auth').
                   with(
-                    'path'               => '/etc/authselect/custom/testprofile/system-auth',
+                    'path'               => '/etc/authselect/custom/cis/system-auth',
                     'line'               => 'session     optional                                     pam_umask.so',
                     'match'              => '^session\s+optional\s+pam_umask.so',
                     'append_on_no_match' => true
@@ -161,7 +161,7 @@ describe 'cis_security_hardening::rules::umask_setting' do
 
                 is_expected.to contain_file_line('umask in password-auth').
                   with(
-                    'path'               => '/etc/authselect/custom/testprofile/password-auth',
+                    'path'               => '/etc/authselect/custom/cis/password-auth',
                     'line'               => 'session     optional                                     pam_umask.so',
                     'match'              => '^session\s+optional\s+pam_umask.so',
                     'append_on_no_match' => true
