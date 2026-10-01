@@ -43,7 +43,8 @@ describe 'cis_security_hardening::rules::passwd_inactive_days' do
           if enforce
             is_expected.to contain_exec('chage --inactive 30 test1').
               with(
-                'path' => ['/bin', '/usr/bin', '/sbin', '/usr/sbin']
+                'path'   => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
+                'unless' => 'test "$(getent shadow test1 | cut -d: -f7)" = "30"'
               )
             is_expected.to contain_exec('useradd -D -f 30').
               with(
