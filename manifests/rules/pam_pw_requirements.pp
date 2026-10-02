@@ -444,17 +444,15 @@ class cis_security_hardening::rules::pam_pw_requirements (
             position  => 'before *[type="password" and (module="pam_pwhistory.so" or module="pam_unix.so")][1]',
           }
 
-          # use_authtok makes pam_unix save the password pwquality/pwhistory already checked
-          # instead of prompting for (and saving) one of its own.
-          Pam { 'pam-common-password-unix-use-authtok':
-            ensure           => present,
-            service          => 'common-password',
-            type             => 'password',
-            control          => '[success=1 default=ignore]',
-            control_is_param => true,
-            module           => 'pam_unix.so',
-            arguments        => ['obscure', 'use_authtok', 'try_first_pass', 'yescrypt'],
-            position         => 'before *[type="password" and module="pam_deny.so"]',
+          # Edit the existing pam_unix entry rather than declaring one: its control varies
+          # (e.g. success=2 to skip pam_sss), so a fixed one adds a duplicate before pam_deny.
+          augeas { 'common-password pam_unix use_authtok':
+            context => '/files/etc/pam.d/common-password',
+            changes => [
+              "rm *[type='password' and module='pam_unix.so'][preceding-sibling::*[type='password' and module='pam_unix.so']]",
+              "setm *[type='password' and module='pam_unix.so' and count(argument[.='use_authtok'])=0] argument[last()+1] use_authtok",
+              "setm *[type='password' and module='pam_unix.so' and count(argument[.='try_first_pass'])=0] argument[last()+1] try_first_pass",
+            ],
           }
         } else {
           Pam { 'pam-common-password-requisite':

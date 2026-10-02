@@ -368,17 +368,16 @@ describe 'cis_security_hardening::rules::pam_pw_requirements' do
                     'position'  => 'before *[type="password" and (module="pam_pwhistory.so" or module="pam_unix.so")][1]'
                   )
 
-                is_expected.to contain_pam('pam-common-password-unix-use-authtok').
+                is_expected.to contain_augeas('common-password pam_unix use_authtok').
                   with(
-                    'ensure'           => 'present',
-                    'service'          => 'common-password',
-                    'type'             => 'password',
-                    'control'          => '[success=1 default=ignore]',
-                    'control_is_param' => true,
-                    'module'           => 'pam_unix.so',
-                    'arguments'        => %w[obscure use_authtok try_first_pass yescrypt],
-                    'position'         => 'before *[type="password" and module="pam_deny.so"]'
+                    'context' => '/files/etc/pam.d/common-password',
+                    'changes' => [
+                      "rm *[type='password' and module='pam_unix.so'][preceding-sibling::*[type='password' and module='pam_unix.so']]",
+                      "setm *[type='password' and module='pam_unix.so' and count(argument[.='use_authtok'])=0] argument[last()+1] use_authtok",
+                      "setm *[type='password' and module='pam_unix.so' and count(argument[.='try_first_pass'])=0] argument[last()+1] try_first_pass",
+                    ]
                   )
+                is_expected.not_to contain_pam('pam-common-password-unix-use-authtok')
               else
                 is_expected.to contain_pam('pam-common-password-requisite').
                   with(
@@ -389,7 +388,7 @@ describe 'cis_security_hardening::rules::pam_pw_requirements' do
                     'module'    => 'pam_pwquality.so',
                     'arguments' => ['retry=3']
                   )
-                is_expected.not_to contain_pam('pam-common-password-unix-use-authtok')
+                is_expected.not_to contain_augeas('common-password pam_unix use_authtok')
               end
 
               if os_facts[:os]['name'].casecmp('debian').zero? && os_facts[:os]['release']['major'] > '10'
