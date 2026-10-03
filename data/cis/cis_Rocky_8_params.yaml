@@ -337,7 +337,7 @@ cis_security_hardening::rules::rsyslog_logging::log_config:
     src: "cron.*"
     dst: "/var/log/cron"
   secure:
-    src: "*.info;mail.none;authpriv.none;cron.none;local0.none"
+    src: "authpriv.*"
     dst: "-/var/log/secure"
   spooler:
     src: "uucp,news.crit"
