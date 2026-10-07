@@ -58,7 +58,8 @@ describe 'cis_security_hardening::rules::passwd_min_days' do
 
             is_expected.to contain_exec('chage --mindays 7 test1').
               with(
-                'path' => ['/bin', '/usr/bin', '/sbin', '/usr/sbin']
+                'path'   => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
+                'unless' => 'test "$(getent shadow test1 | cut -d: -f4)" = "7"'
               )
           else
             is_expected.not_to contain_exec('chage --mindays 7 test1')

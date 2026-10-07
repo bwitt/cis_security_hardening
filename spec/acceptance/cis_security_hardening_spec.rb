@@ -40,5 +40,15 @@ describe 'cis_security_hardening class' do
         expect(shell('grep "[[:space:]]/dev/shm[[:space:]]" /etc/fstab').stdout).not_to match(%r{seclabel})
       end
     end
+
+    describe 'passwd_min_days' do
+      it 'sets PASS_MIN_DAYS in login.defs' do
+        expect(shell('grep -E "^PASS_MIN_DAYS" /etc/login.defs').stdout).to match(%r{^PASS_MIN_DAYS\s+7$})
+      end
+
+      it 'applies the minimum days to root' do
+        expect(shell('getent shadow root | cut -d: -f4').stdout.strip).to eq('7')
+      end
+    end
   end
 end

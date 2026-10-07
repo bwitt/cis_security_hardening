@@ -23,7 +23,6 @@ cis_security_hardening::rules::grub_password::enforce: false
 cis_security_hardening::rules::grub_slub_debug::enforce: false
 cis_security_hardening::rules::grub_vsyscall::enforce: false
 cis_security_hardening::rules::passwd_inactive_days::enforce: false  # Password aging not persistent in containers
-cis_security_hardening::rules::passwd_min_days::enforce: false  # Password aging not persistent in containers
 cis_security_hardening::rules::pti::enforce: false
 cis_security_hardening::rules::selinux_bootloader::enforce: false
 cis_security_hardening::rules::tmp_filesystem::enforce: false
