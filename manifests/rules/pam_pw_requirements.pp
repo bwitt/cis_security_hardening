@@ -429,13 +429,40 @@ class cis_security_hardening::rules::pam_pw_requirements (
           }
         }
 
-        Pam { 'pam-common-password-requisite':
-          ensure    => present,
-          service   => 'common-password',
-          type      => 'password',
-          control   => 'requisite',
-          module    => 'pam_pwquality.so',
-          arguments => ["retry=${retry}"],
+        if $facts['os']['name'].downcase() == 'ubuntu' and $facts['os']['release']['major'] >= '22' {
+          # pwquality must run before pam_unix saves the password, or the policy is never
+          # checked; `positioned` also moves an entry an older run appended after pam_deny.
+          # The xpath matches pam_pwhistory or pam_unix so it resolves whether or not
+          # pam_old_passwords is enforced.
+          Pam { 'pam-common-password-requisite':
+            ensure    => positioned,
+            service   => 'common-password',
+            type      => 'password',
+            control   => 'requisite',
+            module    => 'pam_pwquality.so',
+            arguments => ["retry=${retry}"],
+            position  => 'before *[type="password" and (module="pam_pwhistory.so" or module="pam_unix.so")][1]',
+          }
+
+          # Edit the existing pam_unix entry rather than declaring one: its control varies
+          # (e.g. success=2 to skip pam_sss), so a fixed one adds a duplicate before pam_deny.
+          augeas { 'common-password pam_unix use_authtok':
+            context => '/files/etc/pam.d/common-password',
+            changes => [
+              "rm *[type='password' and module='pam_unix.so'][preceding-sibling::*[type='password' and module='pam_unix.so']]",
+              "setm *[type='password' and module='pam_unix.so' and count(argument[.='use_authtok'])=0] argument[last()+1] use_authtok",
+              "setm *[type='password' and module='pam_unix.so' and count(argument[.='try_first_pass'])=0] argument[last()+1] try_first_pass",
+            ],
+          }
+        } else {
+          Pam { 'pam-common-password-requisite':
+            ensure    => present,
+            service   => 'common-password',
+            type      => 'password',
+            control   => 'requisite',
+            module    => 'pam_pwquality.so',
+            arguments => ["retry=${retry}"],
+          }
         }
       }
       'suse': {
