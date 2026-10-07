@@ -234,8 +234,13 @@ class cis_security_hardening::rules::pam_pw_requirements (
           }
         }
 
-        $profile = fact('cis_security_hardening.authselect.profile')
-        if $profile != undef and $profile != 'none' {
+        include cis_security_hardening::rules::authselect
+        $profile = $cis_security_hardening::rules::authselect::enforce ? {
+          true    => $cis_security_hardening::rules::authselect::custom_profile,
+          default => '',
+        }
+
+        if $profile != undef and $profile != '' {
           $pf_path = "/etc/authselect/custom/${profile}"
         } else {
           $pf_path = ''
@@ -256,6 +261,7 @@ class cis_security_hardening::rules::pam_pw_requirements (
                 "remember=${cis_security_hardening::rules::pam_old_passwords::oldpasswords}"],
                 target    => $pf_file,
                 notify    => Exec['authselect-apply-changes'],
+                require   => Class['cis_security_hardening::rules::authselect'],
               }
             }
           } elsif($facts['os']['release']['major'] == '7') {

@@ -53,9 +53,13 @@ class cis_security_hardening::rules::pam_lockout (
 
     case $facts['os']['family'].downcase() {
       'redhat': {
-        $profile = fact('cis_security_hardening.authselect.profile')
+        include cis_security_hardening::rules::authselect
+        $profile = $cis_security_hardening::rules::authselect::enforce ? {
+          true    => $cis_security_hardening::rules::authselect::custom_profile,
+          default => '',
+        }
 
-        if $profile != undef and $profile != 'none' {
+        if $profile != undef and $profile != '' {
           $pf_path = "/etc/authselect/custom/${profile}"
         } else {
           $pf_path = ''
@@ -68,11 +72,15 @@ class cis_security_hardening::rules::pam_lockout (
 
               if $pf_path != '' {
                 file_line { "update pam lockout ${service}":
-                  path   => $pf_file,
-                  line   => "auth         required                                     pam_faillock.so preauth silent deny=${attempts} unlock_time=${lockouttime}  {include if \"with-faillock\"}", #lint:ignore:140chars
-                  match  => '^auth\s+required\s+pam_faillock.so\s+preauth\s+silent',
-                  notify => Exec['authselect-apply-changes'],
+                  path    => $pf_file,
+                  line    => "auth         required                                     pam_faillock.so preauth silent deny=${attempts} unlock_time=${lockouttime}  {include if \"with-faillock\"}", #lint:ignore:140chars
+                  match   => '^auth\s+required\s+pam_faillock.so\s+preauth\s+silent',
+                  notify  => Exec['authselect-apply-changes'],
+                  require => Class['cis_security_hardening::rules::authselect'],
                 }
+
+                # The pam type rewrites the whole file so ensure that happens first
+                Pam <| target == $pf_file |> -> File_line["update pam lockout ${service}"]
               }
             }
           }
