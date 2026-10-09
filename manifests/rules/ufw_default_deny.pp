@@ -26,10 +26,10 @@
 #
 # @api private
 class cis_security_hardening::rules::ufw_default_deny (
-  Boolean $enforce                        = false,
-  Enum['allow', 'deny'] $default_incoming = 'allow',
-  Enum['allow', 'deny'] $default_outgoing = 'allow',
-  Enum['allow', 'deny'] $default_routed   = 'allow',
+  Boolean $enforce                                  = false,
+  Enum['allow', 'deny', 'reject'] $default_incoming = 'allow',
+  Enum['allow', 'deny', 'reject'] $default_outgoing = 'allow',
+  Enum['allow', 'deny', 'reject'] $default_routed   = 'allow',
 ) {
   if $enforce {
     exec { "default incoming policy ${default_incoming}":
