@@ -235,5 +235,65 @@ describe 'cis_security_hardening::rules::ip6tables_open_ports' do
         }
       end
     end
+
+    context "on #{os} without ip6tables facts" do
+      let(:facts) do
+        os_facts.merge(
+          'network6' => '1.2.3.4',
+          'cis_security_hardening' => {}
+        )
+      end
+      let(:params) do
+        {
+          'enforce' => true,
+          'firewall_rules' => {},
+        }
+      end
+
+      it {
+        is_expected.to compile
+        is_expected.to contain_firewall('010-6 open ssh port inbound').
+          with(
+            'chain' => 'INPUT',
+            'proto' => 'tcp',
+            'dport' => 22,
+            'state' => 'NEW',
+            'jump' => 'ACCEPT',
+            'protocol' => 'ip6tables'
+          )
+      }
+    end
+
+    context "on #{os} with ssh already allowed" do
+      let(:facts) do
+        os_facts.merge(
+          'network6' => '1.2.3.4',
+          'cis_security_hardening' => {
+            'ip6tables' => {
+              'policy' => {
+                'rule 1' => {
+                  'chain' => 'INPUT',
+                  'dpt' => '22',
+                  'proto' => 'tcp',
+                  'state' => 'NEW',
+                  'target' => 'ACCEPT',
+                },
+              },
+            },
+          }
+        )
+      end
+      let(:params) do
+        {
+          'enforce' => true,
+          'firewall_rules' => {},
+        }
+      end
+
+      it {
+        is_expected.to compile
+        is_expected.not_to contain_firewall('010-6 open ssh port inbound')
+      }
+    end
   end
 end
