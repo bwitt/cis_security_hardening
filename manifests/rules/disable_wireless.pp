@@ -20,25 +20,19 @@ class cis_security_hardening::rules::disable_wireless (
   Boolean $enforce = false,
 ) {
   if $enforce {
-    case $facts['os']['family'].downcase() {
-      'redhat': {
-        $pkg = 'NetworkManager'
-      }
-      'debian': {
-        $pkg = 'network-manager'
-      }
-      default: {
-        $pkg = ''
-      }
-    }
-
-    if !empty($pkg) {
-      stdlib::ensure_packages($pkg, {
-        ensure => present,
-      })
-    }
     $wlan_status = fact('cis_security_hardening.wlan_status')
     $wlan_iface_count = fact('cis_security_hardening.wlan_interfaces_count')
+
+    $wlan_modules = fact('cis_security_hardening.wlan_modules')
+    if $wlan_modules != undef {
+      $wlan_modules.each |$wlanmod| {
+        kmod::blacklist { $wlanmod: }
+
+        kmod::install { $wlanmod:
+          command => '/bin/false',
+        }
+      }
+    }
 
     if $wlan_status  == 'enabled' {
       # lint:ignore:exec_idempotency Idempotency handled by fact check ($wlan_status == 'enabled')
