@@ -26,24 +26,20 @@ describe 'cis_security_hardening::rules::ctrl_alt_del_graphical' do
           is_expected.to compile
 
           if enforce
-            is_expected.to contain_dconf__db('disable-cad').
+            is_expected.to contain_cis_security_hardening__dconf_db_entry('00-disable-CAD').
               with(
-                'db_dir'         => '/etc/dconf/db/local.d',
-                'db_filename'    => '00-disable-CAD',
-                'locks_filename' => '00-disable-CAD',
-                'settings'       => {
+                'db' => 'local',
+                'settings' => {
                   'org/gnome/settings-daemon/plugins/media-keys' => {
                     'logout' => '',
                   },
                 },
-                # rubocop:disable Layout/HashAlignment
                 'locks' => [
                   '/org/gnome/settings-daemon/plugins/media-keys/logout'
                 ]
-                # rubocop:enable Layout/HashAlignment
               )
           else
-            is_expected.not_to contain_dconf__db('disable-cad')
+            is_expected.not_to contain_cis_security_hardening__dconf_db_entry('00-disable-CAD')
           end
         }
       end

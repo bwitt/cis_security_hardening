@@ -29,18 +29,16 @@ class cis_security_hardening::rules::gdm_auto_mount (
   $gnome_gdm = fact('cis_security_hardening.gnome_gdm')
   if  $enforce and $gnome_gdm != undef and $gnome_gdm {
     include dconf
-    dconf::db { 'media-automount':
-      db_dir         => "${dconf::db_base_dir}/local.d",
-      db_filename    => '00-media-automount',
-      locks_filename => '00-media-automount',
-      settings       => {
+    cis_security_hardening::dconf_db_entry { '00-media-automount':
+      db       => 'local',
+      settings => {
         'org/gnome/desktop/media-handling' => {
           'automount'      => 'false',
           'automount-open' => 'false',
           'autorun-never'  => 'true',
         },
       },
-      locks          => [
+      locks    => [
         '/org/gnome/desktop/media-handling/automount',
         '/org/gnome/desktop/media-handling/automount-open',
         '/org/gnome/desktop/media-handling/autorun-never',

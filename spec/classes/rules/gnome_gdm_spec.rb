@@ -46,12 +46,10 @@ describe 'cis_security_hardening::rules::gnome_gdm' do
                 }
               )
 
-              is_expected.to contain_dconf__db('gdm-banner').
+              is_expected.to contain_cis_security_hardening__dconf_db_entry('01-banner-message').
                 with(
-                  'db_dir'         => '/etc/dconf/db/gdm.d',
-                  'db_filename'    => '01-banner-message',
-                  'locks_filename' => '01-banner-message',
-                  'settings' => { # rubocop:disable Layout/HashAlignment
+                  'db'       => 'gdm',
+                  'settings' => {
                     'org/gnome/login-screen' => {
                       'banner-message-enable' => 'true',
                       'banner-message-text'   => "'Authorized uses only. All activity may be monitored and reported.'",
@@ -63,12 +61,10 @@ describe 'cis_security_hardening::rules::gnome_gdm' do
                   ]
                 )
 
-              is_expected.to contain_dconf__db('gdm-login-screen').
+              is_expected.to contain_cis_security_hardening__dconf_db_entry('00-login-screen').
                 with(
-                  'db_dir'         => '/etc/dconf/db/gdm.d',
-                  'db_filename'    => '00-login-screen',
-                  'locks_filename' => '00-login-screen',
-                  'settings' => { # rubocop:disable Layout/HashAlignment
+                  'db'       => 'gdm',
+                  'settings' => {
                     'org/gnome/login-screen' => {
                       'disable-user-list' => 'true',
                     },
@@ -79,8 +75,8 @@ describe 'cis_security_hardening::rules::gnome_gdm' do
                 )
             else
               is_expected.not_to contain_dconf__profile('gdm')
-              is_expected.not_to contain_dconf__db('gdm-banner')
-              is_expected.not_to contain_dconf__db('gdm-login-screen')
+              is_expected.not_to contain_cis_security_hardening__dconf_db_entry('01-banner-message')
+              is_expected.not_to contain_cis_security_hardening__dconf_db_entry('00-login-screen')
             end
 
             is_expected.not_to contain_file('/etc/gdm3/greeter.dconf-defaults')
@@ -108,12 +104,10 @@ describe 'cis_security_hardening::rules::gnome_gdm' do
                     }
                   )
 
-                is_expected.to contain_dconf__db('cis-banner').
+                is_expected.to contain_cis_security_hardening__dconf_db_entry('01-banner-message').
                   with(
-                    'db_dir'         => '/etc/dconf/db/cis.d',
-                    'db_filename'    => '01-banner-message',
-                    'locks_filename' => '01-banner-message',
-                    'settings' => { # rubocop:disable Layout/HashAlignment
+                    'db'       => 'cis',
+                    'settings' => {
                       'org/gnome/login-screen' => {
                         'banner-message-enable' => 'true',
                         'banner-message-text'   => "'Authorized uses only. All activity may be monitored and reported.'",
@@ -138,7 +132,7 @@ describe 'cis_security_hardening::rules::gnome_gdm' do
               end
             else
               is_expected.not_to contain_dconf__profile('cis')
-              is_expected.not_to contain_dconf__db('cis-banner')
+              is_expected.not_to contain_cis_security_hardening__dconf_db_entry('01-banner-message')
               is_expected.not_to contain_file('/etc/gdm3/greeter.dconf-defaults')
             end
 
@@ -177,12 +171,10 @@ describe 'cis_security_hardening::rules::gnome_gdm' do
                 }
               )
 
-              is_expected.to contain_dconf__db('gdm-banner').
+              is_expected.to contain_cis_security_hardening__dconf_db_entry('01-banner-message').
                 with(
-                  'db_dir'         => '/etc/dconf/db/gdm.d',
-                  'db_filename'    => '01-banner-message',
-                  'locks_filename' => '01-banner-message',
-                  'settings' => { # rubocop:disable Layout/HashAlignment
+                  'db'       => 'gdm',
+                  'settings' => {
                     'org/gnome/login-screen' => {
                       'banner-message-enable' => 'true',
                       'banner-message-text'   => "'Authorized uses only. All activity may be monitored and reported.'",
@@ -194,12 +186,10 @@ describe 'cis_security_hardening::rules::gnome_gdm' do
                   ]
                 )
 
-              is_expected.to contain_dconf__db('gdm-login-screen').
+              is_expected.to contain_cis_security_hardening__dconf_db_entry('00-login-screen').
                 with(
-                  'db_dir'         => '/etc/dconf/db/gdm.d',
-                  'db_filename'    => '00-login-screen',
-                  'locks_filename' => '00-login-screen',
-                  'settings' => { # rubocop:disable Layout/HashAlignment
+                  'db'       => 'gdm',
+                  'settings' => {
                     'org/gnome/login-screen' => {
                       'disable-user-list' => 'true',
                     },
@@ -210,8 +200,8 @@ describe 'cis_security_hardening::rules::gnome_gdm' do
                 )
             else
               is_expected.not_to contain_dconf__profile('gdm')
-              is_expected.not_to contain_dconf__db('gdm-banner')
-              is_expected.not_to contain_dconf__db('gdm-login-screen')
+              is_expected.not_to contain_cis_security_hardening__dconf_db_entry('01-banner-message')
+              is_expected.not_to contain_cis_security_hardening__dconf_db_entry('00-login-screen')
             end
           end
         }
