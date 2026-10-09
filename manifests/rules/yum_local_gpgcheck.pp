@@ -39,7 +39,7 @@ class cis_security_hardening::rules::yum_local_gpgcheck (
       append_on_no_match => true,
     }
 
-    if $facts['os']['release']['major'] >= '8' {
+    if versioncmp($facts['os']['release']['major'], '8') >= 0 {
       file_line { 'dnf_localpgk_gpgcheck':
         ensure             => present,
         path               => '/etc/dnf/dnf.conf',

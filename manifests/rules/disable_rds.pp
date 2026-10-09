@@ -24,7 +24,7 @@ class cis_security_hardening::rules::disable_rds (
   if $enforce {
     case $facts['os']['name'].downcase() {
       'debian': {
-        if $facts['os']['release']['major'] > '10' {
+        if versioncmp($facts['os']['release']['major'], '10') > 0 {
           $command = '/bin/false'
           kmod::blacklist { 'rds': }
         } else {
@@ -32,7 +32,7 @@ class cis_security_hardening::rules::disable_rds (
         }
       }
       'ubuntu': {
-        if $facts['os']['release']['major'] >= '20' {
+        if versioncmp($facts['os']['release']['major'], '20') >= 0 {
           $command = '/bin/false'
           kmod::blacklist { 'rds': }
         } else {

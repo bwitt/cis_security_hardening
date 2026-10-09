@@ -31,7 +31,7 @@ class cis_security_hardening::rules::shadow_bak_perms (
 ) {
   if $enforce {
     if $facts['os']['name'].downcase() == 'debian' {
-      if $facts['os']['release']['major'] > '10' {
+      if versioncmp($facts['os']['release']['major'], '10') > 0 {
         $default_mode = '0000'
       } else {
         $default_mode = '0600'

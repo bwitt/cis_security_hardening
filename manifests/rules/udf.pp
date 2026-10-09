@@ -31,7 +31,7 @@ class cis_security_hardening::rules::udf (
         kmod::blacklist { 'udf': }
       }
       'redhat': {
-        if $facts['os']['release']['major'] > '7' {
+        if versioncmp($facts['os']['release']['major'], '7') > 0 {
           kmod::install { 'udf':
             command => '/bin/false',
           }
@@ -43,7 +43,7 @@ class cis_security_hardening::rules::udf (
         }
       }
       'debian': {
-        if $facts['os']['release']['major'] > '10' {
+        if versioncmp($facts['os']['release']['major'], '10') > 0 {
           kmod::install { 'udf':
             command => '/bin/false',
           }
@@ -55,7 +55,7 @@ class cis_security_hardening::rules::udf (
         }
       }
       'ubuntu': {
-        if $facts['os']['release']['major'] >= '20' {
+        if versioncmp($facts['os']['release']['major'], '20') >= 0 {
           kmod::install { 'udf':
             command => '/bin/false',
           }

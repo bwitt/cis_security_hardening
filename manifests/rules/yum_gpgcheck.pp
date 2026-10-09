@@ -28,7 +28,7 @@ class cis_security_hardening::rules::yum_gpgcheck (
       match  => '^gpgcheck',
     }
 
-    if $facts['os']['release']['major'] > '7' {
+    if versioncmp($facts['os']['release']['major'], '7') > 0 {
       file_line { 'yum_gpgcheck dnf':
         ensure => present,
         path   => '/etc/dnf/dnf.conf',
