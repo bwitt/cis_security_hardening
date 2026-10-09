@@ -32,23 +32,27 @@
 # @api private
 class cis_security_hardening::rules::chrony (
   Boolean $enforce            = false,
-  Optional[Hash] $ntp_servers = {},       #lint:ignore:optional_default
+  Optional[Chrony::Servers] $ntp_servers = undef,
   Integer $makestep_seconds   = 1,
   Integer $makestep_updates   = 3,
 ) {
   if $enforce {
-    if (empty($ntp_servers)) {
-      echo { 'no ntp servers warning':
-        message  => 'You have not defined any ntp servers, time updating may not work unless provided by your network DHCP',
-        loglevel => 'warning',
-        withpath => false,
+    # chrony manages its own options file, so append -u to the flags it sets
+    if $facts['os']['family'] == 'RedHat' {
+      $distro_options = lookup('chrony::options', Optional[String], 'first', '')
+      $chrony_options = empty($distro_options) ? {
+        true    => { 'options' => '-u chrony' },
+        default => { 'options' => "${distro_options} -u chrony" },
       }
+    } else {
+      $chrony_options = {}
     }
 
     class { 'chrony':
       servers          => $ntp_servers,
       makestep_seconds => $makestep_seconds,
       makestep_updates => $makestep_updates,
+      *                => $chrony_options,
     }
 
     case $facts['os']['name'].downcase() {
@@ -56,15 +60,11 @@ class cis_security_hardening::rules::chrony (
         stdlib::ensure_packages(['ntp'], {
           ensure => purged,
         })
-      }
-      'rocky', 'almalinux','centos','redhat': {
-        file { '/etc/sysconfig/chronyd':
-          ensure  => file,
-          owner   => 'root',
-          group   => 'root',
-          mode    => '0644',
-          content => 'OPTIONS="-u chrony"',
-        }
+
+        ensure_resource('service', 'systemd-timesyncd', {
+          ensure => stopped,
+          enable => false,
+        })
       }
       default: {
         # nothing to do
