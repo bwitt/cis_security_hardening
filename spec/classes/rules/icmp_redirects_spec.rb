@@ -8,7 +8,7 @@ describe 'cis_security_hardening::rules::icmp_redirects' do
   on_supported_os.each do |os, os_facts|
     enforce_options.each do |enforce|
       context "on #{os} with enforce = #{enforce} without ipv6" do
-        my_facts = os_facts.reject { |k| k == 'network6' }
+        my_facts = os_facts.reject { |k| k == 'networking.network6' }
         let(:facts) { my_facts }
         let(:params) do
           {
@@ -41,8 +41,10 @@ describe 'cis_security_hardening::rules::icmp_redirects' do
         let(:facts) do
           os_facts.merge(
             {
-              'network6' => 'fe81::',
-              'netmask6' => 'ffff:ffff:ffff:ffff::',
+              'networking' => {
+                'network6' => 'fe81::',
+                'netmask6' => 'ffff:ffff:ffff:ffff::',
+              }
             }
           )
         end

@@ -23,7 +23,7 @@ class cis_security_hardening::rules::disable_ipv6 (
       value => '1',
     }
 
-    if fact('network6') != undef {
+    if fact('networking.network6') != undef {
       sysctl { 'net.ipv6.conf.all.disable_ipv6':
         ensure => present,
         value  => 1,

@@ -9,7 +9,9 @@ describe 'cis_security_hardening::rules::ipv6_router_advertisements' do
       context "on #{os}" do
         let(:facts) do
           os_facts.merge(
-            network6: 'fe80::'
+            network: {
+              network6: 'fe80::'
+            }
           )
         end
         let(:params) do

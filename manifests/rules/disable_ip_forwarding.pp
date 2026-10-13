@@ -25,7 +25,7 @@ class cis_security_hardening::rules::disable_ip_forwarding (
         ensure => present,
         value  => 0,
     }
-    if fact('network6') {
+    if fact('networking.network6') {
       sysctl {
         'net.ipv6.conf.all.forwarding':
           ensure => present,

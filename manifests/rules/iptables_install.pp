@@ -25,7 +25,7 @@ class cis_security_hardening::rules::iptables_install (
   Boolean $configure_ip6tables = false,
 ) {
   if $enforce {
-    if fact('network6') != undef {
+    if fact('networking.network6') != undef {
       if  $configure_ip6tables == false {
         $params_ip6 = {
           ensure_v6 => 'stopped',

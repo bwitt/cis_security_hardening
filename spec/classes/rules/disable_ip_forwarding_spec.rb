@@ -10,7 +10,9 @@ describe 'cis_security_hardening::rules::disable_ip_forwarding' do
       context "on #{os} with enforce = #{enforce}" do
         let(:facts) do
           os_facts.merge!(
-            'network6' => 'ff:ee:aa:bb:11:33'
+            'networking' => {
+              'network6' => 'ff:ee:aa:bb:11:33'
+            }
           )
         end
         let(:params) do
@@ -28,7 +30,7 @@ describe 'cis_security_hardening::rules::disable_ip_forwarding' do
                 'value' => 0
               )
 
-            if os_facts.key?('network6')
+            if os_facts.key?('networking.network6')
               is_expected.to contain_sysctl('net.ipv6.conf.all.forwarding').
                 with(
                   'value' => 0

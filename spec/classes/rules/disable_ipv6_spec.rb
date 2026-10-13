@@ -10,7 +10,9 @@ describe 'cis_security_hardening::rules::disable_ipv6' do
       context "on #{os} with enforce = #{enforce}" do
         let(:facts) do
           os_facts.merge(
-            'network6' => '1.2.3.4'
+            'networking' => {
+              'network6' => '1.2.3.4'
+            }
           )
         end
         let(:params) do

@@ -11,8 +11,10 @@ describe 'cis_security_hardening::rules::ip6tables_deny_policy' do
         let(:facts) do
           os_facts.merge(
             {
-              'network6' => 'fe81::',
-              'netmask6' => 'ffff:ffff:ffff:ffff::',
+              'networking' => {
+                'network6' => 'fe81::',
+                'netmask6' => 'ffff:ffff:ffff:ffff::',
+              }
             }
           )
         end

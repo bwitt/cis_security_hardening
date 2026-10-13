@@ -10,7 +10,9 @@ describe 'cis_security_hardening::rules::interface_ip_forwarding' do
       context "on #{os} with enforce = #{enforce}" do
         let(:facts) do
           os_facts.merge!(
-            'network6' => 'ff:ee:aa:bb:11:33'
+            'networking' => {
+              'network6' => 'ff:ee:aa:bb:11:33'
+            }
           )
         end
         let(:params) do

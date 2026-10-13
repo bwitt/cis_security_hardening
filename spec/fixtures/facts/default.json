@@ -1,5 +1,7 @@
 {
-  "network6" : "fe:",
+  "networking" : {
+    "network6" : "fe:"
+  },
   "cis_security_hardening" : {
     "accounts" : {
       "no_shell_nologin" : [ ],

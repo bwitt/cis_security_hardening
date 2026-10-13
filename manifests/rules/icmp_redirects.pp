@@ -35,7 +35,7 @@ class cis_security_hardening::rules::icmp_redirects (
         value  => 0,
     }
 
-    if fact('network6') != undef {
+    if fact('networking.network6') != undef {
       sysctl {
         'net.ipv6.conf.all.accept_redirects':
           ensure => present,
