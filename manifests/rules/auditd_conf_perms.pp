@@ -1,5 +1,5 @@
 # @summary
-#    Ensure audit configuration files are 0640 or more restrictive and confibgure user and group
+#    Ensure audit configuration files are 0640 or more restrictive and configure user and group
 #
 # The operating system must be configured so that audit configuration files are not write- accessible by unauthorized users.
 #

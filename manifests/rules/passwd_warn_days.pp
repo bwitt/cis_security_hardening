@@ -13,7 +13,7 @@
 #    Enforce the rule
 #
 # @param warn_pass_days
-#    Minimum dfays before a expiration warning is given.
+#    Minimum days before a expiration warning is given.
 #
 # @example
 #   class { 'cis_security_hardening::rules::passwd_warn_days':

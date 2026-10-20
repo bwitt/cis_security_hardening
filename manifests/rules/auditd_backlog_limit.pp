@@ -9,7 +9,7 @@
 # undetected.
 #
 # @param enforce
-#    Sets rule enforcement. If set to true, code will be exeuted to bring the system into a compliant state.
+#    Sets rule enforcement. If set to true, code will be executed to bring the system into a compliant state.
 #
 # @param backlog_limit
 #    Number of records in backlog

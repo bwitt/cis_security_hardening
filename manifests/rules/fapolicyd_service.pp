@@ -1,7 +1,7 @@
 # @summary
 #    Ensure "fapolicyd" is enabled and running
 #
-# The "fapolic4y" module must be enabled.
+# The "fapolicyd" module must be enabled.
 #
 # Rationale:
 # The organization must identify authorized software programs and permit execution of authorized software. The process

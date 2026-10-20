@@ -1,7 +1,7 @@
 # @summary
 #    Ensure sudo commands use pty
 #
-# sudo can be configured to run only from a psuedo-pty
+# sudo can be configured to run only from a pseudo-pty
 #
 # Rationale:
 # Attackers can run a malicious program using sudo which would fork a background process

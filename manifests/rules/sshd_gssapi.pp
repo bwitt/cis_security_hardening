@@ -13,7 +13,7 @@
 #    Enforce the rule.
 #
 # @example
-#   class { 'cis_security_hardening::rules::sshd_gssasi':
+#   class { 'cis_security_hardening::rules::sshd_gssapi':
 #     enforce => true,
 #   }
 #

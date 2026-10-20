@@ -11,7 +11,7 @@
 #    Enforce the rule
 #
 # @param use_systemd
-#    Use systemd for perioding aide work instead of cronjbs.
+#    Use systemd for periodic aide work instead of cronjobs.
 #
 # @param hour
 #    Cron hour.

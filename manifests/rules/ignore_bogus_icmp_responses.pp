@@ -2,7 +2,7 @@
 #    Ensure bogus ICMP responses are ignored
 #
 # Setting icmp_ignore_bogus_error_responses to 1 prevents the kernel from logging bogus
-# responses (RFC-1122 non-compliant) from broadcast reframes, keeping file systems from
+# responses (RFC-1122 non-compliant) from broadcast frames, keeping file systems from
 # filling up with useless log messages.
 #
 # Rationale:

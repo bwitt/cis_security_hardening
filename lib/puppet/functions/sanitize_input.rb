@@ -3,7 +3,7 @@
 require 'shellwords'
 
 # sanitize_input.rb
-# Uses Shellwords.escape to sabitize cmd.
+# Uses Shellwords.escape to sanitize cmd.
 Puppet::Functions.create_function(:sanitize_input) do
   dispatch :sanitize do
     param 'String', :cmd

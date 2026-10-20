@@ -5,7 +5,7 @@
 #
 # Rationale:
 # There are two policies: accept (Default) and drop. If the policy is set to accept, the firewall will
-# accept any packet that is not configured to be denied and the packet will continue transversing the
+# accept any packet that is not configured to be denied and the packet will continue traversing the
 # network stack.
 # It is easier to white list acceptable usage than to black list unacceptable usage.
 #
