@@ -1,53 +1,75 @@
 # frozen_string_literal: true
 
+require 'date'
+
+# an unset aging field reads as -1, which is what chage reports for it, not 0
+def shadow_number(value)
+  value.empty? ? -1 : value.to_i
+end
+
 # read local users
 def read_local_users
   local_users = {}
-  user_list = Facter::Core::Execution.exec('egrep ^[^:]+:[^\!*] /etc/shadow | cut -d: -f1').split("\n")
-  user_list.each do |user|
-    local_users[user] = {}
+  today = (Date.today - Date.new(1970, 1, 1)).to_i
 
-    # parse chage output for each user in /etc/shadow and create variables
-    last_password_change   = %r{:\s*\K.*}.match(Facter::Core::Execution.exec("chage --list #{user} | grep \"Last password\"")).to_s
-    password_expires       = %r{:\s*\K.*}.match(Facter::Core::Execution.exec("chage --list #{user} | grep \"Password expires\"")).to_s
-    password_inactive      = %r{:\s*\K.*}.match(Facter::Core::Execution.exec("chage --list #{user} | grep \"Password inactive\"")).to_s
-    account_expires        = %r{:\s*\K.*}.match(Facter::Core::Execution.exec("chage --list #{user} | grep \"Account expires\"")).to_s
-    minimum_number_of_days = %r{:\d*\K.*}.match(Facter::Core::Execution.exec("chage --list #{user} | grep \"Minimum\""))[0].to_i
-    maximum_number_of_days = %r{:\d*\K.*}.match(Facter::Core::Execution.exec("chage --list #{user} | grep \"Maximum\""))[0].to_i
-    warning_number_of_days = %r{:\d*\K.*}.match(Facter::Core::Execution.exec("chage --list #{user} | grep \"warning\""))[0].to_i
+  begin
+    lines = File.readlines('/etc/shadow')
+  rescue SystemCallError, IOError
+    return local_users
+  end
 
-    # set default values for facts
-    last_password_change_days = last_password_change
-    password_expires_days     = password_expires
-    password_inactive_days    = password_inactive
-    account_expires_days      = account_expires
+  lines.each do |line|
+    fields = line.chomp.split(':', -1)
+    next if fields.length < 8
 
-    # check if password attribute not 'never' or 'password must be changed', then determine days between now and then
-    # and check if password is set prior to current date
-    unless ['never', 'password must be changed'].include?(last_password_change)
-      last_password_change_days = (Date.today - Date.parse(last_password_change)).to_i
-      password_date_valid       = Date.parse(last_password_change) <= Date.today
+    user, password, lastchg, min, max, warn, inactive, expire = fields
+
+    next if password.start_with?('!', '*')
+
+    max_days = max.empty? ? nil : max.to_i
+
+    must_change   = !lastchg.empty? && lastchg.to_i.zero?
+    aging_unset   = lastchg.empty?
+    never_expires = max_days.nil? || max_days >= 10_000
+
+    if must_change
+      last_password_change_days = 'password must be changed'
+      password_expires_days     = 'password must be changed'
+      password_inactive_days    = 'password must be changed'
+      password_date_valid       = nil
+    elsif aging_unset
+      last_password_change_days = 'never'
+      password_expires_days     = 'never'
+      password_inactive_days    = 'never'
+      password_date_valid       = nil
+    else
+      lastchg_days = lastchg.to_i
+
+      last_password_change_days = today - lastchg_days
+      password_date_valid       = lastchg_days <= today
+
+      password_expires_days = never_expires ? 'never' : (lastchg_days + max_days) - today
+
+      password_inactive_days = if inactive.empty? || never_expires
+                                 'never'
+                               else
+                                 inactive.to_i
+                               end
     end
 
-    unless ['never', 'password must be changed'].include?(password_expires)
-      password_expires_days = (Date.parse(password_expires) - Date.today).to_i
+    account_expires_days = expire.empty? ? 'never' : expire.to_i - today
 
-      password_inactive_days = (Date.parse(password_inactive) - Date.parse(password_expires)).to_i unless ['never', 'password must be changed'].include?(password_inactive)
-    end
-
-    account_expires_days = (Date.parse(account_expires) - Date.today).to_i unless account_expires == 'never'
-
-    # create nested fact
     local_users[user] = {
       'last_password_change_days'         => last_password_change_days,
       'password_expires_days'             => password_expires_days,
       'password_inactive_days'            => password_inactive_days,
       'account_expires_days'              => account_expires_days,
-      'min_days_between_password_change'  => minimum_number_of_days,
-      'max_days_between_password_change'  => maximum_number_of_days,
-      'warn_days_between_password_change' => warning_number_of_days,
+      'min_days_between_password_change'  => shadow_number(min),
+      'max_days_between_password_change'  => shadow_number(max),
+      'warn_days_between_password_change' => shadow_number(warn),
       'password_date_valid'               => password_date_valid,
     }
   end
+
   local_users
 end
