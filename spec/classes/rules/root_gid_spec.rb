@@ -20,7 +20,7 @@ describe 'cis_security_hardening::rules::root_gid' do
         let(:params) do
           {
             'enforce' => enforce,
-            'encrypted_root_password' => '$6$g456vnhfgh',
+            'encrypted_root_password' => sensitive('$6$g456vnhfgh'),
           }
         end
 
@@ -32,7 +32,7 @@ describe 'cis_security_hardening::rules::root_gid' do
               with(
                 'ensure' => 'present',
                 'gid' => '0',
-                'password' => '$6$g456vnhfgh'
+                'password' => sensitive('$6$g456vnhfgh')
               )
           else
             is_expected.not_to contain_user('root')
