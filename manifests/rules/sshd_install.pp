@@ -40,7 +40,12 @@ class cis_security_hardening::rules::sshd_install (
       ensure => present,
     })
 
-    ensure_resource('service', 'sshd', {
+    $svc = $facts['os']['family'].downcase() ? {
+      'debian' => 'ssh',
+      default  => 'sshd',
+    }
+
+    ensure_resource('service', $svc, {
       enable => true,
       ensure => running,
     })
