@@ -211,7 +211,7 @@ describe 'cis_security_hardening::rules::pam_pw_requirements' do
                     'control'   => 'requisite',
                     'module'    => 'pam_pwquality.so',
                     'arguments' => ['try_first_pass', 'retry=3', 'enforce-for-root', 'local_users_only', 'remember=5'],
-                    'target'    => '/etc/authselect/custom/testprofile/system-auth'
+                    'target'    => '/etc/authselect/custom/cis/system-auth'
                   ).
                   that_notifies('Exec[authselect-apply-changes]')
 
@@ -223,7 +223,7 @@ describe 'cis_security_hardening::rules::pam_pw_requirements' do
                     'control'   => 'requisite',
                     'module'    => 'pam_pwquality.so',
                     'arguments' => ['try_first_pass', 'retry=3', 'enforce-for-root', 'local_users_only', 'remember=5'],
-                    'target'    => '/etc/authselect/custom/testprofile/password-auth'
+                    'target'    => '/etc/authselect/custom/cis/password-auth'
                   ).
                   that_notifies('Exec[authselect-apply-changes]')
 

@@ -148,7 +148,7 @@ describe 'cis_security_hardening::rules::pam_lockout' do
 
                 is_expected.to contain_file_line('update pam lockout system-auth').
                   with(
-                    'path' => '/etc/authselect/custom/testprofile/system-auth',
+                    'path' => '/etc/authselect/custom/cis/system-auth',
                     'line' => 'auth         required                                     pam_faillock.so preauth silent deny=3 unlock_time=900  {include if "with-faillock"}',
                     'match' => '^auth\s+required\s+pam_faillock.so\s+preauth\s+silent'
                   ).
@@ -156,7 +156,7 @@ describe 'cis_security_hardening::rules::pam_lockout' do
 
                 is_expected.to contain_file_line('update pam lockout password-auth').
                   with(
-                    'path' => '/etc/authselect/custom/testprofile/password-auth',
+                    'path' => '/etc/authselect/custom/cis/password-auth',
                     'line' => 'auth         required                                     pam_faillock.so preauth silent deny=3 unlock_time=900  {include if "with-faillock"}',
                     'match' => '^auth\s+required\s+pam_faillock.so\s+preauth\s+silent'
                   ).
