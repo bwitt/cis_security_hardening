@@ -111,7 +111,7 @@ cis_security_hardening::rules::ctrl_alt_del_graphical::enforce: true
 cis_security_hardening::rules::systemd_timesyncd::enforce: false
 cis_security_hardening::rules::systemd_timesyncd::fix_file_perms: true
 cis_security_hardening::rules::systemd_timesyncd::ntp_servers: ~
-cis_security_hardening::rules::systemd_timesyncd::ntp_fallback_server: ~
+cis_security_hardening::rules::systemd_timesyncd::ntp_fallback_servers: ~
 cis_security_hardening::rules::chrony::enforce: true
 cis_security_hardening::rules::chrony::ntp_servers:
   0.pool.ntp.org:

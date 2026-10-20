@@ -87,7 +87,7 @@ cis_security_hardening::rules::systemd_timesyncd::ntp_servers:
   - 0.de.pool.ntp.org
   - 1.de.pool.ntp.org
   - 3.de.pool.ntp.org
-cis_security_hardening::rules::systemd_timesyncd::ntp_fallback_server:
+cis_security_hardening::rules::systemd_timesyncd::ntp_fallback_servers:
   - 3.de.pool.ntp.org
 cis_security_hardening::rules::chrony::enforce: false
 cis_security_hardening::rules::chrony::ntp_servers: ~
