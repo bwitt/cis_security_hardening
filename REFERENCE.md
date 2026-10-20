@@ -468,6 +468,7 @@ Ensure systemd-journal-remote is enabled
 
 ### Defined types
 
+* [`cis_security_hardening::fstab_entry`](#cis_security_hardening--fstab_entry): Ensure exactly one fstab entry exists for a mountpoint
 * [`cis_security_hardening::parent_dirs`](#cis_security_hardening--parent_dirs): Create directories recursively
 * [`cis_security_hardening::set_mount_options`](#cis_security_hardening--set_mount_options): Change mount options
 * [`cis_security_hardening::unmask_systemd_service`](#cis_security_hardening--unmask_systemd_service): Unmask a systemd service
@@ -1106,6 +1107,91 @@ The script to run
 Default value: `'/usr/share/cis_security_hardening/bin/sticy-world-writable.sh'`
 
 ## Defined types
+
+### <a name="cis_security_hardening--fstab_entry"></a>`cis_security_hardening::fstab_entry`
+
+Replaces every existing entry for a mountpoint with a single canonical entry.
+Installers do not agree on how to name a device - Ubuntu's curtin writes
+"/dev/disk/by-uuid/<uuid>" while the Red Hat and Debian installers write
+"UUID=<uuid>" - so a rule matching on the device name alone can append a
+second entry for a mountpoint that is already listed. Addressing the entry by
+its mountpoint through the Augeas fstab lens removes any such duplicates.
+
+#### Examples
+
+##### 
+
+```puppet
+cis_security_hardening::fstab_entry { '/boot/efi':
+  mountpoint   => '/boot/efi',
+  spec         => 'UUID=BC04-FDA2',
+  fstype       => 'vfat',
+  mountoptions => ['umask=0077', 'fmask=0077', 'uid=0', 'gid=0'],
+  passno       => 1,
+}
+```
+
+#### Parameters
+
+The following parameters are available in the `cis_security_hardening::fstab_entry` defined type:
+
+* [`mountpoint`](#-cis_security_hardening--fstab_entry--mountpoint)
+* [`spec`](#-cis_security_hardening--fstab_entry--spec)
+* [`fstype`](#-cis_security_hardening--fstab_entry--fstype)
+* [`mountoptions`](#-cis_security_hardening--fstab_entry--mountoptions)
+* [`dump`](#-cis_security_hardening--fstab_entry--dump)
+* [`passno`](#-cis_security_hardening--fstab_entry--passno)
+* [`target`](#-cis_security_hardening--fstab_entry--target)
+
+##### <a name="-cis_security_hardening--fstab_entry--mountpoint"></a>`mountpoint`
+
+Data type: `Cis_security_hardening::Mountpoint`
+
+Mountpoint the entry is for, the second field of the fstab entry.
+
+##### <a name="-cis_security_hardening--fstab_entry--spec"></a>`spec`
+
+Data type: `Pattern[/\A\S+\z/]`
+
+Device to mount, the first field of the fstab entry, e. g. "UUID=BC04-FDA2".
+
+##### <a name="-cis_security_hardening--fstab_entry--fstype"></a>`fstype`
+
+Data type: `Pattern[/\A\S+\z/]`
+
+Filesystem type, the third field of the fstab entry.
+
+##### <a name="-cis_security_hardening--fstab_entry--mountoptions"></a>`mountoptions`
+
+Data type: `Array[Pattern[/\A\S+\z/], 1]`
+
+Mount options, the fourth field of the fstab entry.
+
+Default value: `['defaults']`
+
+##### <a name="-cis_security_hardening--fstab_entry--dump"></a>`dump`
+
+Data type: `Integer[0, 1]`
+
+Dump frequency, the fifth field of the fstab entry.
+
+Default value: `0`
+
+##### <a name="-cis_security_hardening--fstab_entry--passno"></a>`passno`
+
+Data type: `Integer[0, 2]`
+
+Order the filesystem is checked by fsck, the sixth field of the fstab entry.
+
+Default value: `0`
+
+##### <a name="-cis_security_hardening--fstab_entry--target"></a>`target`
+
+Data type: `Stdlib::Absolutepath`
+
+File to manage. Only meant to be changed by tests.
+
+Default value: `'/etc/fstab'`
 
 ### <a name="cis_security_hardening--parent_dirs"></a>`cis_security_hardening::parent_dirs`
 
