@@ -95,7 +95,7 @@ cis_security_hardening::benchmark::redhat::v9:
         - telnet_server
         - dnsmasq
         - mta_local
-        - nfs_utils
+        - nfs
         - rpcbind
         - rsyncd
     service_clients:
