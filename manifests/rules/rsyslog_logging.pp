@@ -34,7 +34,7 @@ class cis_security_hardening::rules::rsyslog_logging (
       file { "/etc/rsyslog.d/${config}.conf":
         ensure  => file,
         content => "${src} ${dst}",
-        notify  => Exec['reload-rsyslog'],
+        notify  => Service['rsyslog'],
         require => Package['rsyslog'],
       }
     }

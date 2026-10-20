@@ -392,7 +392,7 @@ cis_security_hardening::rules::rsyslog_logging::log_config:
     src: "mail.*"
     dst: "-/var/log/mail.log"
   kern:
-    src: "kern.*"
+    src: "#kern.*"
     dst: "-/var/log/kern.log"
   messages:
     src: "*.info;mail.none;authpriv.none;cron.none;local0.none"
@@ -401,7 +401,7 @@ cis_security_hardening::rules::rsyslog_logging::log_config:
     src: "cron.*"
     dst: "/var/log/cron"
   secure:
-    src: "*.info;mail.none;authpriv.none;cron.none;local0.none"
+    src: "authpriv.*"
     dst: "-/var/log/secure"
   spooler:
     src: "uucp,news.crit"
@@ -413,10 +413,10 @@ cis_security_hardening::rules::rsyslog_logging::log_config:
     src: "local4.*"
     dst: "/var/log/ldap.log"
   debug:
-    src: "*.debug"
+    src: "#*.debug"
     dst: "/var/log/debug"
   daemon:
-    src: "daemon.*"
+    src: "#daemon.*"
     dst: "/var/log/daemon.log"
 cis_security_hardening::rules::rsyslog_remote_logs::enforce: false
 cis_security_hardening::rules::rsyslog_remote_syslog::enforce: true
