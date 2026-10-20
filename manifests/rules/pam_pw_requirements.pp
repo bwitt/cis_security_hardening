@@ -241,6 +241,13 @@ class cis_security_hardening::rules::pam_pw_requirements (
           $pf_path = ''
         }
 
+        $pwquality_arguments = $enforce_for_root ? {
+          true    => ['try_first_pass', "retry=${retry}", 'enforce_for_root', 'local_users_only',
+          "remember=${cis_security_hardening::rules::pam_old_passwords::oldpasswords}"],
+          default => ['try_first_pass', "retry=${retry}", 'local_users_only',
+          "remember=${cis_security_hardening::rules::pam_old_passwords::oldpasswords}"],
+        }
+
         $services.each | $service | {
           if ($facts['os']['release']['major'] > '7') {
             if $pf_path != '' {
@@ -252,8 +259,7 @@ class cis_security_hardening::rules::pam_pw_requirements (
                 type      => 'password',
                 control   => 'requisite',
                 module    => 'pam_pwquality.so',
-                arguments => ['try_first_pass', "retry=${retry}",'enforce-for-root','local_users_only',
-                "remember=${cis_security_hardening::rules::pam_old_passwords::oldpasswords}"],
+                arguments => $pwquality_arguments,
                 target    => $pf_file,
                 notify    => Exec['authselect-apply-changes'],
               }
