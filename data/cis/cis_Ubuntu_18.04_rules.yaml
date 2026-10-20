@@ -85,6 +85,8 @@ cis_security_hardening::benchmark::ubuntu::v18:
         - telnet_client
         - ldap_client
     unused_network_protocols:
+      level1:
+        - disable_bluetooth
       level2:
         - disable_ipv6
         - disable_wireless
