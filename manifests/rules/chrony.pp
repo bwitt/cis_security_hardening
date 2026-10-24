@@ -45,10 +45,17 @@ class cis_security_hardening::rules::chrony (
       }
     }
 
+    # chrony manages /etc/sysconfig/chronyd itself on RedHat
+    $chrony_options = $facts['os']['name'].downcase() ? {
+      /^(rocky|almalinux|centos|redhat)$/ => { 'options' => '-u chrony' },
+      default                              => {},
+    }
+
     class { 'chrony':
       servers          => $ntp_servers,
       makestep_seconds => $makestep_seconds,
       makestep_updates => $makestep_updates,
+      *                => $chrony_options,
     }
 
     case $facts['os']['name'].downcase() {
@@ -56,15 +63,6 @@ class cis_security_hardening::rules::chrony (
         stdlib::ensure_packages(['ntp'], {
           ensure => purged,
         })
-      }
-      'rocky', 'almalinux','centos','redhat': {
-        file { '/etc/sysconfig/chronyd':
-          ensure  => file,
-          owner   => 'root',
-          group   => 'root',
-          mode    => '0644',
-          content => 'OPTIONS="-u chrony"',
-        }
       }
       default: {
         # nothing to do

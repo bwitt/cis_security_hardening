@@ -57,13 +57,12 @@ describe 'cis_security_hardening::rules::chrony' do
                   )
               elsif os_facts[:os]['name'].casecmp('rocky').zero? || os_facts[:os]['name'].casecmp('almalinux').zero? ||
                     os_facts[:os]['name'].casecmp('redhst').zero? || os_facts[:os]['name'].casecmp('centos').zero?
+                is_expected.to contain_class('chrony').with_options('-u chrony')
                 is_expected.to contain_file('/etc/sysconfig/chronyd').
                   with(
                     'ensure'  => 'file',
-                    'owner'   => 'root',
-                    'group'   => 'root',
                     'mode'    => '0644',
-                    'content' => 'OPTIONS="-u chrony"'
+                    'content' => %r{^OPTIONS="-u chrony"$}
                   )
 
               end
