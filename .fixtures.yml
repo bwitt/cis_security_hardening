@@ -16,7 +16,7 @@ fixtures:
     ntp:                        "puppetlabs/ntp"
     chrony:
       repo: "puppet/chrony"
-      ref: "2.5.0"
+      ref: "6.0.0"
     firewall:                   "puppetlabs/firewall"
     reboot:                     "puppetlabs/reboot"
     inifile:                    "puppetlabs/inifile"
